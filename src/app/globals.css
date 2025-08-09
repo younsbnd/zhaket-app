@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-bold;
+  }
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  h4 {
+    @apply text-xl font-bold;
+  }
+  h5 {
+    @apply text-lg font-bold;
+  }
+  h6 {
+    @apply text-base font-bold;
+  }
+}
+
+@theme {
+  --color-zhaket-primary: #ff9606; /*  For important buttons and links */
+  --color-zhaket-hover: #FFE6C0; /* For hover states. */
+  --color-zhaket-secondary: #424242; /* For secondary text and form elements. */
+  --color-zhaket-bg: #F5F5F5; /* For general backgrounds and cards. */
+  --color-zhaket-text: #212121; /* For main text and headings. */
+  --color-zhaket-button-hover: #B47510; /* For button hover state. */
+  --color-zhaket-link: #0288D1; /*  For links and hover states. */
+  --color-zhaket-cta: #FF5722; /* For call-to-action buttons. */
+}
+
+body {
+  font-family: var(--font-iranyekan), sans-serif;
+}
