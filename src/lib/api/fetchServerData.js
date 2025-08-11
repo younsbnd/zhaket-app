@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import { logger } from "../utils/logger";
 
 // function to fetch data from the server
 export async function fetchServerData(path, option = {}) {

@@ -1,4 +1,4 @@
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/utils/logger";
 import react, { useState } from "react";
 import { useSWRConfig } from "swr";
 
