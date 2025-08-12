@@ -38,3 +38,28 @@
 body {
   font-family: var(--font-iranyekan), sans-serif;
 }
+/* components/layout/header/mobile */
+/* for burget menu that cant tailwind handle */
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Burger open animation */
+.burger-container.open .burger:nth-child(1) {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.burger-container.open .burger:nth-child(2) {
+  opacity: 0;
+}
+
+.burger-container.open .burger:nth-child(3) {
+  transform: translateY(-10px) rotate(-45deg);
+}

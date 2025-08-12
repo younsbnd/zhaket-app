@@ -3,7 +3,10 @@ import React, { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { containerVariants, itemVariants } from "./data";
+import {
+  containerVariants,
+  itemVariants,
+} from "../../../../constants/searchData";
 
 function SearchSlider({ data }) {
   const sliderRef = useRef(null);
@@ -56,45 +59,43 @@ function SearchSlider({ data }) {
   }, []);
 
   return (
-    <div>
-      <motion.div
-        variants={containerVariants}
-        ref={sliderRef}
-        className='hide-scrollbar flex gap-6 overflow-x-auto whitespace-nowrap px-6 py-4 scroll-smooth snap-x snap-mandatory touch-pan-x cursor-grab'
-        style={{
-          WebkitOverflowScrolling: "touch",
-          scrollBehavior: "smooth",
-        }}>
-        {data.map((item, i) => (
-          <motion.div
-            variants={itemVariants}
-            key={i}
-            className='flex-shrink-0 flex items-center gap-3 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out px-4 py-3 snap-start min-w-[120px] cursor-pointer select-none'>
-            <Link href={item.url} key={i} title={item.title}>
-              {item.image && (
-                <div className='relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-200'>
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className='object-cover'
-                    sizes='40px'
-                    priority={i < 3} // prioritize first images for speed
-                  />
-                </div>
+    <motion.div
+      variants={containerVariants}
+      ref={sliderRef}
+      className='hide-scrollbar flex gap-6 overflow-x-auto whitespace-nowrap px-6 py-4 scroll-smooth snap-x snap-mandatory touch-pan-x cursor-grab'
+      style={{
+        WebkitOverflowScrolling: "touch",
+        scrollBehavior: "smooth",
+      }}>
+      {data.map((item, i) => (
+        <motion.div
+          variants={itemVariants}
+          key={i}
+          className='flex-shrink-0 flex items-center gap-3 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out px-4 py-3 snap-start min-w-[120px] cursor-pointer select-none'>
+          <Link href={item.url} key={i} title={item.title}>
+            {item.image && (
+              <div className='relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-200'>
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className='object-cover'
+                  sizes='40px'
+                  priority={i < 3} // prioritize first images for speed
+                />
+              </div>
+            )}
+            <span className='text-sm font-medium text-gray-800 truncate'>
+              {item.image ? (
+                <span>{item.title.slice(0, 10)}...</span>
+              ) : (
+                item.title
               )}
-              <span className='text-sm font-medium text-gray-800 truncate'>
-                {item.image ? (
-                  <span>{item.title.slice(0, 10)}...</span>
-                ) : (
-                  item.title
-                )}
-              </span>
-            </Link>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+            </span>
+          </Link>
+        </motion.div>
+      ))}
+    </motion.div>
   );
 }
 

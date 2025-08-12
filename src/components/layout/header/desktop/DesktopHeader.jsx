@@ -2,14 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { FiSearch, FiUser, FiShoppingCart } from "react-icons/fi";
-import { academyMenu, categories, servicesMenu } from "../data";
+import {
+  academyMenu,
+  categories,
+  servicesMenu,
+} from "../../../../constants/headerData";
 import Link from "next/link";
 import MegaMenuDropdown from "./MegaMenuDropdown";
 import Academy from "./Academy";
 import Image from "next/image";
 import Search from "../search/Search";
 import BurgerMenu from "../mobile/Mobile";
-
 
 export default function DesktopHeader() {
   const [openMenuIndex, setOpenMenuIndex] = useState(null);

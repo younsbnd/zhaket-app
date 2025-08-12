@@ -13,38 +13,17 @@ export default function LoadingMessage() {
       </motion.div>
 
       {/* Message */}
-      <p className='text-gray-700 text-lg font-medium'>
+      <div className='text-gray-700 text-lg font-medium'>
         لطفا منتظر بمانید
-        <span className='dots'></span>
-      </p>
+        <span className='inline-block w-4 overflow-hidden align-bottom'>
+          <span className='animate-[dots_1.5s_steps(4,end)_infinite]'>
+            ....
+          </span>
+        </span>
+      </div>
 
       {/* Optional: soft hint */}
       <p className='text-sm text-gray-500 mt-1'>در حال بارگذاری اطلاعات...</p>
-
-      <style jsx>{`
-        .dots::after {
-          content: "";
-          display: inline-block;
-          animation: dots 1.5s steps(4, end) infinite;
-        }
-        @keyframes dots {
-          0% {
-            content: "";
-          }
-          25% {
-            content: ".";
-          }
-          50% {
-            content: "..";
-          }
-          75% {
-            content: "...";
-          }
-          100% {
-            content: "";
-          }
-        }
-      `}</style>
     </div>
   );
 }

@@ -1,9 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { containerVariants, itemVariants, ourSuggestion } from "./data";
+import {
+  containerVariants,
+  itemVariants,
+  ourSuggestion,
+} from "../../../../constants/searchData";
 import SearchSlider from "./Slider";
-import { categories } from "../data";
+import { categories } from "../../../../constants/headerData";
 import { ImFire } from "react-icons/im";
 export default function SearchSuggestion() {
   const categoryTitles = categories.map((cat) => ({
