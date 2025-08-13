@@ -2,9 +2,15 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { categories } from "../../../../constants/headerData";
+import {
+  academyMenu,
+  categories,
+  servicesMenu,
+} from "../../../../constants/headerData";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import Link from "next/link";
+import Academy from "../desktop/Academy";
+import Image from "next/image";
 
 const categoryListVariants = {
   hidden: {},
@@ -39,7 +45,7 @@ export default function BurgerMenu() {
   };
 
   return (
-    <div className='lg:hidden flex'>
+    <div className='lg:hidden flex fixed top-0 left-0 right-0'>
       {/* Burger Button */}
       <div
         className={`burger-container fixed top-[30px] right-[20px] w-[30px] h-[24px] cursor-pointer z-[100] flex flex-col justify-between ${
@@ -71,28 +77,52 @@ export default function BurgerMenu() {
                 animate='visible'
                 exit='hidden'
                 variants={categoryListVariants}>
+                <motion.li className='w-full flex items-center justify-end my-3'>
+                  <Image
+                    src={"/logo.svg"}
+                    width={60}
+                    height={60}
+                    className='object-cover'
+                    alt='logo'
+                  />
+                </motion.li>
                 {categories.map((item, index) => (
                   <motion.li
                     key={item.id || index}
                     variants={categoryItemVariants}
-                    className='border-b border-gray-200 py-3 my-5'>
+                    className='py-3 my-5'>
                     <div
                       className='flex items-center justify-between w-full'
                       onClick={() => toggleSubmenu(index)}>
-                      <span className='font-semibold flex items-center gap-2 text-zhaket-secondary text-xl select-none'>
-                        {item.icon && item.icon}
+                      <span className='font-semibold flex items-center gap-2 text-zhaket-secondary/70 text-xl select-none'>
+                        <span
+                          className={`text-2xl ml-1.5 ${
+                            item.title === "محیوب ترین" && "text-zhaket-primary"
+                          }`}>
+                          {" "}
+                          {item.icon && item.icon}
+                        </span>
                         {item.title}
                       </span>
                       {item.subcategories?.length > 0 && (
                         <button
-                          className='p-1'
+                          className='p-1 flex items-center justify-center'
                           aria-expanded={openSubmenu === index}
                           aria-controls={`submenu-${index}`}>
-                          {openSubmenu === index ? (
-                            <BiChevronUp className='h-6 w-6' />
-                          ) : (
-                            <BiChevronDown className='h-6 w-6' />
-                          )}
+                          <span className='relative block w-4 h-4'>
+                            {/* Horizontal line */}
+                            <span
+                              className={`absolute top-1/2 left-0 w-4 h-0.5 bg-gray-600 transform -translate-y-1/2 transition-all duration-300 ease-in-out`}
+                            />
+                            {/* Vertical line */}
+                            <span
+                              className={`absolute top-1/2 left-0 w-4 h-0.5 bg-gray-600 transform -translate-y-1/2 transition-all duration-300 ease-in-out ${
+                                openSubmenu === index
+                                  ? "scale-x-0"
+                                  : "rotate-90"
+                              }`}
+                            />
+                          </span>
                         </button>
                       )}
                     </div>
@@ -107,7 +137,7 @@ export default function BurgerMenu() {
                           animate='visible'
                           exit='hidden'
                           variants={submenuListVariants}
-                          className='overflow-hidden grid grid-cols-2 mb-10'>
+                          className='overflow-hidden mb-10 my-3'>
                           {item.subcategories.map((subItem, subIndex) => (
                             <motion.li
                               key={subItem.id || subIndex}
@@ -115,7 +145,7 @@ export default function BurgerMenu() {
                               className='my-1.5'>
                               <Link
                                 href={subItem.url || "#"}
-                                className='block text-gray-700 hover:text-primary transition-colors'
+                                className='block text-gray-700 hover:text-primary transition-colors py-3'
                                 onClick={() => setMenuOpen(false)}>
                                 {subItem.title}
                               </Link>
@@ -126,6 +156,21 @@ export default function BurgerMenu() {
                     </AnimatePresence>
                   </motion.li>
                 ))}
+                <motion.li
+                  variants={categoryListVariants}
+                  className='py-3 my-2 font-semibold flex items-center gap-2 text-zhaket-secondary/70 text-xl'>
+                  وبلاگ
+                </motion.li>
+                <motion.li
+                  variants={categoryListVariants}
+                  className=' py-3 my-2'>
+                  <Academy academyMenu={academyMenu} title={"اکادمی"} />
+                </motion.li>
+                <motion.li
+                  variants={categoryListVariants}
+                  className=' py-3 my-2'>
+                  <Academy academyMenu={servicesMenu} title={"خدمات"} />
+                </motion.li>
               </motion.ul>
             )}
           </AnimatePresence>

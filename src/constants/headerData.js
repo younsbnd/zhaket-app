@@ -6,13 +6,14 @@ import {
   FaPaintBrush,
   FaGraduationCap,
 } from "react-icons/fa";
-import { GrHtml5 } from "react-icons/gr";
+import { SiDatabricks, SiHtml5 } from "react-icons/si";
+import { CiDiscount1, CiHeart } from "react-icons/ci";
 
 export const categories = [
   {
-    title: "قالب وردپرس",
+    title: "محیوب ترین",
     url: "/",
-    icon: <FaWordpress />,
+    icon: <CiHeart />,
     subcategories: [
       { title: "فروشگاهی", url: "" },
       { title: "خبری و مجله‌ای", url: "" },
@@ -26,17 +27,10 @@ export const categories = [
       { title: "ورزشی", url: "" },
       { title: "موزیک و هنری", url: "" },
       { title: "مسافرت و گردشگری", url: "" },
-      { title: "خدماتی", url: "" },
-      { title: "شخصی و بلاگ", url: "" },
-      { title: "حرفه‌ای و فریلنسری", url: "" },
-      { title: "تجاری و مالی", url: "" },
-      { title: "عروسی و رویداد", url: "" },
-      { title: "آموزش آنلاین", url: "" },
-      { title: "نمونه کار و پورتفولیو", url: "" },
     ],
   },
   {
-    title: "افزونه وردپرس",
+    title: "قالب وردپرس",
     url: "/",
     icon: <FaPuzzlePiece />,
     subcategories: [
@@ -59,9 +53,9 @@ export const categories = [
     ],
   },
   {
-    title: "قالب HTML",
+    title: "افزونه وردپرس",
     url: "/",
-    icon: <GrHtml5 />,
+    icon: <SiDatabricks />,
     subcategories: [
       { title: "قالب شرکتی HTML", url: "" },
       { title: "قالب فروشگاهی HTML", url: "" },
@@ -93,9 +87,9 @@ export const categories = [
     ],
   },
   {
-    title: "سایت آماده",
+    title: "قالب html",
     url: "/",
-    icon: <FaGlobe />,
+    icon: <SiHtml5 />,
     subcategories: [
       { title: "فروشگاهی", url: "" },
       { title: "آموزشی", url: "" },
@@ -110,9 +104,9 @@ export const categories = [
     ],
   },
   {
-    title: "گرافیک و UI",
+    title: "بسته های شگفت انگیز",
     url: "/",
-    icon: <FaPaintBrush />,
+    icon: <CiDiscount1 />,
     subcategories: [
       { title: "کیت رابط کاربری", url: "" },
       { title: "آیکون", url: "" },
@@ -124,23 +118,6 @@ export const categories = [
       { title: "طرح‌های آماده", url: "" },
       { title: "بنر و تبلیغات", url: "" },
       { title: "بک‌گراند و تکسچر", url: "" },
-    ],
-  },
-  {
-    title: "آموزش و دوره‌ها",
-    url: "/",
-    icon: <FaGraduationCap />,
-    subcategories: [
-      { title: "وردپرس", url: "" },
-      { title: "برنامه‌نویسی وب", url: "" },
-      { title: "طراحی UI/UX", url: "" },
-      { title: "سئو و دیجیتال مارکتینگ", url: "" },
-      { title: "طراحی گرافیک", url: "" },
-      { title: "توسعه موبایل", url: "" },
-      { title: "هوش مصنوعی و یادگیری ماشین", url: "" },
-      { title: "بازاریابی محتوا", url: "" },
-      { title: "مدیریت پروژه", url: "" },
-      { title: "امنیت سایبری", url: "" },
     ],
   },
 ];

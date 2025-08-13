@@ -4,6 +4,7 @@ import {
   FaLinkedin,
   FaTwitter,
   FaFacebookF,
+  FaLinkedinIn,
 } from "react-icons/fa";
 
 export const footerLinks = [
@@ -29,7 +30,6 @@ export const serviceLinks = [
 export const socialLinks = [
   { icon: <FaInstagram />, url: "#" },
   { icon: <FaTelegramPlane />, url: "#" },
-  { icon: <FaLinkedin />, url: "#" },
-  { icon: <FaTwitter />, url: "#" },
-  { icon: <FaFacebookF />, url: "#" },
+  { icon: <FaLinkedinIn />, url: "#" },
+
 ];

@@ -4,6 +4,8 @@ import { useRef } from "react";
 import { BiSearchAlt } from "react-icons/bi";
 import { TfiClose } from "react-icons/tfi";
 import { motion } from "framer-motion";
+import ControlledInput from "@/components/shared/forms/ControlledInput";
+import { useForm } from "react-hook-form";
 
 export default function SearchForm({
   query,
@@ -14,7 +16,12 @@ export default function SearchForm({
   autoFocus = true,
 }) {
   const formRef = useRef(null);
-
+  const {
+    control,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { email: "" },
+  });
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimmed = query.trim();
@@ -43,15 +50,17 @@ export default function SearchForm({
           className='absolute left-2 -translate-y-1/2 top-1/2 p-1 text-black/50 hover:text-black transition'>
           <TfiClose size={20} />
         </motion.button>
-        <input
+        <ControlledInput
+          name={query}
+          control={control}
+          placeholder='جستجو کنید ...'
+          rules={{ required: "جستجو کنید ..." }}
+          errors={errors}
+          autoFocus={autoFocus}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className='rounded-full w-full sm:px-10 sm:py-3 py-2 px-5 sm:border-2 border-1 border-transparent focus:outline-none focus:border-black/20 placeholder-black/40 transition-all duration-300 shadow-md'
-          placeholder='جستجو کنید ...'
-          required
-          type='text'
-          autoFocus={autoFocus}
         />
+    
         {/* Search Icon */}
         <motion.button
           type='submit'

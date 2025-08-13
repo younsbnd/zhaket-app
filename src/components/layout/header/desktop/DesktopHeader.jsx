@@ -34,7 +34,7 @@ export default function DesktopHeader() {
   return (
     <header
       dir='rtl'
-      className='fixednpm top-0 z-50 lg:px-10 lg:py-5 md:px-5 px-1 py-2 bg-white w-full shadow-md select-none'>
+      className='relative top-0 z-50 lg:px-10 lg:py-5 md:px-5 px-1 py-2 bg-white w-full shadow-md select-none'>
       {/* Main header */}
       <div className='flex items-center justify-between px-6 py-3'>
         {/* Logo */}
@@ -47,19 +47,16 @@ export default function DesktopHeader() {
               alt='Zhaket Logo'
               width={60}
               height={60}
-              className='object-cover sm:w-16 w-12'
+              className='object-cover sm:w-16 w-11'
             />
           </Link>
         </div>
 
+        <MegaMenuDropdown categories={categories} />
         {/* Categories mega menu + search */}
         <div className='flex-1 mx-8 hidden lg:flex items-center gap-8'>
           <nav className='relative' onMouseLeave={() => setOpenMenuIndex(null)}>
             <ul className='flex items-center gap-4'>
-              <li>
-                <MegaMenuDropdown categories={categories} />
-              </li>
-
               <li>
                 <Link
                   href='#'
@@ -90,23 +87,22 @@ export default function DesktopHeader() {
         )}
 
         {/* Right action buttons */}
-        <div className='flex items-center md:gap-4 gap-3'>
+        <div className='flex items-center md:gap-2 gap-1.5'>
           <div
             onClick={() => setSearch((prev) => !prev)}
             className='flex items-center lg:ml-10 md:ml-3 gap-2 md:border border-zhaket-secondary/30 py-1.5 md:px-3 rounded-md transition-all text-zhaket-text/70 hover:border-none hover:text-zhaket-primary cursor-pointer'>
-            <FiSearch className='text-2xl' />
+            <FiSearch className='text-xl' />
           </div>
-          <button className='relative text-zhaket-text/70 inline-flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 hover:bg-gray-100'>
-            <FiShoppingCart className='text-2xl' />
-            <span className='text-sm md:flex hidden'>سبد خرید</span>
-            <span className='absolute -top-1 -right-0 bg-zhaket-cta text-white rounded-full text-xs w-5 h-5 flex items-center justify-center'>
+          <button className='relative text-zhaket-text/70 inline-flex items-center gap-2 px-3 py-2 rounded-md'>
+            <FiShoppingCart className='text-xl' />
+            <span className='absolute -top-1 -right-0 bg-zhaket-cta text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center'>
               3
             </span>
           </button>
           <Link
             href='#'
-            className='flex items-center gap-2 md:px-3 py-2 text-zhaket-text/70 rounded-md border border-gray-200 hover:bg-gray-100'>
-            <FiUser className='text-2xl' />
+            className='flex items-center gap-2 md:px-3 py-2 text-zhaket-text/70 rounded-md text-sm'>
+            <FiUser className='text-xl' />
             <span className='text-sm md:flex hidden'>ورود / ثبت‌نام</span>
           </Link>
         </div>

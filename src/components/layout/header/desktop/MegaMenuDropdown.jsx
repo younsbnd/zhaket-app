@@ -53,7 +53,7 @@ const MegaMenuDropdown = ({ categories }) => {
   }, []);
 
   return (
-    <div className='relative' ref={menuRef} onMouseLeave={handleMouseLeave}>
+    <div className='lg:block hidden pr-4' ref={menuRef} onMouseLeave={handleMouseLeave}>
       {/* Trigger Button */}
       <button
         onMouseEnter={() => setIsMenuOpen(true)}
@@ -77,49 +77,44 @@ const MegaMenuDropdown = ({ categories }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
-            className='absolute rtl:right-0 right-0 mt-2 w-[700px] bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-50 flex'
+            className='absolute top-[80] left-0 right-0 mx-auto mt-2 w-[90vw] bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-50 flex'
             onMouseEnter={cancelMouseLeave}
             onMouseLeave={handleMouseLeave}>
             {/* Main Categories Column */}
-            <div className='w-1/3 bg-gray-100 pt-5 pr-5'>
-              <p className='font-bold text-gray-800 mb-4 text-lg'>
-                همه دسته‌بندی‌ها
-              </p>
+            <div className='w-1/5 bg-gray-50 pt-5 pr-5'>
               <ul className='space-y-1'>
                 {categories.map((cat, i) => (
                   <motion.li
                     key={i}
                     initial={{ backgroundColor: "rgba(243, 244, 246, 1)" }}
                     animate={{
-                      backgroundColor:
-                        activeCategory === i
-                          ? "#fff"
-                          : "rgba(243, 244, 246, 1)",
+                      backgroundColor: activeCategory === i ? "#fff" : "",
                     }}
                     transition={{ duration: 0.15 }}
                     className='rounded-md'>
                     <div
-                      className={`p-3 flex items-center justify-between transition-colors ${
+                      className={`p-5 flex-1/4 flex items-center justify-between transition-colors ${
                         activeCategory === i
-                          ? "text-primary"
-                          : "text-gray-700 hover:text-primary"
+                          ? "text-zhaket-secondary"
+                          : "text-zhaket-secondary/80 hover:text-primary"
                       }`}
                       onMouseEnter={() => handleCategoryHover(i)}
                       onClick={() => handleCategoryHover(i)}>
                       <Link
                         href={cat.url || "#"}
-                        className='flex items-center gap-3 w-full font-medium'>
+                        className='flex items-center gap-3 w-full'>
                         {cat.icon && (
                           <Icon
                             name={cat.icon}
-                            className='text-primary text-lg'
+                            className={` text-xl ${
+                              cat.title === "محیوب ترین"
+                                ? "text-zhaket-primary"
+                                : "text-zhaket-secondary/70"
+                            }`}
                           />
                         )}
                         <span>{cat.title}</span>
                       </Link>
-                      {cat.subcategories?.length > 0 && (
-                        <MdKeyboardArrowLeft className='text-gray-400 text-xl' />
-                      )}
                     </div>
                   </motion.li>
                 ))}
@@ -137,13 +132,13 @@ const MegaMenuDropdown = ({ categories }) => {
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.15 }}
                     className='w-2/3 p-6'>
-                    <div className='grid grid-cols-2 gap-6'>
+                    <div className='grid grid-cols-2 gap-6 w-[60%]'>
                       {categories[activeCategory].subcategories.map(
                         (sub, j) => (
                           <div key={j} className=''>
                             <Link
                               href={sub.url || "#"}
-                              className='text-gray-600 text-sm hover:text-primary flex items-center gap-2 border-b border-gray-100 pb-2'>
+                              className='text-zhaket-secondary/80 text-sm hover:text-zhaket-text flex items-center gap-2 pb-2'>
                               {sub.title}
                             </Link>
                           </div>

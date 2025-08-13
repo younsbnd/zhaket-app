@@ -74,7 +74,7 @@ function SearchSlider({ data }) {
           className='flex-shrink-0 flex items-center gap-3 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 ease-in-out px-4 py-3 snap-start min-w-[120px] cursor-pointer select-none'>
           <Link href={item.url} key={i} title={item.title}>
             {item.image && (
-              <div className='relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-200'>
+              <div className='relative md:w-10 md:h-10 w-6 h-6 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-200'>
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -85,7 +85,7 @@ function SearchSlider({ data }) {
                 />
               </div>
             )}
-            <span className='text-sm font-medium text-gray-800 truncate'>
+            <span className='md:text-sm text-[12px] font-medium text-gray-800 truncate'>
               {item.image ? (
                 <span>{item.title.slice(0, 10)}...</span>
               ) : (
