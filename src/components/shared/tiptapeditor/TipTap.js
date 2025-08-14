@@ -13,8 +13,9 @@ import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
 import { Card, CardBody } from "@heroui/react";
-import TiptapMenuBar from "./tiptapmeubar/TiptapMenuBar";
-
+import TiptapMenuBar from "./TiptapMenuBar";
+ 
+ 
 /* ============================================================================
  * Utility Functions
  * ==========================================================================*/
