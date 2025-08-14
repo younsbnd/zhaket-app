@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { logger } from "../logger";
+import { logger } from "./logger";
 
 export function errorHandler(error) {
   //   log the error
