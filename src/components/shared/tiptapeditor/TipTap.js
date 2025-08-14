@@ -1,732 +1,348 @@
 "use client";
 
-import React, { useEffect, useImperativeHandle, useMemo } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { useEditor, EditorContent } from "@tiptap/react";
+import React, {
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+  forwardRef,
+} from "react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import ControlledSelect from "../forms/ControlledSelect";
-import { Button, Tooltip, Divider, Card, CardBody } from "@heroui/react";
-import {
-  TbBold,
-  TbItalic,
-  TbUnderline,
-  TbStrikethrough,
-  TbCode,
-  TbBraces,
-  TbList,
-  TbListNumbers,
-  TbQuote,
-  TbLink,
-  TbUnlink,
-  TbPhoto,
-  TbPencil,
-  TbTypography,
-  TbArrowBackUp,
-  TbArrowForwardUp,
-  TbEraser,
-  // Direction icons (added)
-  TbTextDirectionLtr,
-  TbTextDirectionRtl,
-} from "react-icons/tb";
+import TextAlign from "@tiptap/extension-text-align";
+import { Card, CardBody } from "@heroui/react";
+import TiptapMenuBar from "./tiptapmeubar/TiptapMenuBar";
 
-/* Utility: normalize URL input (trim, strip leading ":" and any "data:" prefix) */
-const normalizeUrlInput = (raw) => {
-  if (typeof raw !== "string") return "";
-  let s = raw.trim();
-  while (s.startsWith(":")) s = s.slice(1);
-  // Ensure no "data:" scheme remains
-  while (s.toLowerCase().startsWith("data:")) s = s.slice(5).trim();
-  return s;
+/* ============================================================================
+ * Utility Functions
+ * ==========================================================================*/
+
+/** Clean and normalize URL input */
+const normalizeUrlInput = (raw) =>
+  typeof raw === "string"
+    ? raw.trim().replace(/^:+/, "").replace(/^data:/i, "").trim()
+    : "";
+
+/** Detect data/base64 URLs (not allowed) */
+const isDataOrBase64 = (str) =>
+  typeof str === "string" && (/^data:/i.test(str) || /base64,/.test(str));
+
+/** Validate URLs: absolute HTTP/HTTPS or relative path */
+const urlAllowed = (href, validate) => {
+  const h = normalizeUrlInput(href);
+  if (!h || isDataOrBase64(h)) return false;
+  if (typeof validate === "function") {
+    try {
+      return !!validate(h);
+    } catch {
+      return false;
+    }
+  }
+  return h.startsWith("/") || /^https?:\/\//i.test(h);
 };
 
-/* Detect disallowed data/base64 URLs */
-const isDataOrBase64 = (s) => {
-  if (!s || typeof s !== "string") return false;
-  const lower = s.toLowerCase();
-  return lower.startsWith("data:") || lower.includes("base64,");
-};
+/** Remove base64 images from pasted HTML */
+const stripDataImagesFromHTML = (html) =>
+  typeof html === "string"
+    ? html.replace(
+        /<img[^>]+src=(["'])(?:data:[^"']*|[^"']*base64[^"']*)\1[^>]*>/gi,
+        ""
+      )
+    : "";
 
-/* Remove <img> tags whose src is data/base64 */
-const stripDataImagesFromHTML = (html) => {
-  if (typeof html !== "string") return "";
-  return html.replace(
-    /<img[^>]+src=(["'])(?:data:[^"']*|[^"']*base64[^"']*)\1[^>]*>/gi,
-    ""
-  );
-};
+/** Remove empty paragraph or heading tags */
+const removeEmptyHtmlTags = (html) =>
+  html.replace(/<(p|h[1-6])[^>]*>\s*<\/\1>/gi, "").trim();
 
-/* Extract plain text recursively from a node */
-const getTextContent = (node) => {
-  if (!node) return "";
-  if (node.type === "text") return node.text || "";
-  const content = node.content || [];
-  return content.map(getTextContent).join("");
-};
+/* ============================================================================
+ * Document Parsing Helpers
+ * ==========================================================================*/
 
-/* Extract inline parts (marks + hardBreak) from a node */
-const extractInlineParts = (node) => {
-  const parts = [];
-  if (!node || !node.content) return parts;
+/** Extract plain text from ProseMirror node */
+const textOf = (node) =>
+  !node
+    ? ""
+    : node.type === "text"
+    ? node.text || ""
+    : (node.content || []).map(textOf).join("");
 
-  node.content.forEach((child) => {
+/** Extract inline parts (text, links, line breaks) */
+const inlineParts = (node) => {
+  const out = [];
+  (node?.content || []).forEach((child) => {
     if (child.type === "text") {
-      const marks = (child.marks || []).map((m) => m.type);
       const link = (child.marks || []).find((m) => m.type === "link");
-      parts.push({
+      out.push({
         text: child.text || "",
-        marks,
         ...(link?.attrs?.href ? { href: link.attrs.href } : {}),
       });
     } else if (child.type === "hardBreak") {
-      parts.push({ tag: "br" });
+      out.push({ br: true });
     } else if (child.content) {
-      parts.push(...extractInlineParts(child));
+      out.push(...inlineParts(child));
     }
   });
-
-  return parts;
+  return out;
 };
 
-/* Map block nodes to a simplified object */
-const mapNodeToTagObject = (node) => {
-  if (!node) return null;
+/** Map ProseMirror node to clean block structure */
+const mapNode = (n) => {
+  if (!n) return null;
 
-  switch (node.type) {
-    case "paragraph":
-      return {
-        tag: "p",
-        text: getTextContent(node),
-        inlines: extractInlineParts(node),
-      };
-
-    case "heading": {
-      const level = node.attrs?.level || 1;
-      return {
-        tag: `h${level}`,
-        level,
-        text: getTextContent(node),
-        inlines: extractInlineParts(node),
-      };
-    }
-
-    case "bulletList": {
-      const items = (node.content || [])
-        .map((li) => mapNodeToTagObject(li))
-        .filter(Boolean);
-      return { tag: "ul", items };
-    }
-
-    case "orderedList": {
-      const start = node.attrs?.start || 1;
-      const items = (node.content || [])
-        .map((li) => mapNodeToTagObject(li))
-        .filter(Boolean);
-      return { tag: "ol", start, items };
-    }
-
-    case "listItem": {
-      const firstParagraph = (node.content || []).find(
-        (c) => c.type === "paragraph"
-      );
-      const text = firstParagraph
-        ? getTextContent(firstParagraph)
-        : getTextContent(node);
-      const inlines = firstParagraph
-        ? extractInlineParts(firstParagraph)
-        : extractInlineParts(node);
-      const nestedBlocks = (node.content || [])
-        .filter((c) => c.type !== "paragraph")
-        .map((c) => mapNodeToTagObject(c))
-        .filter(Boolean);
-      return {
-        tag: "li",
-        text,
-        inlines,
-        ...(nestedBlocks.length ? { content: nestedBlocks } : {}),
-      };
-    }
-
-    case "blockquote": {
-      const content = (node.content || [])
-        .map((c) => mapNodeToTagObject(c))
-        .filter(Boolean);
-      return { tag: "blockquote", content };
-    }
-
-    case "codeBlock":
-      return {
-        tag: "pre",
-        code: getTextContent(node),
-        language: node.attrs?.language || "",
-      };
-
-    case "image":
-      return {
-        tag: "img",
-        src: node.attrs?.src || "",
-        alt: node.attrs?.alt || "",
-        title: node.attrs?.title || "",
-      };
-
-    case "horizontalRule":
-      return { tag: "hr" };
-
-    default:
-      return null;
+  if (n.type === "paragraph") {
+    const txt = textOf(n).trim();
+    if (!txt) return null;
+    return {
+      type: "p",
+      align: n.attrs?.textAlign || "left",
+      text: txt,
+      inlines: inlineParts(n),
+    };
   }
+
+  if (n.type === "heading") {
+    const txt = textOf(n).trim();
+    if (!txt) return null;
+    return {
+      type: "h",
+      level: n.attrs?.level || 1,
+      align: n.attrs?.textAlign || "left",
+      text: txt,
+      inlines: inlineParts(n),
+    };
+  }
+
+  if (n.type === "bulletList") {
+    const items = (n.content || []).map(mapNode).filter(Boolean);
+    return items.length ? { type: "ul", items } : null;
+  }
+
+  if (n.type === "orderedList") {
+    const items = (n.content || []).map(mapNode).filter(Boolean);
+    return items.length
+      ? { type: "ol", start: n.attrs?.start || 1, items }
+      : null;
+  }
+
+  if (n.type === "listItem") {
+    const p = (n.content || []).find((c) => c.type === "paragraph");
+    const txt = textOf(p || n).trim();
+    if (!txt) return null;
+    return {
+      type: "li",
+      text: txt,
+      inlines: inlineParts(p || n),
+      content: (n.content || [])
+        .filter((c) => c.type !== "paragraph")
+        .map(mapNode)
+        .filter(Boolean),
+    };
+  }
+
+  if (n.type === "image") {
+    const src = n.attrs?.src || "";
+    if (!src) return null;
+    return {
+      type: "img",
+      src,
+      alt: n.attrs?.alt || "",
+    };
+  }
+
+  return null;
 };
 
-/* Convert full document JSON (getJSON()) to an array of simplified blocks */
-const docToContentArray = (docJSON) => {
-  if (!docJSON || !Array.isArray(docJSON.content)) return [];
-  return docJSON.content.map(mapNodeToTagObject).filter(Boolean);
-};
+/** Convert document JSON to block array */
+const docToBlocks = (doc) =>
+  Array.isArray(doc?.content) ? doc.content.map(mapNode).filter(Boolean) : [];
 
-/* Icon-only toolbar button using heroui + react-icons */
-function ToolbarIconButton({
-  active,
-  disabled,
-  onClick,
-  title,
-  icon: Icon,
-  className = "",
-}) {
-  const color = active ? "primary" : "default";
-  const variant = active ? "solid" : "flat";
-  return (
-    <Tooltip content={title} placement="bottom" closeDelay={0}>
-      <Button
-        isIconOnly
-        size="sm"
-        radius="sm"
-        variant={variant}
-        color={color}
-        className={`min-w-8 ${className}`}
-        onClick={onClick}
-        disabled={disabled}
-      >
-        <Icon className="h-4 w-4" />
-      </Button>
-    </Tooltip>
-  );
-}
+/** Detect active heading level */
+const getHeadingLevel = (editor) =>
+  (editor.isActive("heading", { level: 1 }) && 1) ||
+  (editor.isActive("heading", { level: 2 }) && 2) ||
+  (editor.isActive("heading", { level: 3 }) && 3) ||
+  0;
 
-/* Zod schema for non-function props (runtime validation) */
-const PropsSchema = z.object({
-  value: z.string().optional(),
-  editable: z.boolean().optional(),
-  className: z.string().optional(),
-  linkOptions: z
-    .object({
-      openOnClick: z.boolean().optional(),
-      autolink: z.boolean().optional(),
-      linkOnPaste: z.boolean().optional(),
-      // validate is handled at runtime; do not use z.function here
-    })
-    .optional(),
-  immediatelyRender: z.boolean().optional(),
-});
+/* ============================================================================
+ * Main Tiptap Editor Component
+ * ==========================================================================*/
 
-const TiptapEditor = React.forwardRef(function TiptapEditor(allProps, ref) {
-  // Validate plain (non-function) props via Zod
-  const parsed = PropsSchema.safeParse(allProps);
-  const safeProps = parsed.success ? parsed.data : {};
+const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
   const {
     value = "",
     editable = true,
     className = "",
-    linkOptions: linkOpts = {},
-    immediatelyRender = false,
-  } = safeProps;
+    linkOptions = {},
+    menuTitle = "Editor Menu",
+    onChangeHtml,
+    onChangeBlocks,
+  } = props || {};
 
-  // Pull callbacks directly and type-check at usage time
-  const onChange =
-    typeof allProps.onChange === "function" ? allProps.onChange : undefined;
-  const onReady =
-    typeof allProps.onReady === "function" ? allProps.onReady : undefined;
-  const onImagesChange =
-    typeof allProps.onImagesChange === "function"
-      ? allProps.onImagesChange
-      : undefined;
-  const onContentArrayChange =
-    typeof allProps.onContentArrayChange === "function"
-      ? allProps.onContentArrayChange
-      : undefined;
-
-  // Build a URL validator that always rejects data/base64; defer to user's validator if provided
-  const userValidate =
-    typeof allProps.linkOptions?.validate === "function"
-      ? allProps.linkOptions.validate
-      : null;
-  const linkValidate = (href) => {
-    const normalized = normalizeUrlInput(href);
-    if (!normalized) return false;
-    if (isDataOrBase64(normalized)) return false;
-    if (userValidate) {
-      try {
-        return !!userValidate(normalized);
-      } catch {
-        return false;
-      }
-    }
-    return normalized.startsWith("/") || /^https?:\/\//i.test(normalized);
-  };
-
-  // Form state for heading selector
-  const {
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    defaultValues: { headingLevel: "0" },
-  });
-
-  // Editor extensions
+  /** Configure editor extensions */
   const extensions = useMemo(
     () => [
-      StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
-      Underline,
+      StarterKit.configure({
+        heading: { levels: [1, 2, 3] },
+        italic: false,
+        strike: false,
+        code: false,
+        codeBlock: false,
+        blockquote: false,
+        horizontalRule: false,
+      }),
       Link.configure({
-        openOnClick: linkOpts.openOnClick ?? true,
-        autolink: linkOpts.autolink ?? true,
-        linkOnPaste: linkOpts.linkOnPaste ?? true,
-        validate: linkValidate,
+        openOnClick: linkOptions.openOnClick ?? true,
+        autolink: linkOptions.autolink ?? true,
+        linkOnPaste: linkOptions.linkOnPaste ?? true,
+        validate: (href) => urlAllowed(href, linkOptions.validate),
       }),
       Image.configure({ allowBase64: false }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    // Depend on primitives to avoid re-initialization
-    [linkOpts.openOnClick, linkOpts.autolink, linkOpts.linkOnPaste]
+    [linkOptions]
   );
 
-  // Collect images from editor state (filter out data/base64 just in case)
-  const extractImages = (editorInstance) => {
-    const imgs = [];
-    if (!editorInstance) return imgs;
-    editorInstance.state.doc.descendants((node) => {
-      if (node.type?.name === "image") {
-        imgs.push({
-          src: node.attrs?.src || "",
-          alt: node.attrs?.alt || "",
-        });
-      }
-    });
-    return imgs.filter((img) => !isDataOrBase64(img.src));
-  };
+  const [headingLevel, setHeadingLevel] = useState("0");
 
-  // Sanitize initial content by removing data/base64 images
-  const sanitizedInitial = useMemo(
-    () => stripDataImagesFromHTML(value || ""),
-    [value]
-  );
-
-  // Initialize TipTap editor
+  /** Create Tiptap editor instance */
   const editor = useEditor({
     extensions,
-    content: sanitizedInitial,
+    content: removeEmptyHtmlTags(stripDataImagesFromHTML(value || "")),
     editable,
-    immediatelyRender,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "prose max-w-none focus:outline-none dark:prose-invert",
+        class:
+          "prose max-w-full text-sm sm:text-base focus:outline-none dark:prose-invert",
         dir: "auto",
       },
-      // Block data/base64 images from paste/drop
-      transformPastedHTML: (html) => stripDataImagesFromHTML(html),
-      handlePaste: (_view, event) => {
-        const dt = event.clipboardData;
-        if (dt && dt.files && dt.files.length > 0) {
-          const hasImage = Array.from(dt.files).some((f) =>
-            f.type?.startsWith("image/")
-          );
-          if (hasImage) {
-            event.preventDefault();
-            return true;
-          }
+      transformPastedHTML: (html) =>
+        removeEmptyHtmlTags(stripDataImagesFromHTML(html)),
+      handlePaste: (_v, e) => {
+        const files = e.clipboardData?.files;
+        if (files?.length && Array.from(files).some((f) => f.type?.startsWith("image/"))) {
+          e.preventDefault();
+          return true;
         }
         return false;
       },
-      handleDrop: (_view, event) => {
-        const dt = event.dataTransfer;
-        if (dt && dt.files && dt.files.length > 0) {
-          const hasImage = Array.from(dt.files).some((f) =>
-            f.type?.startsWith("image/")
-          );
-          if (hasImage) {
-            event.preventDefault();
-            return true;
-          }
+      handleDrop: (_v, e) => {
+        const files = e.dataTransfer?.files;
+        if (files?.length && Array.from(files).some((f) => f.type?.startsWith("image/"))) {
+          e.preventDefault();
+          return true;
         }
         return false;
       },
-    },
-    onUpdate: ({ editor }) => {
-      if (onChange) onChange(editor.getHTML());
-      if (onImagesChange) onImagesChange(extractImages(editor));
-      if (onContentArrayChange) {
-        const arr = docToContentArray(editor.getJSON());
-        onContentArrayChange(arr);
-      }
     },
     onCreate: ({ editor }) => {
-      if (onReady) onReady(editor);
-      if (onImagesChange) onImagesChange(extractImages(editor));
-      if (onContentArrayChange) {
-        const arr = docToContentArray(editor.getJSON());
-        onContentArrayChange(arr);
-      }
-      // Sync initial heading level to the select
-      const lvl =
-        (editor.isActive("heading", { level: 1 }) && 1) ||
-        (editor.isActive("heading", { level: 2 }) && 2) ||
-        (editor.isActive("heading", { level: 3 }) && 3) ||
-        0;
-      setValue("headingLevel", String(lvl), {
-        shouldDirty: false,
-        shouldTouch: false,
-      });
+      setHeadingLevel(String(getHeadingLevel(editor)));
+      onChangeHtml?.(removeEmptyHtmlTags(editor.getHTML()));
+      onChangeBlocks?.(docToBlocks(editor.getJSON()));
     },
-    onSelectionUpdate: ({ editor }) => {
-      // Keep the select in sync when cursor moves
-      const lvl =
-        (editor.isActive("heading", { level: 1 }) && 1) ||
-        (editor.isActive("heading", { level: 2 }) && 2) ||
-        (editor.isActive("heading", { level: 3 }) && 3) ||
-        0;
-      setValue("headingLevel", String(lvl), {
-        shouldDirty: false,
-        shouldTouch: false,
-      });
+    onSelectionUpdate: ({ editor }) =>
+      setHeadingLevel(String(getHeadingLevel(editor))),
+    onUpdate: ({ editor }) => {
+      onChangeHtml?.(removeEmptyHtmlTags(editor.getHTML()));
+      onChangeBlocks?.(docToBlocks(editor.getJSON()));
     },
   });
 
-  // Expose editor instance
+  /** Expose editor instance via ref */
   useImperativeHandle(ref, () => editor, [editor]);
 
-  // Controlled sync: update content when "value" changes
+  /** Sync external value changes */
   useEffect(() => {
     if (!editor) return;
-    const current = editor.getHTML();
-    const sanitized = stripDataImagesFromHTML(value || "");
-    if (sanitized !== current) editor.commands.setContent(sanitized, false);
+    const sanitized = removeEmptyHtmlTags(stripDataImagesFromHTML(value || ""));
+    if (sanitized !== editor.getHTML()) {
+      editor.commands.setContent(sanitized, false);
+    }
   }, [editor, value]);
 
-  // Sync editable flag
+  /** Update editable state dynamically */
   useEffect(() => {
-    if (editor) editor.setEditable(Boolean(editable));
+    if (editor) editor.setEditable(!!editable);
   }, [editor, editable]);
 
-  // Apply heading change coming from the ControlledSelect
-  const watchedHeading = watch("headingLevel");
-  useEffect(() => {
+  /** Handle heading level change */
+  const handleHeadingChange = (lvlStr) => {
     if (!editor) return;
+    const next = Number(lvlStr || 0);
+    const current = getHeadingLevel(editor);
+    if (current === next) return;
+    setHeadingLevel(String(next));
+    if (next === 0) editor.chain().focus().setParagraph().run();
+    else editor.chain().focus().toggleHeading({ level: next }).run();
+  };
 
-    const raw =
-      typeof watchedHeading === "object" && watchedHeading?.target
-        ? watchedHeading.target.value
-        : watchedHeading;
-    const lvl = Number(raw ?? 0);
-    if (Number.isNaN(lvl)) return;
-
-    const currentLvl =
-      (editor.isActive("heading", { level: 1 }) && 1) ||
-      (editor.isActive("heading", { level: 2 }) && 2) ||
-      (editor.isActive("heading", { level: 3 }) && 3) ||
-      0;
-
-    if (lvl === currentLvl) return;
-
-    if (lvl === 0) {
-      editor.chain().focus().setParagraph().run();
-    } else {
-      editor.chain().focus().toggleHeading({ level: lvl }).run();
+  /** Add or edit link */
+  const handleAddOrEditLink = () => {
+    const prev = editor?.getAttributes("link")?.href || "";
+    const raw = window.prompt("Enter a URL:", prev || "https://");
+    if (raw === null) return;
+    if (!urlAllowed(raw, linkOptions.validate)) {
+      return editor?.chain().focus().unsetLink().run();
     }
-  }, [watchedHeading, editor]);
+    editor
+      ?.chain()
+      .focus()
+      .extendMarkRange("link")
+      .setLink({ href: normalizeUrlInput(raw) })
+      .run();
+  };
 
-  /* Direction state and application:
-     - Keeps UI direction (RTL/LTR) without changing editor logic.
-     - Updates both Card dir prop and editor root DOM attribute. */
-  const [dir, setDir] = React.useState("rtl");
+  /** Insert image via URL */
+  const handleInsertImage = () => {
+    const raw = window.prompt("Enter an image URL:", "");
+    if (raw === null) return;
+    const u = normalizeUrlInput(raw);
+    if (!u || isDataOrBase64(u)) {
+      return alert("Invalid URL. Only HTTP/HTTPS or relative paths allowed.");
+    }
+    const alt = window.prompt("Enter image alt text:", "") ?? "";
+    editor?.chain().focus().setImage({ src: u, alt }).run();
+  };
 
-  useEffect(() => {
+  /** Edit image attributes */
+  const handleEditImageAttr = (attr) => {
     if (!editor) return;
-    const root = editor.view?.dom;
-    if (root) {
-      root.setAttribute("dir", dir);
+    const prev = editor.getAttributes("image")?.[attr] || "";
+    const raw = window.prompt(`Enter image ${attr}:`, prev);
+    if (raw === null) return;
+    const val = attr === "src" ? normalizeUrlInput(raw) : raw;
+    if (attr === "src" && (!val || isDataOrBase64(val))) {
+      return alert("Invalid URL. Only HTTP/HTTPS or relative paths allowed.");
     }
-  }, [editor, dir]);
+    editor.chain().focus().updateAttributes("image", { [attr]: val }).run();
+  };
 
   if (!editor) return null;
 
-  const canUndo = editor.can().undo();
-  const canRedo = editor.can().redo();
-  const isImageActive = editor.isActive("image");
-
-  // Insert image by URL (reject data/base64, strip any leading "data:")
-  const handleInsertImagePrompt = () => {
-    const rawUrl = window.prompt(
-      "Enter an image URL (example: https://example.com/a.jpg):"
-    );
-    if (rawUrl === null) return;
-    const url = normalizeUrlInput(rawUrl);
-    if (!url) {
-      alert("URL is not valid.");
-      return;
-    }
-    if (isDataOrBase64(url)) {
-      alert(
-        "Base64 or data URLs are not allowed — please provide a regular http/https URL."
-      );
-      return;
-    }
-    const alt = window.prompt("Enter image alt text (optional):", "") ?? "";
-    editor.chain().focus().setImage({ src: url, alt }).run();
-  };
-
-  const promptEditImageSrc = () => {
-    const prev = editor.getAttributes("image")?.src || "";
-    const raw = window.prompt("Enter new image URL:", prev);
-    if (raw === null) return;
-    const url = normalizeUrlInput(raw);
-    if (!url) {
-      alert("URL is not valid.");
-      return;
-    }
-    if (isDataOrBase64(url)) {
-      alert(
-        "Base64 or data URLs are not allowed — please provide a regular http/https URL."
-      );
-      return;
-    }
-    editor.chain().focus().updateAttributes("image", { src: url }).run();
-  };
-
-  const promptEditImageAlt = () => {
-    const prev = editor.getAttributes("image")?.alt || "";
-    const alt = window.prompt("Enter image alt text:", prev);
-    if (alt === null) return;
-    editor.chain().focus().updateAttributes("image", { alt }).run();
-  };
-
   return (
     <Card
-      dir={dir} // Reflect current direction on container
-      shadow="sm "
-      className={`border bg-white dark:bg-content1 dark:border-default-200 ${className}`}
+      shadow="sm"
+      className={`border w-full max-w-[700px] bg-white dark:bg-content1 dark:border-default-200 ${className}`}
     >
       <CardBody className="p-0">
         {/* Toolbar */}
-        <div className="sticky top-0 z-10 border-b bg-gray-50/90 backdrop-blur supports-[backdrop-filter]:bg-gray-50/60 dark:bg-default-100/60">
-          <div className="flex flex-wrap items-center gap-2 p-2">
-            {/* Heading level selector via ControlledSelect */}
-            <div className="w-48">
-              <ControlledSelect
-                name="headingLevel"
-                control={control}
-                errors={errors}
-                label="Heading"
-                placeholder="Select heading"
-                options={[
-                  { value: "0", label: "Paragraph" },
-                  { value: "1", label: "Heading 1" },
-                  { value: "2", label: "Heading 2" },
-                  { value: "3", label: "Heading 3" },
-                ]}
-                variant="bordered"
-              />
-            </div>
+        <TiptapMenuBar
+          title={menuTitle}
+          editor={editor}
+          headingLevel={headingLevel}
+          onHeadingChange={handleHeadingChange}
+          onAddOrEditLink={handleAddOrEditLink}
+          onInsertImage={handleInsertImage}
+          onEditImageSrc={() => handleEditImageAttr("src")}
+          onEditImageAlt={() => handleEditImageAttr("alt")}
+        />
 
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* Inline styles */}
-            <div className="flex items-center gap-1">
-              <ToolbarIconButton
-                title="Bold"
-                active={editor.isActive("bold")}
-                onClick={() => editor.chain().focus().toggleBold().run()}
-                icon={TbBold}
-              />
-              <ToolbarIconButton
-                title="Italic"
-                active={editor.isActive("italic")}
-                onClick={() => editor.chain().focus().toggleItalic().run()}
-                icon={TbItalic}
-              />
-              <ToolbarIconButton
-                title="Underline"
-                active={editor.isActive("underline")}
-                onClick={() => editor.chain().focus().toggleUnderline().run()}
-                icon={TbUnderline}
-              />
-              <ToolbarIconButton
-                title="Strikethrough"
-                active={editor.isActive("strike")}
-                onClick={() => editor.chain().focus().toggleStrike().run()}
-                icon={TbStrikethrough}
-              />
-              <ToolbarIconButton
-                title="Inline Code"
-                active={editor.isActive("code")}
-                onClick={() => editor.chain().focus().toggleCode().run()}
-                icon={TbCode}
-              />
-            </div>
-
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* Lists / Blocks */}
-            <div className="flex items-center gap-1">
-              <ToolbarIconButton
-                title="Bullet List"
-                active={editor.isActive("bulletList")}
-                onClick={() => editor.chain().focus().toggleBulletList().run()}
-                icon={TbList}
-              />
-              <ToolbarIconButton
-                title="Ordered List"
-                active={editor.isActive("orderedList")}
-                onClick={() => editor.chain().focus().toggleOrderedList().run()}
-                icon={TbListNumbers}
-              />
-              <ToolbarIconButton
-                title="Blockquote"
-                active={editor.isActive("blockquote")}
-                onClick={() => editor.chain().focus().toggleBlockquote().run()}
-                icon={TbQuote}
-              />
-              <ToolbarIconButton
-                title="Code Block"
-                active={editor.isActive("codeBlock")}
-                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-                icon={TbBraces}
-              />
-            </div>
-
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* Link */}
-            <div className="flex items-center gap-1">
-              <ToolbarIconButton
-                title={editor.isActive("link") ? "Edit/Remove Link" : "Add Link"}
-                active={editor.isActive("link")}
-                onClick={() => {
-                  const prev = editor.getAttributes("link")?.href || "";
-                  const rawUrl = window.prompt(
-                    "Enter a URL:",
-                    prev || "https://"
-                  );
-                  if (rawUrl === null) return;
-                  const normalized = normalizeUrlInput(rawUrl);
-                  if (!normalized) {
-                    editor.chain().focus().unsetLink().run();
-                    return;
-                  }
-                  if (isDataOrBase64(normalized)) {
-                    alert(
-                      "Base64 or data URLs are not allowed — please provide a regular http/https URL."
-                    );
-                    return;
-                  }
-                  if (!linkValidate(normalized)) {
-                    alert("URL is not valid.");
-                    return;
-                  }
-                  editor
-                    .chain()
-                    .focus()
-                    .extendMarkRange("link")
-                    .setLink({ href: normalized })
-                    .run();
-                }}
-                icon={TbLink}
-              />
-              {editor.isActive("link") && (
-                <ToolbarIconButton
-                  title="Remove Link"
-                  onClick={() => editor.chain().focus().unsetLink().run()}
-                  icon={TbUnlink}
-                />
-              )}
-            </div>
-
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* Images (URL only) */}
-            <div className="flex items-center gap-1">
-              <ToolbarIconButton
-                title="Insert Image (URL only)"
-                onClick={handleInsertImagePrompt}
-                icon={TbPhoto}
-              />
-              <ToolbarIconButton
-                title="Edit Image URL"
-                onClick={promptEditImageSrc}
-                disabled={!isImageActive}
-                icon={TbPencil}
-              />
-              <ToolbarIconButton
-                title="Edit Image Alt"
-                onClick={promptEditImageAlt}
-                disabled={!isImageActive}
-                icon={TbTypography}
-              />
-            </div>
-
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* Text direction controls (RTL / LTR) */}
-            <div className="flex items-center gap-1">
-              {/* Right-to-Left */}
-              <ToolbarIconButton
-                title="Right-to-Left"
-                active={dir === "rtl"}
-                onClick={() => setDir("rtl")}
-                icon={TbTextDirectionRtl}
-              />
-              {/* Left-to-Right */}
-              <ToolbarIconButton
-                title="Left-to-Right"
-                active={dir === "ltr"}
-                onClick={() => setDir("ltr")}
-                icon={TbTextDirectionLtr}
-              />
-            </div>
-
-            <Divider orientation="vertical" className="h-6" />
-
-            {/* History + Clear */}
-            <div className="flex items-center gap-1">
-              <ToolbarIconButton
-                title="Undo"
-                onClick={() => editor.chain().focus().undo().run()}
-                disabled={!canUndo}
-                icon={TbArrowBackUp}
-              />
-              <ToolbarIconButton
-                title="Redo"
-                onClick={() => editor.chain().focus().redo().run()}
-                disabled={!canRedo}
-                icon={TbArrowForwardUp}
-              />
-              <ToolbarIconButton
-                title="Clear Formatting"
-                onClick={() =>
-                  editor.chain().focus().clearNodes().unsetAllMarks().run()
-                }
-                icon={TbEraser}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Editor */}
-        <div className="p-3">
-          <div className="min-h-56 max-h-[520px] overflow-auto rounded-md border bg-white p-3 dark:bg-content1">
-            <EditorContent editor={editor} className="min-h-48" />
+        {/* Editor content */}
+        <div className="p-1">
+          <div className="min-h-[160px] sm:min-h-[192px] max-h-[420px] overflow-auto rounded-md border bg-white p-2 dark:bg-content1">
+            <EditorContent editor={editor} className="text-sm sm:text-base" />
           </div>
         </div>
       </CardBody>
