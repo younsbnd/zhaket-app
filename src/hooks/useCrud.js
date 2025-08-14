@@ -1,4 +1,3 @@
-import { logger } from "@/lib/utils/logger";
 import react, { useState } from "react";
 import { useSWRConfig } from "swr";
 
@@ -21,9 +20,6 @@ export const useCrud = (endpoint) => {
       ? `${endpoint}${path}`
       : `${apiBaseUrl}${endpoint}${path}`;
 
-    logger.info("endpoint", endpoint);
-    logger.info("path", path);
-    logger.info("url", url);
 
     // create the options
     try {
