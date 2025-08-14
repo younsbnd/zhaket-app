@@ -1,28 +1,26 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Divider, Tooltip, Select, SelectItem } from "@heroui/react";
+import { Button, Divider, Tooltip } from "@heroui/react";
 import {
   TbBold,
   TbList,
   TbListNumbers,
   TbLink,
   TbPhoto,
-  TbPencil,
-  TbTypography,
   TbAlignLeft,
   TbAlignCenter,
   TbAlignRight,
 } from "react-icons/tb";
-
-/**
- * IconBtn - A small icon-only button with tooltip for editor actions.
- *
+import ControlledSelect from "../forms/ControlledSelect";
+  
+/** 
+ * Icon-only button with tooltip 
  * Props:
- * - title: Tooltip text
- * - active: Whether the button is active (highlighted)
- * - disabled: Whether the button is disabled
- * - onClick: Click handler
+ * - title: tooltip text
+ * - active: whether the button is active
+ * - disabled: whether the button is disabled
+ * - onClick: click handler
  * - Icon: React icon component
  */
 const IconBtn = ({ title, active, disabled, onClick, Icon }) => (
@@ -44,66 +42,64 @@ const IconBtn = ({ title, active, disabled, onClick, Icon }) => (
 );
 
 /**
- * ToolbarContent - The main toolbar controls for the editor.
- *
+ * Toolbar content for the Tiptap editor
  * Props:
  * - editor: Tiptap editor instance
- * - onAddOrEditLink: Callback to add or edit links
- * - onInsertImage: Callback to insert an image
- * - onEditImageSrc: Callback to edit image URL
- * - onEditImageAlt: Callback to edit image alt text
- * - className: Optional additional CSS classes
+ * - onAddOrEditLink: callback to add or edit a link
+ * - onInsertImage: callback to insert an image
+ * - className: optional extra classes
+ * - control: react-hook-form control object
+ * - errors: react-hook-form errors object
+ * - name: name of the block type field
  */
 const ToolbarContent = ({
   editor,
   onAddOrEditLink,
   onInsertImage,
-  onEditImageSrc,
-  onEditImageAlt,
   className = "",
+  control,
+  errors,
+  name = "blockType",
 }) => {
   if (!editor) return null;
 
-  // Returns whether a formatting is currently active
+  // Check if a formatting option is active
   const formatState = (name) => editor.isActive(name);
-
-  // Returns whether a text alignment is currently active
   const alignState = (align) => editor.isActive({ textAlign: align });
 
-  // Handle block type selection from dropdown
-  const handleBlockSelect = (keys) => {
-    const key = Array.from(keys)[0];
-    if (!key) return;
-
-    if (key === "paragraph") {
-      editor.chain().focus().setParagraph().run();
-    } else {
-      editor.chain().focus().toggleHeading({ level: parseInt(key, 10) }).run();
-    }
+  // Handle block type selection
+  const handleBlockSelect = (value) => {
+    if (!value) return;
+    if (value === "paragraph") editor.chain().focus().setParagraph().run();
+    else editor.chain().focus().toggleHeading({ level: parseInt(value, 10) }).run();
   };
 
-  // Render vertical divider between toolbar groups
   const renderDivider = () => <Divider orientation="vertical" className="hidden h-6 sm:block" />;
+
+  const options = [
+    { value: "paragraph", label: "Normal text" },
+    { value: "1", label: "Heading 1" },
+    { value: "2", label: "Heading 2" },
+    { value: "3", label: "Heading 3" },
+  ];
 
   return (
     <div role="toolbar" className={`flex flex-wrap items-center gap-2 ${className}`}>
-      {/* Block type selector */}
-      <Select
-        aria-label="Block type"
-        className="max-w-[200px]"
-        placeholder="Block type"
-        selectionMode="single"
-        onSelectionChange={handleBlockSelect}
-      >
-        <SelectItem key="paragraph">Normal text</SelectItem>
-        <SelectItem key="1">Heading 1</SelectItem>
-        <SelectItem key="2">Heading 2</SelectItem>
-        <SelectItem key="3">Heading 3</SelectItem>
-      </Select>
+      {/* Block type selector using ControlledSelect */}
+      {control && (
+        <ControlledSelect
+          name={name}
+          control={control}
+          errors={errors}
+          options={options}
+          placeholder="Block type"
+          onChange={handleBlockSelect} // sync selection with editor
+        />
+      )}
 
       {renderDivider()}
 
-      {/* Bold button */}
+      {/* Bold formatting button */}
       <IconBtn
         title="Bold"
         active={formatState("bold")}
@@ -112,7 +108,7 @@ const ToolbarContent = ({
       />
       {renderDivider()}
 
-      {/* List controls */}
+      {/* List buttons */}
       <div className="flex items-center gap-1">
         <IconBtn
           title="Bullet List"
@@ -130,7 +126,7 @@ const ToolbarContent = ({
 
       {renderDivider()}
 
-      {/* Text alignment controls */}
+      {/* Text alignment buttons */}
       <div className="flex items-center gap-1">
         <IconBtn
           title="Align Left"
@@ -154,45 +150,39 @@ const ToolbarContent = ({
 
       {renderDivider()}
 
-      {/* Link control */}
+      {/* Link button */}
       <IconBtn
         title="Add or Edit Link"
         active={formatState("link")}
         onClick={onAddOrEditLink}
         Icon={TbLink}
       />
+
       {renderDivider()}
 
-      {/* Image controls */}
+      {/* Insert image button */}
       <div className="flex items-center gap-1">
         <IconBtn title="Insert Image" onClick={onInsertImage} Icon={TbPhoto} />
-        <IconBtn title="Edit Image URL" onClick={onEditImageSrc} Icon={TbPencil} />
-        <IconBtn title="Edit Image Alt" onClick={onEditImageAlt} Icon={TbTypography} />
       </div>
     </div>
   );
 };
 
 /**
- * TiptapMenuBar - Main toolbar wrapper with responsive behavior.
- *
+ * Main Tiptap toolbar wrapper
  * Props:
- * - title: Toolbar title
+ * - title: toolbar title
  * - editor: Tiptap editor instance
- * - onAddOrEditLink, onInsertImage, onEditImageSrc, onEditImageAlt: callbacks
+ * - onAddOrEditLink: callback for links
+ * - onInsertImage: callback for images
+ * - control: react-hook-form control object
+ * - errors: react-hook-form errors object
  */
-export default function TiptapMenuBar({
-  title = "Editor Menu",
-  editor,
-  onAddOrEditLink,
-  onInsertImage,
-  onEditImageSrc,
-  onEditImageAlt,
-}) {
-  const [open, setOpen] = useState(false); // Mobile menu open state
+export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEditLink, onInsertImage, control, errors }) {
+  const [open, setOpen] = useState(false); // Mobile menu toggle
   const panelRef = useRef(null);
 
-  // Close mobile toolbar when clicking outside or pressing Escape
+  // Handle outside click and escape key to close mobile menu
   useEffect(() => {
     if (!open) return;
 
@@ -213,7 +203,8 @@ export default function TiptapMenuBar({
       {/* Toolbar header */}
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-sm font-medium">{title}</span>
-        <Button size="sm" radius="sm" variant="flat" className="sm:hidden" onClick={() => setOpen((v) => !v)}>
+        {/* Mobile toggle button */}
+        <Button size="sm" radius="sm" variant="flat" className="sm:hidden" onClick={() => setOpen(v => !v)}>
           {open ? "Hide menu" : "Show menu"}
         </Button>
       </div>
@@ -221,8 +212,12 @@ export default function TiptapMenuBar({
       {/* Desktop toolbar */}
       <div className="hidden border-t px-3 py-2 sm:block">
         <ToolbarContent
-          {...{ editor, onAddOrEditLink, onInsertImage, onEditImageSrc, onEditImageAlt }}
+          editor={editor}
+          onAddOrEditLink={onAddOrEditLink}
+          onInsertImage={onInsertImage}
           className="gap-2"
+          control={control}
+          errors={errors}
         />
       </div>
 
@@ -233,8 +228,12 @@ export default function TiptapMenuBar({
           className="absolute left-3 right-3 top-12 z-20 origin-top rounded-md border bg-white p-2 shadow-xl ring-1 ring-black/5 transition-all dark:border-default-200 dark:bg-content1 sm:hidden"
         >
           <ToolbarContent
-            {...{ editor, onAddOrEditLink, onInsertImage, onEditImageSrc, onEditImageAlt }}
+            editor={editor}
+            onAddOrEditLink={onAddOrEditLink}
+            onInsertImage={onInsertImage}
             className="gap-2"
+            control={control}
+            errors={errors}
           />
         </div>
       )}
