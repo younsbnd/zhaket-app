@@ -341,7 +341,7 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
 
         {/* Editor content */}
         <div className="p-1">
-          <div className="min-h-[160px] sm:min-h-[192px] max-h-[420px] overflow-auto rounded-md border bg-white p-2 dark:bg-content1">
+          <div className="min-h-[161px] sm:min-h-[192px] max-h-[420px] overflow-auto rounded-md border bg-white p-2 dark:bg-content1">
             <EditorContent editor={editor} className="text-sm sm:text-base" />
           </div>
         </div>
