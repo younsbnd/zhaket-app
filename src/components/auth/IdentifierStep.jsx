@@ -8,7 +8,7 @@ import ModalSecurityTips from "./ModalSecurityTips";
 import Image from "next/image";
 import { useCrud } from "@/hooks/useCrud";
 
-const IdentifierStep = ({ setStep, setIsEmail, setIsUserExists }) => {
+const IdentifierStep = ({ setStep, setIsEmail, setIsUserExists, setIdentifier }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { createRecord, isLoading, error } = useCrud("/auth/user-exists");
@@ -35,6 +35,7 @@ const IdentifierStep = ({ setStep, setIsEmail, setIsUserExists }) => {
         setStep(2);
         setIsEmail(data.identifier.includes("@"));
         setIsUserExists(response.data.userExists);
+        setIdentifier(data.identifier);
       }
     } catch (err) {
       // if error is zod error

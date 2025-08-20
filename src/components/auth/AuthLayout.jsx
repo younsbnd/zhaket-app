@@ -15,7 +15,7 @@ const AuthLayout = ({ title, children }) => {
           priority
           className="absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[590px]"
         />
-        <div className="bg-white border border-[#F4F4F4] shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] w-90 z-10 rounded-lg mx-9 sm:p-10 p-5">
+        <div className="bg-white border border-[#F4F4F4] shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] w-90 z-10 rounded-lg mx-9 sm:p-10 p-5 relative">
           {/* logo and title */}
           <div className=" flex flex-col justify-center items-center h-auto mb-9 relative">
             <Image
