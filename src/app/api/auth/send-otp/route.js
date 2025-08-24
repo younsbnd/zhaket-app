@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { sendOtpMeli } from "@/lib/utils/sendOtpMeli";
 import sendEmailOtp from "@/lib/utils/sendEmailOtp";
 import { identifierSchema } from "@/lib/validations/userValidation";
+import { logger } from "@/lib/utils/logger";
 
 const sendOtp = async (req, res) => {
   try {
@@ -54,13 +55,18 @@ const sendOtp = async (req, res) => {
         expiresAt: otpExpiresAt,
       });
 
+      // send otp to phone number
       if (identifierType === "phoneNumber") {
         await sendOtpMeli(identifier, [otp]);
       } else {
+        // send otp to email
         const emailResult = await sendEmailOtp(identifier, otp);
 
         if (!emailResult.data) {
-          throw createBadRequestError("خطا در ارسال ایمیل");
+          await Otp.deleteMany({ email: identifier });
+          throw createBadRequestError(
+            "خطا در ارسال ایمیل لطفا دوباره تلاش کنید"
+          );
         }
       }
 
@@ -83,4 +89,32 @@ const sendOtp = async (req, res) => {
   }
 };
 
-export { sendOtp as POST };
+// get request for resend otp
+const getOtp = async (req) => {
+  try {
+    const { searchParams } = req.nextUrl;
+    const identifier = searchParams.get("identifier");
+
+    logger.info("identifier :", identifier);
+
+    const validationResult = identifierSchema.safeParse({ identifier });
+    if (!validationResult.success) {
+      throw validationResult.error;
+    }
+
+    await connectToDb();
+    const otp = await Otp.findOne({
+      $or: [{ email: identifier }, { phoneNumber: identifier }],
+      expiresAt: { $gt: new Date() },
+    });
+
+    return NextResponse.json({
+      success: true,
+      otp,
+    });
+  } catch (err) {
+    return errorHandler(err);
+  }
+};
+
+export { sendOtp as POST, getOtp as GET };

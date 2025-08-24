@@ -3,10 +3,12 @@ import { useCrud } from "@/hooks/useCrud";
 import { addToast, Button } from "@heroui/react";
 import React from "react";
 
-const AuthMethodStep = ({ isUserExists, isEmail, setStep, identifier }) => {
-  const { createRecord, isLoading, error } = useCrud("/auth/send-otp");
+const AuthMethodStep = ({ isUserExists, setStep, identifier, setWithOtp }) => {
+  const { createRecord, isLoading } = useCrud("/auth/send-otp");
 
+  // send otp to user
   const onSendOtp = async () => {
+    setWithOtp(true);
     try {
       const response = await createRecord({ identifier });
 
@@ -29,6 +31,7 @@ const AuthMethodStep = ({ isUserExists, isEmail, setStep, identifier }) => {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* send otp button */}
       <Button
         className="w-full text-[12px] font-semibold"
         color="warning"
@@ -40,12 +43,16 @@ const AuthMethodStep = ({ isUserExists, isEmail, setStep, identifier }) => {
       >
         {isUserExists ? "ورود با کد یکبار مصرف" : "ثبت نام با کد یکبار مصرف"}
       </Button>
+      {/* login with password button */}
       <Button
         className="w-full text-[12px] font-semibold"
         variant="flat"
         color="warning"
         radius="sm"
-        onPress={() => setStep(3)}
+        onPress={() => {
+          setWithOtp(false);
+          setStep(3);
+        }}
       >
         {isUserExists ? "ورود با رمز عبور" : "ثبت نام با رمز عبور"}
       </Button>

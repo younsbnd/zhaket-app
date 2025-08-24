@@ -1,3 +1,5 @@
+import { logger } from "./logger";
+
 export async function sendOtpMeli(phoneNumber, paramsArray) {
     const apiUrl =
       "https://api.payamak-panel.com/post/Send.asmx/SendByBaseNumber2";
@@ -28,7 +30,7 @@ export async function sendOtpMeli(phoneNumber, paramsArray) {
         responseCode: resultText,
       };
     } catch (error) {
-      console.error("خطا در ارسال پیامک:", error);
+      logger.error("خطا در ارسال پیامک:", error);
       return {
         success: false,
         error: error.message,
