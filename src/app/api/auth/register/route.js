@@ -70,12 +70,13 @@ const userRegister = async (req, res) => {
           password: hashedPassword,
         });
 
-        // delete otp
-        await Otp.deleteOne({ _id: existingOtp._id });
+        // Don't delete OTP immediately for auto-login
+        // It will be deleted when user logs in
 
         return NextResponse.json(
           {
             message: "ثبت نام با موفقیت انجام شد",
+            canAutoLogin: true,
           },
           { status: 201 }
         );

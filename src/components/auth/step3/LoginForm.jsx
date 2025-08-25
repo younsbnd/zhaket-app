@@ -1,9 +1,10 @@
 import ControlledInput from "@/components/shared/forms/ControlledInput";
 import { Button, Form, InputOtp } from "@heroui/react";
-import React from "react";
+import React, { useState } from "react";
 import { Controller } from "react-hook-form";
 import ResendOtp from "./ResendOtp";
 import Link from "next/link";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const LoginForm = ({
   control,
@@ -15,7 +16,13 @@ const LoginForm = ({
   withOtp,
   identifier,
   setWithOtp,
+  isResetPassword,
+  isOtpVerified,
+  setIsResetPassword,
+  setStep,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <>
       <Form
@@ -23,8 +30,8 @@ const LoginForm = ({
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col items-center gap-4 w-full"
       >
-        {!isUserExists && (
-          // full name input
+        {!isUserExists && !isResetPassword && (
+          // full name input for registration only
           <ControlledInput
             control={control}
             name="fullName"
@@ -41,15 +48,29 @@ const LoginForm = ({
             }}
           />
         )}
-        {withOtp && !isUserExists && (
-          // password input
+        {((withOtp && !isUserExists) || (isResetPassword && isOtpVerified)) && (
+          // password input for registration with OTP or reset password after OTP verification
           <ControlledInput
             control={control}
             name="password"
-            placeholder="رمز عبور"
+            type={showPassword ? "text" : "password"}
+            placeholder={isResetPassword ? "رمز عبور جدید" : "رمز عبور"}
             errorMessage={errors.password?.message}
             isInvalid={!!errors.password}
             errors={errors}
+            endContent={
+              <button
+                className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <FiEyeOff className="text-xl text-default-400 pointer-events-none" />
+                ) : (
+                  <FiEye className="text-xl text-default-400 pointer-events-none" />
+                )}
+              </button>
+            }
             rules={{
               required: "رمز عبور الزامی است",
               minLength: {
@@ -59,15 +80,29 @@ const LoginForm = ({
             }}
           />
         )}
-        {!withOtp && (
-          // password input
+        {!withOtp && !isResetPassword && (
+          // password input for normal login
           <ControlledInput
             control={control}
             name="password"
+            type={showPassword ? "text" : "password"}
             placeholder="رمز عبور"
             errorMessage={errors.password?.message}
             isInvalid={!!errors.password}
             errors={errors}
+            endContent={
+              <button
+                className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <FiEyeOff className="text-xl text-default-400 pointer-events-none" />
+                ) : (
+                  <FiEye className="text-xl text-default-400 pointer-events-none" />
+                )}
+              </button>
+            }
             rules={{
               required: "رمز عبور الزامی است",
               minLength: {
@@ -77,17 +112,52 @@ const LoginForm = ({
             }}
           />
         )}
-        {withOtp && (
+        {isResetPassword && isOtpVerified && (
+          // confirm password input for reset password
+          <ControlledInput
+            control={control}
+            name="confirmPassword"
+            type={showPassword ? "text" : "password"}
+            placeholder="تکرار رمز عبور جدید"
+            errorMessage={errors.confirmPassword?.message}
+            isInvalid={!!errors.confirmPassword}
+            errors={errors}
+            endContent={
+              <button
+                className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <FiEyeOff className="text-xl text-default-400 pointer-events-none" />
+                ) : (
+                  <FiEye className="text-xl text-default-400 pointer-events-none" />
+                )}
+              </button>
+            }
+            rules={{
+              required: "تکرار رمز عبور الزامی است",
+              minLength: {
+                value: 8,
+                message: "رمز عبور باید حداقل 8 کاراکتر باشد",
+              },
+            }}
+          />
+        )}
+        {((withOtp && !isResetPassword) ||
+          (isResetPassword && !isOtpVerified)) && (
           <div className="flex flex-col gap w-full">
             <span className="text-[13px] font-medium ms-1 text-gray-500">
-              کد یکبار مصرف
+              {isResetPassword ? "کد بازیابی" : "کد یکبار مصرف"}
             </span>
             {/* otp input */}
             <Controller
               control={control}
               name="otp"
               rules={{
-                required: "کد یکبار مصرف الزامی است",
+                required: isResetPassword
+                  ? "کد بازیابی الزامی است"
+                  : "کد یکبار مصرف الزامی است",
                 minLength: {
                   value: 4,
                   message: "کد یکبار مصرف باید 4 رقم باشد",
@@ -125,26 +195,37 @@ const LoginForm = ({
           radius="sm"
           className="text-white"
         >
-          {isUserExists ? "ورود" : "ثبت نام"}
+          {isResetPassword
+            ? isOtpVerified
+              ? "تغییر رمز عبور"
+              : "تایید کد"
+            : isUserExists
+              ? "ورود"
+              : "ثبت نام"}
         </Button>
       </Form>
       {/* resend otp */}
-      {withOtp && (
+      {((withOtp && !isResetPassword) ||
+        (isResetPassword && !isOtpVerified)) && (
         <ResendOtp
           identifier={identifier}
           withOtp={withOtp}
           setWithOtp={setWithOtp}
+          isResetPassword={isResetPassword}
         />
       )}
 
       {/* forget password */}
-      {!withOtp && isUserExists && (
-        <Link
-          href="/reset-password"
+      {!withOtp && isUserExists && !isResetPassword && (
+        <button
+          onClick={() => {
+            setIsResetPassword(true);
+            setStep(1);
+          }}
           className="text-[9.7px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block"
         >
           فراموشی رمز عبور
-        </Link>
+        </button>
       )}
     </>
   );

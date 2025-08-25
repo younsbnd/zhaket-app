@@ -36,8 +36,8 @@ const ResendOtp = ({ identifier, withOtp }) => {
           }
         } else {
           // If no expiration time is provided, set a default counter
-          setCounter(60);
-          localStorage.setItem("otp-counter", "60");
+          setCounter(120);
+          localStorage.setItem("otp-counter", "120");
         }
 
         // Force refresh the SWR data
@@ -61,7 +61,7 @@ const ResendOtp = ({ identifier, withOtp }) => {
   };
 
   const [otp, setOtp] = useState("");
-  const [counter, setCounter] = useState(60);
+  const [counter, setCounter] = useState(120);
 
   // Restore counter from localStorage on component mount
   useEffect(() => {

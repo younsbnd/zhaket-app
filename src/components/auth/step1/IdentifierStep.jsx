@@ -13,10 +13,17 @@ const IdentifierStep = ({
   setIsEmail,
   setIsUserExists,
   setIdentifier,
+  setIsResetPassword,
+  isResetPassword,
+  setWithOtp,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { createRecord, isLoading, error } = useCrud("/auth/user-exists");
+  const {
+    createRecord: createResetPasswordRecord,
+    isLoading: isResetPasswordLoading,
+  } = useCrud("/auth/send-reset-otp");
 
   // hook form useForm for form validation
   const {
@@ -34,6 +41,41 @@ const IdentifierStep = ({
 
   // on submit function
   const onSubmit = async (data) => {
+    if (isResetPassword) {
+      try {
+        const response = await createResetPasswordRecord(data);
+        if (response.ok) {
+          addToast({
+            description: response.data.message,
+            color: "success",
+            shouldShowTimeoutProgress: true,
+            timeout: 3000,
+          });
+          setStep(3);
+          setWithOtp(true);
+          setIsUserExists(true);
+          setIdentifier(data.identifier);
+          return;
+        }
+      } catch (error) {
+        if (error && error.errors) {
+          Object.entries(error.errors).forEach(([fieldName, message]) => {
+            setError(fieldName, {
+              type: "server",
+              message: message.join(", "),
+            });
+          });
+        }
+        addToast({
+          description: error.error?.message || error.message,
+          color: "danger",
+          shouldShowTimeoutProgress: true,
+          timeout: 3000,
+        });
+        return;
+      }
+    }
+
     try {
       const response = await createRecord(data);
       if (response.ok) {
@@ -77,7 +119,8 @@ const IdentifierStep = ({
           onSubmit,
           identifierValue,
           isLoading,
-          btnText: "ورود یا ثبت نام",
+          isResetPasswordLoading,
+          btnText: isResetPassword ? "بازیابی رمز عبور" : "ورود یا ثبت نام",
         }}
       />
       {/* Button for security tips */}
@@ -90,12 +133,12 @@ const IdentifierStep = ({
           نکات امنیتی
         </button>
 
-        <Link
-          href="/reset-password"
+        <button
           className="text-[9.7px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block self-end"
+          onClick={() => setIsResetPassword(!isResetPassword)}
         >
-          فراموشی رمز عبور
-        </Link>
+          {isResetPassword ? "ورود / ثبت نام" : "فراموشی رمز عبور"}
+        </button>
       </div>
       <ModalSecurityTips isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>

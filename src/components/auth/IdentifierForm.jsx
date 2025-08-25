@@ -11,6 +11,7 @@ const IdentifierForm = ({
   register,
   identifierValue,
   isLoading,
+  isResetPasswordLoading,
   btnText,
 }) => {
   // on submit
@@ -73,8 +74,8 @@ const IdentifierForm = ({
       />
       {/* Button for user identifier */}
       <Button
-        isLoading={isLoading}
-        isDisabled={isLoading}
+        isLoading={isLoading || isResetPasswordLoading}
+        isDisabled={isLoading || isResetPasswordLoading}
         radius="sm"
         type="submit"
         color="warning"

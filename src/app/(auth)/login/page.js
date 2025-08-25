@@ -1,4 +1,5 @@
 import AuthFlow from "@/components/auth/AuthFlow";
+import AuthWrapper from "@/components/providers/AuthWrapper";
 import { metadata } from "@/lib/seo/metadata";
 import React from "react";
 
@@ -12,9 +13,9 @@ export const generateMetadata = () => {
 
 const LoginPage = () => {
   return (
-    <div>
+    <AuthWrapper>
       <AuthFlow />
-    </div>
+    </AuthWrapper>
   );
 };
 

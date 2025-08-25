@@ -23,7 +23,7 @@ const otpSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["login", "register"],
+      enum: ["login", "register", "reset-password"],
       default: "login",
     },
   },
@@ -33,6 +33,11 @@ const otpSchema = new mongoose.Schema(
 // otp expire after 2 minutes
 otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 120 });
 
-const Otp = mongoose.models.Otp || mongoose.model("Otp", otpSchema);
+// Force recreation of model to include new enum values
+if (mongoose.models.Otp) {
+  mongoose.deleteModel('Otp');
+}
+
+const Otp = mongoose.model("Otp", otpSchema);
 
 export default Otp;
