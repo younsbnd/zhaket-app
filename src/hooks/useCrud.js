@@ -20,7 +20,6 @@ export const useCrud = (endpoint) => {
       ? `${endpoint}${path}`
       : `${apiBaseUrl}${endpoint}${path}`;
 
-
     // create the options
     try {
       const options = {
@@ -40,14 +39,27 @@ export const useCrud = (endpoint) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "خطا در دریافت داده");
+        // throw new Error(data.message || "خطا در دریافت داده");
+        throw data;
       }
 
       //   mutate the data
       mutate(isFullUrl ? endpoint : `${apiBaseUrl}${endpoint}`);
-      return data;
+
+      return {
+        data,
+        status: response.status,
+        ok: response.ok,
+      };
     } catch (error) {
-      setError(error.message);
+      if (!error.errors) {
+        const errorMessage =
+        error?.error?.message ||
+        error?.message ||
+          "یک خطای پیش‌بینی نشده رخ داد.";
+        setError(errorMessage);
+      }
+
       throw error;
     } finally {
       setIsLoading(false);

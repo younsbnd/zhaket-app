@@ -12,6 +12,8 @@ const ControlledInput = ({
   rules,
   errors,
   variant = "bordered",
+  color = "default",
+  classNames,
   ...rest
 }) => {
   const error = errors[name];
@@ -29,6 +31,11 @@ const ControlledInput = ({
           label={label}
           placeholder={placeholder}
           variant={variant}
+          color={color}
+          radius="sm"
+          classNames={{
+            ...classNames,
+          }}
         />
       )}
     />
