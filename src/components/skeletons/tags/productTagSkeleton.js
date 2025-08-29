@@ -11,9 +11,7 @@ export const TagFormSkeleton = ({ isEditMode = false }) => {
       {/* Background image */}
       <div
         className="fixed inset-0 -z-20 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1557683316-973673baf926?q=90&w=2400&auto=format&fit=crop')",
-        }}
+        
       />
       
       {/* Dark overlay */}
