@@ -1,16 +1,16 @@
 // app/api/tags/route.js
- 
+
 import connectToDb from "@/lib/utils/db";
 import { errorHandler } from "@/lib/utils/errorHandler";
 import { createBadRequestError } from "@/lib/utils/errors";
 import { logger } from "@/lib/utils/logger";
-import { validateTag, validateTagUpdate } from "@/lib/validations/tagsValidation";
+import { tagSchema } from "@/lib/validations/tagsValidation";
 import { Tag } from "@/models/Tags";
 import { NextResponse } from "next/server";
- 
+
 /**
  * @route   GET /api/tags
- * @desc    Retrieve all tags from the database
+ * @desc    Retrieve all tags from database
  * @access  Public
  */
 export async function GET() {
@@ -23,9 +23,9 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: "Tags retrieved successfully",
+      message: "تگ‌ها با موفقیت دریافت شدند",
       data: tags,
-      count: tags.length
+      count: tags.length,
     });
   } catch (error) {
     return errorHandler(error);
@@ -34,26 +34,27 @@ export async function GET() {
 
 /**
  * @route   POST /api/tags
- * @desc    Create a new tag
+ * @desc    Create a new tag in database
  * @access  Public
  */
 export async function POST(request) {
   try {
     await connectToDb();
+
     const body = await request.json();
 
-    // Validate input
-    const validation = validateTag(body);
-    if (!validation.success) {
-      throw createBadRequestError(validation.errors.map(err => err.message).join(", "));
+    // Input validation
+    const tagValidation = tagSchema.safeParse(body);
+    if (!tagValidation.success) {
+      throw tagValidation.error;
     }
 
-    const { name, slug, description } = validation.data;
+    const { name, slug, description } = tagValidation.data;
 
-    // Check for duplicate slug
-    const duplicate = await Tag.findOne({ slug }).lean();
-    if (duplicate) {
-      throw createBadRequestError("A tag with this slug already exists");
+    // Check if slug already exists
+    const existingTag = await Tag.findOne({ slug }).lean();
+    if (existingTag) {
+      throw createBadRequestError("تگی با این اسلاگ از قبل وجود دارد");
     }
 
     // Create and save new tag
@@ -61,11 +62,14 @@ export async function POST(request) {
 
     logger.info("Tag created successfully", { id: newTag._id });
 
-    return NextResponse.json({
-      success: true,
-      message: "Tag created successfully",
-      data: newTag
-    }, { status: 201 });
+    return NextResponse.json(
+      {
+        success: true,
+        message: "تگ با موفقیت ایجاد شد",
+        data: newTag,
+      },
+      { status: 201 }
+    );
   } catch (error) {
     return errorHandler(error);
   }

@@ -1,55 +1,24 @@
 // lib/validations/tagValidation.js
+// Validation schema for 'Tag' objects, ensuring specific rules for name, slug, and description.
+
 import { z } from 'zod';
 
 export const tagSchema = z.object({
+  // Tag name: 3-100 characters, trimmed of extra spaces
   name: z.string()
-    .min(1, "Name is required")
-    .max(100, "Name must be less than 100 characters")
-    .trim(),
+    .min(3, "وارد کردن نام الزامی است")
+    .max(100, "نام باید کمتر از ۱۰۰ کاراکتر باشد")
+    .trim(), // Removes spaces from start and end
   
+  // Slug: 3-100 characters, trimmed of extra spaces
   slug: z.string()
-    .min(1, "Slug is required")
-    .max(100, "Slug must be less than 100 characters")
-    .regex(/^[a-z0-9-_]+$/, "Slug can only contain lowercase letters, numbers, hyphens and underscores")
+    .min(3, "وارد کردن اسلاگ الزامی است")
+    .max(100, "اسلاگ باید کمتر از ۱۰۰ کاراکتر باشد")
     .trim(),
   
+  // Optional description: up to 500 characters, defaults to empty string
   description: z.string()
-    .max(500, "Description must be less than 500 characters")
+    .max(500, "توضیح باید کمتر از ۵۰۰ کاراکتر باشد")
     .optional()
-    .default(""),
+    .default(""), // Empty string if not provided
 });
-
-export const tagUpdateSchema = tagSchema.partial();
-
-// Validation functions
-export const validateTag = (data) => {
-  try {
-    return {
-      success: true,
-      data: tagSchema.parse(data),
-      errors: null
-    };
-  } catch (error) {
-    return {
-      success: false,
-      data: null,
-      errors: error.errors
-    };
-  }
-};
-
-export const validateTagUpdate = (data) => {
-  try {
-    return {
-      success: true,
-      data: tagUpdateSchema.parse(data),
-      errors: null
-    };
-  } catch (error) {
-    return {
-      success: false,
-      data: null,
-      errors: error.errors
-    };
-  }
-};

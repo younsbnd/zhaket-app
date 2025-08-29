@@ -1,10 +1,12 @@
-import EditTagPage from '@/components/(admin)/tags/[id]/EditProductCategoryLogic';
+ 
+ 
+import TagsManagement from '@/components/admin/tags/tagsmanagement/TagsManagement';
 import React from 'react';
 
 const page = () => {
     return (
         <div>
-            <EditTagPage />
+            <TagsManagement/>
         </div>
     );
 };

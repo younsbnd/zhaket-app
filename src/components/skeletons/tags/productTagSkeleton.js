@@ -1,63 +1,75 @@
-import { motion } from 'framer-motion';
+import React from "react";
+import { Skeleton } from "@heroui/react";
+import { FiEdit, FiSave } from "react-icons/fi";
 
-export function TagsListSkeleton() {
+/**
+ * Universal skeleton for tag forms (both create and edit)
+ */
+export const TagFormSkeleton = ({ isEditMode = false }) => {
   return (
-    <div className="relative min-h-screen text-slate-100">
-      {/* Background Layer */}
+    <div className="relative min-ah-screen text-slate-100">
+      {/* Background image */}
       <div
         className="fixed inset-0 -z-20 bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1557683316-973673baf926?q=90&w=2400&auto=format&fit=crop')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1557683316-973673baf926?q=90&w=2400&auto=format&fit=crop')",
         }}
-      ></div>
-      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-[#000814]/[0.99] via-[#000814]/[0.992] to-[#000814]/[0.996] backdrop-blur-sm"></div>
+      />
+      
+      {/* Dark overlay */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-b from-[#000814]/[0.99] via-[#000814]/[0.992] to-[#000814]/[0.996] backdrop-blur-sm" />
 
-      {/* Page Container */}
-      <div className="mx-auto max-w-7xl px-4 py-8 space-y-6">
-        {/* Header Skeleton */}
-        <div className="flex items-center gap-3">
-          <div className="h-7 w-32 bg-slate-700/50 rounded-lg animate-pulse"></div>
-          <div className="ms-auto">
-            <div className="h-10 w-32 bg-slate-700/50 rounded-xl animate-pulse"></div>
-          </div>
+      {/* Main container */}
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        
+        {/* Page title skeleton */}
+        <div className="mb-6 flex items-center gap-2">
+          {isEditMode ? (
+            <FiEdit className="text-emerald-400 w-5 h-5" />
+          ) : (
+            <FiSave className="text-blue-400 w-5 h-5" />
+          )}
+          <Skeleton className="h-6 w-32 rounded-md bg-slate-700/50" />
         </div>
 
-        {/* Tags Grid Skeleton */}
-        <div className="glass rounded-2xl border border-slate-800/50 p-5 backdrop-blur-md">
-          <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
-            {[...Array(6)].map((_, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.25, delay: index * 0.05 }}
-                className="rounded-xl bg-white/5 border border-slate-700/40 p-5 shadow-lg"
-              >
-                {/* Title and Action Buttons Skeleton */}
-                <div className="flex justify-between items-start mb-3">
-                  <div className="h-6 w-24 bg-slate-700/50 rounded animate-pulse"></div>
-                  <div className="flex gap-2">
-                    {/* Edit Button Skeleton */}
-                    <div className="h-7 w-7 bg-slate-700/50 rounded-full animate-pulse"></div>
-                    {/* Delete Button Skeleton */}
-                    <div className="h-7 w-7 bg-red-700/50 rounded-full animate-pulse"></div>
-                  </div>
-                </div>
+        {/* Form container */}
+        <div className={`glass rounded-2xl border border-slate-800/60 p-6 backdrop-blur-md shadow-xl ${
+          isEditMode ? "hover:shadow-emerald-400/20" : "hover:shadow-blue-500/20"
+        }`}>
+          
+          <div className="space-y-5">
+            
+            {/* Name field */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-16 rounded bg-slate-700/50" />
+              <Skeleton className="h-12 w-full rounded-lg bg-slate-700/30" />
+            </div>
 
-                {/* ID Skeleton */}
-                <div className="h-4 w-full bg-slate-700/50 rounded animate-pulse mb-2"></div>
+            {/* Slug field */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-12 rounded bg-slate-700/50" />
+              <Skeleton className="h-12 w-full rounded-lg bg-slate-700/30" />
+            </div>
 
-                {/* Description Skeleton */}
-                <div className="space-y-1">
-                  <div className="h-3 w-full bg-slate-700/50 rounded animate-pulse"></div>
-                  <div className="h-3 w-3/4 bg-slate-700/50 rounded animate-pulse"></div>
-                </div>
-              </motion.div>
-            ))}
+            {/* Description field */}
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24 rounded bg-slate-700/50" />
+              <Skeleton className="h-24 w-full rounded-lg bg-slate-700/30" />
+            </div>
+
+            {/* Submit button */}
+            <Skeleton 
+              className={`h-12 w-full rounded-xl ${
+                isEditMode 
+                  ? "bg-gradient-to-l from-emerald-500/30 to-green-400/30" 
+                  : "bg-gradient-to-l from-blue-600/30 to-indigo-700/30"
+              }`} 
+            />
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default TagFormSkeleton;
