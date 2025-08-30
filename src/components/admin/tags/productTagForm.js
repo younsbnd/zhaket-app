@@ -1,24 +1,9 @@
-
 import ControlledInput from "@/components/shared/forms/ControlledInput";
 import ControlledTextarea from "@/components/shared/forms/ControlledTextarea";
 import { Button } from "@heroui/react";
 import React from "react";
 import { FiSave, FiEdit } from "react-icons/fi";
 
-/**
- * ProductTagForm Component
- * Shared form component for creating and editing product tags
- * Supports both create and edit modes with proper validation and error handling
- * 
- * @param {Object} control - Form control from react-hook-form
- * @param {Function} handleSubmit - Submit handler from react-hook-form
- * @param {Function} onSubmit - Custom submit function
- * @param {Object} errors - Form validation errors
- * @param {boolean} isEditMode - Whether component is in edit or create mode
- * @param {string} title - Form title
- * @param {boolean} isLoading - Loading state for submit button
- * @param {string} serverError - Server error message to display
- */
 const ProductTagForm = ({
   control,
   handleSubmit,
@@ -30,21 +15,30 @@ const ProductTagForm = ({
   serverError,
 }) => {
   return (
-    <div className="bg-slate-50 text-slate-900 min-h-screen">
+    <div className="  text-slate-100 min-h-screen selection:bg-blue-600/30">
+      {/* Background overlay */}
+      <div
+        className="fixed inset-0 -z-20 bg-cover bg-center"
+       
+      />
+      
+      {/* Background gradient overlay */}
+      <div className="fixed inset-0 -z-10     " />
+ 
       {/* Main content container */}
-      <main className="mx-auto w-full max-w-4xl px-4 py-8">
-        {/* Form container with glass effect */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
-          {/* Form header with icon and title */}
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-slate-800">
+      <main className="mx-auto w-full max-w-7xl px-4 py-8">
+        {/* Glass card container */}
+        <div className="glass rounded-2xl p-5">
+          {/* Form header with title and icon */}
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
             {isEditMode ? (
               <>
-                <FiEdit className="text-emerald-500" />
+                <FiEdit className="text-emerald-400" />
                 {title || "ویرایش تگ"}
               </>
             ) : (
               <>
-                <FiSave className="text-blue-500" />
+                <FiSave className="text-blue-400" />
                 {title || "ساخت تگ جدید"}
               </>
             )}
@@ -52,13 +46,13 @@ const ProductTagForm = ({
 
           {/* Server error display */}
           {serverError && (
-            <div className="mb-6 rounded-lg border border-red-300 bg-red-50 text-red-700 px-4 py-3 text-sm">
-              <strong>خطا:</strong> {serverError}
+            <div className="mb-4 rounded-lg border border-red-400/30 bg-red-500/20 text-red-200 px-4 py-2 text-sm">
+              {serverError}
             </div>
           )}
 
-          {/* Main form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Form with controlled inputs */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Tag name input field */}
             <ControlledInput
               name="name"
@@ -69,7 +63,7 @@ const ProductTagForm = ({
               errors={errors}
               variant="bordered"
               color="primary"
-              className="w-full"
+              className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/50"
             />
 
             {/* Tag slug input field */}
@@ -77,18 +71,12 @@ const ProductTagForm = ({
               name="slug"
               control={control}
               label="اسلاگ"
-              placeholder="اسلاگ تگ را وارد کنید (برای URL استفاده می‌شود)"
-              rules={{ 
-                required: "وارد کردن اسلاگ الزامی است",
-                pattern: {
-                  value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                  message: "اسلاگ فقط می‌تواند شامل حروف کوچک انگلیسی، اعداد و خط تیره باشد"
-                }
-              }}
+              placeholder="اسلاگ تگ را وارد کنید"
+              rules={{ required: "وارد کردن اسلاگ الزامی است" }}
               errors={errors}
               variant="bordered"
               color="primary"
-              className="w-full"
+              className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/50"
             />
 
             {/* Tag description textarea field */}
@@ -96,34 +84,33 @@ const ProductTagForm = ({
               name="description"
               control={control}
               label="توضیحات"
-              placeholder="توضیحات تگ را وارد کنید (اختیاری)"
+              placeholder="توضیحات تگ را وارد کنید"
               errors={errors}
               rows={4}
-              className="w-full resize-none"
+              className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/50 resize-none"
             />
 
-            {/* Submit button with loading state */}
+            {/* Submit button with loading state and conditional styling */}
             <Button
               isLoading={isLoading}
               disabled={isLoading}
               type="submit"
-              size="lg"
-              className={`w-full flex items-center justify-center gap-2 font-medium ${
+              className={`w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-white ${
                 isEditMode
-                  ? "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
-                  : "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
-              } text-white shadow-lg hover:shadow-xl transition-all duration-200`}
+                  ? "bg-gradient-to-l from-emerald-500 to-green-400"
+                  : "bg-gradient-to-l from-blue-600 to-indigo-700"
+              }`}
             >
-              {/* Button content based on mode */}
+              {/* Conditional button content based on edit mode */}
               {isEditMode ? (
                 <>
                   <FiEdit className="w-5 h-5" />
-                  {isLoading ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                  ذخیره تغییرات
                 </>
               ) : (
                 <>
                   <FiSave className="w-5 h-5" />
-                  {isLoading ? "در حال ساخت..." : "ساخت تگ"}
+                  ساخت تگ 
                 </>
               )}
             </Button>
