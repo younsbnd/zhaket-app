@@ -4,7 +4,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "@heroui/react";
+ 
 
 // SWR and API utilities
 import useSWR from "swr";
@@ -69,9 +69,7 @@ export default function EditProductTagLogic() {
       // Update tag via API
       await updateRecord(tagId, formData);
       
-      // Show success toast notification using Hero UI
-      toast("تگ با موفقیت ویرایش شد", { type: "success" });
-      
+   
       // Redirect to tags list page
       router.push("/admin/tags");
     } catch (err) {
@@ -85,10 +83,10 @@ export default function EditProductTagLogic() {
         });
       }
       
-      // Show error toast notification with specific error details using Hero UI
+    
       const errorMessage = err?.message || 
                           (typeof err === "string" ? err : "خطا در ویرایش تگ");
-      toast(`خطا در ویرایش تگ: ${errorMessage}`, { type: "error" });
+     
     } finally {
       setIsSubmitting(false);
     }

@@ -4,7 +4,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "@heroui/react";
+ 
 
 // Components and utilities
 import ProductTagForm from "../productTagForm";
@@ -31,9 +31,7 @@ export default function CreateProductTagLogic() {
     try {
       // Create new tag via API
       await createRecord(data);
-      
-      // Show success toast notification using Hero UI
-      toast("تگ با موفقیت ساخته شد", { type: "success" });
+       
       
       // Redirect to tags list page
       router.push("/admin/tags");
@@ -45,10 +43,10 @@ export default function CreateProductTagLogic() {
         });
       }
       
-      // Show error toast notification with specific error details using Hero UI
+   
       const errorMessage = err?.message || 
                           (typeof err === "string" ? err : "خطا در ساخت تگ");
-      toast(`خطا در ساخت تگ: ${errorMessage}`, { type: "error" });
+ 
     }
   });
 

@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import { toast } from "@heroui/react";
+ 
 
 // Table and CRUD utilities
 import TagsTable from "../TagsTable";
@@ -35,8 +35,7 @@ export default function TagsManagement() {
   const { deleteRecord, error: deleteError } = useCrud("/tags");
 
   /**
-   * Handle tag deletion with confirmation
-   * Shows toast notifications for success/error states
+  
    * @param {string} id - Tag ID to delete
    */
   const handleDelete = async (id) => {
@@ -49,12 +48,13 @@ export default function TagsManagement() {
       setActiveDeletingId(id);
       await deleteRecord(id);
       mutate();
-      toast.success("تگ با موفقیت حذف شد");
+    
     } catch (err) {
-      // Show error toast notification (not setError)
+      
       const errorMessage = err?.message || (typeof err === "string" ? err : "خطا در حذف تگ");
-      toast(errorMessage, { type: "error" });
+      
       logger.error("Tag deletion error:", err);
+      
     } finally {
       setActiveDeletingId(null);
     }

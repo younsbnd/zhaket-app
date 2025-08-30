@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { unique } from "next/dist/build/utils";
 
 // Tag model for content categorization and labeling
 const tagSchema = new mongoose.Schema(
   {
     // Tag display name
-    name: {
+      name: {
       type: String,
+      minLength:[3,"طول نام باید حداقل ۳ کاراکتر باشد"],
        required: [true, "فیلد نام الزامی می‌باشد"],
       trim: true,
        maxlength: [100, "طول نام نمی‌تواند بیش از ۱۰۰ کاراکتر باشد"]

@@ -49,10 +49,10 @@ export async function GET(request, { params }) {
 export async function PUT(request, { params }) {
   try {
     await connectToDb();
-    const paramsID = await params.id || "";
+  const { id } = await params;
 
     // Validate tag ID format
-    if (!isValidObjectId(paramsID)) {
+    if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه تگ معتبر نیست");
     }
 
@@ -74,7 +74,7 @@ export async function PUT(request, { params }) {
     if (tagValidation.data.slug) {
       const duplicateSlug = await Tag.findOne({
         slug: tagValidation.data.slug,
-        _id: { $ne: params.id },
+        _id: { $ne: id },
       }).lean();
       if (duplicateSlug) {
         throw createBadRequestError("این اسلاگ قبلاً استفاده شده است");
@@ -83,12 +83,12 @@ export async function PUT(request, { params }) {
 
     // Update tag
     const updatedTag = await Tag.findByIdAndUpdate(
-      params.id,
+     id,
       { ...tagValidation.data, updatedAt: new Date() },
       { new: true }
     ).lean();
 
-    logger.info("Tag updated successfully", { id: params.id });
+    logger.info("Tag updated successfully", { id });
 
     return NextResponse.json({
       success: true,
@@ -108,26 +108,30 @@ export async function PUT(request, { params }) {
 export async function DELETE(_, { params }) {
   try {
     await connectToDb();
-    const paramsID = await params.id || "";
+    const { id } = await params;
 
     // Validate tag ID format
-    if (!isValidObjectId(paramsID)) {
+    if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه تگ معتبر نیست");
     }
 
     // Delete tag
-    const deletedTag = await Tag.findByIdAndDelete(paramsID).lean();
+    const deletedTag = await Tag.findByIdAndDelete(id).lean();
     if (!deletedTag) {
       throw createNotFoundError("تگ پیدا نشد");
     }
 
-    logger.info("Tag deleted successfully", { id: paramsID });
+    logger.info("Tag deleted successfully", { id });
 
     return NextResponse.json({
       success: true,
       message: "تگ با موفقیت حذف شد",
     });
   } catch (error) {
+    // Ensure error always has a message
+    if (!error.message) {
+      error.message = "یک خطای ناشناخته هنگام حذف تگ رخ داد.";
+    }
     return errorHandler(error);
   }
 }
