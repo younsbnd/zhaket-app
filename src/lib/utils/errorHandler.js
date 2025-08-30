@@ -4,15 +4,11 @@ import { logger } from "./logger";
 
 export function errorHandler(error) {
   //   log the error
-  if (error && error.message) {
-    logger.error("API Route Error Occurred", {
-      message: error.message,
-      stack: error.stack,
-      name: error.name,
-    });
-  } else {
-    logger.error("API Route Error Occurred: Raw error object", error);
-  }
+  logger.error("API Route Error Occurred", {
+    message: error.message,
+    stack: error.stack,
+    name: error.name,
+  });
 
   //   handle zod error
   if (error instanceof ZodError) {
