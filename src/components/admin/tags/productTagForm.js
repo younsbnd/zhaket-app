@@ -3,6 +3,7 @@ import ControlledTextarea from "@/components/shared/forms/ControlledTextarea";
 import { Button } from "@heroui/react";
 import React from "react";
 import { FiSave, FiEdit } from "react-icons/fi";
+import { maxLength } from "zod";
 
 const ProductTagForm = ({
   control,
@@ -59,7 +60,13 @@ const ProductTagForm = ({
               control={control}
               label="نام تگ"
               placeholder="نام تگ را وارد کنید"
-              rules={{ required: "وارد کردن نام تگ الزامی است" }}
+              rules={{
+                required: "وارد کردن نام تگ الزامی است",
+                minLength: {
+                  value: 3,
+                  message: "نام باید حداقل ۳ کاراکتر باشد"
+                }
+              }}
               errors={errors}
               variant="bordered"
               color="primary"
@@ -72,7 +79,13 @@ const ProductTagForm = ({
               control={control}
               label="اسلاگ"
               placeholder="اسلاگ تگ را وارد کنید"
-              rules={{ required: "وارد کردن اسلاگ الزامی است" }}
+                rules={{
+                required: "وارد کردن نام اسلاگ تگ الزامی است",
+                minLength: {
+                  value: 3,
+                  message: "اسلاگ باید حداقل ۳ کاراکتر باشد"
+                }
+              }}
               errors={errors}
               variant="bordered"
               color="primary"
@@ -84,6 +97,13 @@ const ProductTagForm = ({
               name="description"
               control={control}
               label="توضیحات"
+              rules={{
+                 
+                maxLength: {
+                  value: 300,
+                  message: "توضیحات باید حداکثر ۳۰۰ کاراکتر باشد"
+                }
+              }}
               placeholder="توضیحات تگ را وارد کنید"
               errors={errors}
               rows={4}
@@ -95,7 +115,8 @@ const ProductTagForm = ({
               isLoading={isLoading}
               disabled={isLoading}
               type="submit"
-              className={`w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium text-white ${
+              size="sm"
+              className={`w-full flex items-center justify-center gap-2 rounded-xl py-1.5 text-sm font-medium text-white ${
                 isEditMode
                   ? "bg-gradient-to-l from-emerald-500 to-green-400"
                   : "bg-gradient-to-l from-blue-600 to-indigo-700"

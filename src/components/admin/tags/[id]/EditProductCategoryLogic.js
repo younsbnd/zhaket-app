@@ -70,7 +70,7 @@ export default function EditProductTagLogic() {
       await updateRecord(tagId, formData);
       
       // Show success toast notification using Hero UI
-      toast.success("تگ با موفقیت ویرایش شد");
+      toast("تگ با موفقیت ویرایش شد", { type: "success" });
       
       // Redirect to tags list page
       router.push("/admin/tags");
@@ -88,7 +88,7 @@ export default function EditProductTagLogic() {
       // Show error toast notification with specific error details using Hero UI
       const errorMessage = err?.message || 
                           (typeof err === "string" ? err : "خطا در ویرایش تگ");
-      toast.error(`خطا در ویرایش تگ: ${errorMessage}`);
+      toast(`خطا در ویرایش تگ: ${errorMessage}`, { type: "error" });
     } finally {
       setIsSubmitting(false);
     }

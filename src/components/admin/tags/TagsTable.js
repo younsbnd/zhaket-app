@@ -1,4 +1,4 @@
- 
+
 
 import TagsTableSkeleton from "@/components/skeletons/tags/TagsTableSkeleton";
 import { Button } from "@heroui/react";
@@ -25,13 +25,13 @@ const TagsTable = ({
   return (
     <div className="  text-slate-100 min-h-screen selection:bg-blue-600/30">
       {/* Background overlay */}
-      <div 
-        className="fixed inset-0 -z-20 bg-cover bg-center" 
-      
+      <div
+        className="fixed inset-0 -z-20 bg-cover bg-center"
+
       />
       <div className="fixed inset-0 -z-10 " />
 
-    
+
 
       <main className="mx-auto w-full max-w-7xl px-4 py-8">
         <div className="glass rounded-2xl p-5">
@@ -43,6 +43,8 @@ const TagsTable = ({
             </h2>
             <Button
               onClick={onCreate}
+              size="sm"
+
               className="rounded-xl bg-gradient-to-l from-blue-600 to-indigo-700 px-4 py-2 text-sm flex items-center gap-2"
             >
               <FiPlus className="w-4 h-4" />
@@ -90,7 +92,7 @@ const TagsTable = ({
                           </div>
                           <div>
                             <div className="font-medium">{tag.name}</div>
-                            <div className="text-xs text-slate-400">شناسه: {tag._id}</div>
+
                           </div>
                         </div>
                       </td>
@@ -107,7 +109,10 @@ const TagsTable = ({
                         <div className="flex items-center gap-2">
                           {/* Edit button */}
                           <Button
+
                             onClick={() => onEdit(tag._id)}
+                            size="sm"
+
                             className="rounded-lg bg-white/5 px-2 py-1 hover:bg-white/10 text-xs flex items-center gap-1"
                           >
                             <FiEdit className="w-3 h-3" />
@@ -116,6 +121,8 @@ const TagsTable = ({
                           {/* Delete button with loading state */}
                           <Button
                             onClick={() => onDelete(tag._id)}
+                            size="sm"
+
                             disabled={activeDeletingId === tag._id}
                             className="rounded-lg bg-white/5 px-2 py-1 hover:bg-white/10 text-xs text-rose-300 flex items-center gap-1 disabled:opacity-50"
                           >

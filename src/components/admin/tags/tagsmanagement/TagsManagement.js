@@ -53,7 +53,7 @@ export default function TagsManagement() {
     } catch (err) {
       // Show error toast notification (not setError)
       const errorMessage = err?.message || (typeof err === "string" ? err : "خطا در حذف تگ");
-      toast.error(errorMessage);
+      toast(errorMessage, { type: "error" });
       logger.error("Tag deletion error:", err);
     } finally {
       setActiveDeletingId(null);

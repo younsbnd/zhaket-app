@@ -33,7 +33,7 @@ export default function CreateProductTagLogic() {
       await createRecord(data);
       
       // Show success toast notification using Hero UI
-      toast.success("تگ با موفقیت ساخته شد");
+      toast("تگ با موفقیت ساخته شد", { type: "success" });
       
       // Redirect to tags list page
       router.push("/admin/tags");
@@ -48,7 +48,7 @@ export default function CreateProductTagLogic() {
       // Show error toast notification with specific error details using Hero UI
       const errorMessage = err?.message || 
                           (typeof err === "string" ? err : "خطا در ساخت تگ");
-      toast.error(`خطا در ساخت تگ: ${errorMessage}`);
+      toast(`خطا در ساخت تگ: ${errorMessage}`, { type: "error" });
     }
   });
 
