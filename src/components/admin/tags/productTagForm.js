@@ -97,13 +97,7 @@ const ProductTagForm = ({
               name="description"
               control={control}
               label="توضیحات"
-              rules={{
-                 
-                maxLength: {
-                  value: 300,
-                  message: "توضیحات باید حداکثر ۳۰۰ کاراکتر باشد"
-                }
-              }}
+            
               placeholder="توضیحات تگ را وارد کنید"
               errors={errors}
               rows={4}

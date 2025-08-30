@@ -18,7 +18,7 @@ export const tagSchema = z.object({
   
   // Optional description: up to 500 characters, defaults to empty string
   description: z.string()
-    .max(500, "توضیح باید کمتر از ۵۰۰ کاراکتر باشد")
+    
     .optional()
     .default(""), // Empty string if not provided
 });
