@@ -1,14 +1,19 @@
 "use client";
  
+// React and Next.js imports
 import React from "react";
-import ProductTagForm from "../productTagForm";
-import { useForm } from "react-hook-form";
-import { useCrud } from "@/hooks/useCrud";
 import { useRouter } from "next/navigation";
-import { addToast } from "@heroui/react"; // Import addToast function
+import { useForm } from "react-hook-form";
+import { toast } from "@heroui/react";
 
-// Logic component for creating new product tags
-// Handles form submission, validation, and API calls
+// Components and utilities
+import ProductTagForm from "../productTagForm";
+import { useCrud } from "@/hooks/useCrud";
+
+/**
+ * Logic component for creating new product tags
+ * Handles form submission, validation, and API calls
+ */
 export default function CreateProductTagLogic() {
   const router = useRouter();
   const { createRecord, error } = useCrud("/tags");
@@ -18,19 +23,17 @@ export default function CreateProductTagLogic() {
     defaultValues: { name: "", slug: "", description: "" },
   });
 
-  // Handle form submission
+  /**
+   * Handle form submission for creating new tag
+   * @param {Object} data - Form data containing tag information
+   */
   const onSubmit = handleSubmit(async (data) => {
     try {
       // Create new tag via API
       await createRecord(data);
       
-      // Show success toast notification
-      addToast({
-        title: "موفق",
-        description: "تگ با موفقیت ساخته شد",
-        color: "success",
-        timeout: 3000
-      });
+      // Show success toast notification using Hero UI
+      toast.success("تگ با موفقیت ساخته شد");
       
       // Redirect to tags list page
       router.push("/admin/tags");
@@ -42,16 +45,14 @@ export default function CreateProductTagLogic() {
         });
       }
       
-      // Show error toast notification
-      addToast({
-        title: "خطا",
-        description: "خطا در ساخت تگ",
-        color: "danger",
-        timeout: 3000
-      });
+      // Show error toast notification with specific error details using Hero UI
+      const errorMessage = err?.message || 
+                          (typeof err === "string" ? err : "خطا در ساخت تگ");
+      toast.error(`خطا در ساخت تگ: ${errorMessage}`);
     }
   });
 
+  // Render form component with all necessary props
   return (
     <ProductTagForm
       control={control}

@@ -1,18 +1,24 @@
 "use client";
 
+// React and Next.js imports
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
-import useSWR from "swr";
 import { useForm } from "react-hook-form";
-import ProductTagForm from "../productTagForm";
+import { toast } from "@heroui/react";
+
+// SWR and API utilities
+import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import { useCrud } from "@/hooks/useCrud";
-import TagFormSkeleton from "@/components/skeletons/tags/productTagSkeleton";
-import { logger } from "@/lib/utils/logger";
-import { addToast } from "@heroui/react"; // Import addToast function
 
-// Logic component for editing existing product tags
-// Handles data fetching, form initialization, and update operations
+// Components
+import ProductTagForm from "../productTagForm";
+import TagFormSkeleton from "@/components/skeletons/tags/productTagSkeleton";
+
+/**
+ * Logic component for editing existing product tags
+ * Handles data fetching, form initialization, and update operations
+ */
 export default function EditProductTagLogic() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,8 +36,8 @@ export default function EditProductTagLogic() {
   // Initialize CRUD hook for update operations
   const { updateRecord, isLoading: updating, error: updateError } = useCrud("/tags");
 
-  // Fetch existing tag data
-  const { data: tagData, error: fetchError, isLoading: loadingTag } = useSWR(
+  // Fetch existing tag data using SWR
+  const { data: tagData, error: fetchError, isLoading: loadingTag, mutate } = useSWR(
     tagId ? `/api/tags/${tagId}` : null,
     fetcher
   );
@@ -52,7 +58,10 @@ export default function EditProductTagLogic() {
     }
   }, [tagData, reset]);
 
-  // Handle form submission for updating tag
+  /**
+   * Handle form submission for updating tag
+   * @param {Object} formData - Updated tag data from form
+   */
   const onSubmit = async (formData) => {
     try {
       setIsSubmitting(true);
@@ -60,13 +69,8 @@ export default function EditProductTagLogic() {
       // Update tag via API
       await updateRecord(tagId, formData);
       
-      // Show success toast notification
-      addToast({
-        title: "موفق",
-        description: "تگ با موفقیت ویرایش شد",
-        color: "success",
-        timeout: 3000
-      });
+      // Show success toast notification using Hero UI
+      toast.success("تگ با موفقیت ویرایش شد");
       
       // Redirect to tags list page
       router.push("/admin/tags");
@@ -81,13 +85,10 @@ export default function EditProductTagLogic() {
         });
       }
       
-      // Show error toast notification
-      addToast({
-        title: "خطا",
-        description: "خطا در ویرایش تگ",
-        color: "danger",
-        timeout: 3000
-      });
+      // Show error toast notification with specific error details using Hero UI
+      const errorMessage = err?.message || 
+                          (typeof err === "string" ? err : "خطا در ویرایش تگ");
+      toast.error(`خطا در ویرایش تگ: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -96,7 +97,7 @@ export default function EditProductTagLogic() {
   // Show loading skeleton while fetching data
   if (loadingTag) return <TagFormSkeleton isEditMode={true} />;
 
-  // Determine server error message
+  // Determine server error message for display
   const serverError = fetchError
     ? "خطا در بارگیری داده‌های تگ"
     : !tagData?.data && !loadingTag
@@ -105,6 +106,7 @@ export default function EditProductTagLogic() {
     ? (typeof updateError === "string" ? updateError : updateError?.message)
     : null;
 
+  // Render form component with all necessary props
   return (
     <ProductTagForm
       control={control}
