@@ -65,7 +65,7 @@ export async function PUT(request, { params }) {
       throw tagValidation.error;
     }
     // Check if tag exists
-    const existingTag = await Tag.findById(params.id).lean();
+    const existingTag = await Tag.findById(id).lean();
     if (!existingTag) {
       throw createNotFoundError("تگ پیدا نشد");
     }
