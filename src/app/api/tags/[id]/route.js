@@ -18,14 +18,14 @@ import { NextResponse } from "next/server";
 export async function GET(request, { params }) {
   try {
     await connectToDb();
-    const paramsID = await params.id || "";
+    const { id } = await params;  
     // Validate tag ID format
-    if (!isValidObjectId(paramsID)) {
+    if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه تگ معتبر نیست");
     }
 
     // Find tag by ID
-    const tag = await Tag.findById(paramsID).lean();
+    const tag = await Tag.findById(id).lean();
     if (!tag) {
       throw createNotFoundError("تگ پیدا نشد");
     }

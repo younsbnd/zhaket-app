@@ -1,7 +1,6 @@
-
-
+"use client";
 import TagsTableSkeleton from "@/components/skeletons/tags/TagsTableSkeleton";
-import { Button } from "@heroui/react";
+import { Button, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import React from "react";
 import { FiEdit, FiTrash2, FiTag, FiPlus, FiAlertTriangle } from "react-icons/fi";
 
@@ -23,15 +22,10 @@ const TagsTable = ({
   }
 
   return (
-    <div className="  text-slate-100 min-h-screen selection:bg-blue-600/30">
+    <div className="text-slate-100 min-h-screen selection:bg-blue-600/30">
       {/* Background overlay */}
-      <div
-        className="fixed inset-0 -z-20 bg-cover bg-center"
-
-      />
-      <div className="fixed inset-0 -z-10 " />
-
-
+      <div className="fixed inset-0 -z-20 bg-cover bg-center" />
+      <div className="fixed inset-0 -z-10" />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-8">
         <div className="glass rounded-2xl p-5">
@@ -41,15 +35,16 @@ const TagsTable = ({
               <FiTag className="text-emerald-400" />
               لیست تگ‌ها
             </h2>
-            <Button
-              onClick={onCreate}
-              size="sm"
-
-              className="rounded-xl bg-gradient-to-l from-blue-600 to-indigo-700 px-4 py-2 text-sm flex items-center gap-2"
-            >
-              <FiPlus className="w-4 h-4" />
-              تگ جدید
-            </Button>
+            <div className="ms-auto flex items-center gap-2">
+              <Button
+                onClick={onCreate}
+                size="sm"
+                className="rounded-xl bg-gradient-to-l from-blue-600 to-indigo-700 px-3 py-2 text-[10px] text-white flex items-center gap-2"
+              >
+                <FiPlus className="w-4 h-4" />
+                تگ جدید
+              </Button>
+            </div>
           </div>
 
           {/* Error message display */}
@@ -68,63 +63,75 @@ const TagsTable = ({
               <p className="text-sm mt-2">برای شروع، تگ جدیدی ایجاد کنید</p>
             </div>
           ) : (
-            // Tags table display
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-sm">
-                {/* Table header */}
-                <thead className="text-slate-300">
-                  <tr className="text-right">
-                    <th className="px-3 py-2 font-medium">نام تگ</th>
-                    <th className="px-3 py-2 font-medium">اسلاگ</th>
-                    <th className="px-3 py-2 font-medium">توضیحات</th>
-                    <th className="px-3 py-2 font-medium">اقدامات</th>
-                  </tr>
-                </thead>
-                {/* Table body with tag rows */}
-                <tbody className="divide-y divide-white/10">
+            // Tags table display using HeroUI Table component
+            <div className="mt-4 overflow-x-auto">
+              <Table
+                radius="sm"
+                shadow="none"
+                aria-labelledby="tags-table"
+                classNames={{
+                  wrapper: "bg-transparent",
+                  th: "bg-transparent text-white font-semibold",
+                  td: "text-[11px]",
+                  tr: "h-[47px] not-last:not-first:border-y border-white/10 hover:bg-white/5",
+                }}
+              >
+                <TableHeader>
+                  <TableColumn>نام تگ</TableColumn>
+                  <TableColumn>اسلاگ</TableColumn>
+                  <TableColumn>توضیحات</TableColumn>
+                  <TableColumn>اقدامات</TableColumn>
+                </TableHeader>
+                <TableBody>
                   {tagList.map((tag) => (
-                    <tr key={tag._id} className="hover:bg-white/5">
-                      {/* Tag name column */}
-                      <td className="px-3 py-3">
+                    <TableRow key={tag._id}>
+                      {/* Tag name column with icon */}
+                      <TableCell>
                         <div className="flex items-center gap-3">
                           <div className="size-9 rounded-lg bg-emerald-500/15 flex items-center justify-center">
                             <FiTag className="text-emerald-400 size-4" />
                           </div>
                           <div>
-                            <div className="font-medium">{tag.name}</div>
-
+                            <div className="font-medium text-white">{tag.name}</div>
                           </div>
                         </div>
-                      </td>
+                      </TableCell>
+                      
                       {/* Tag slug column */}
-                      <td className="px-3 py-3 text-slate-300">{tag.slug}</td>
+                      <TableCell>
+                        <span className="text-slate-300">{tag.slug}</span>
+                      </TableCell>
+                      
                       {/* Tag description column */}
-                      <td className="px-3 py-3 text-slate-300">
-                        <div className="max-w-xs truncate">
+                      <TableCell>
+                        <div className="max-w-xs truncate text-slate-300">
                           {tag.description || "توضیحی ندارد"}
                         </div>
-                      </td>
+                      </TableCell>
+                      
                       {/* Action buttons column */}
-                      <td className="px-3 py-3">
-                        <div className="flex items-center gap-2">
+                      <TableCell>
+                        <div className="flex items-center gap-1">
                           {/* Edit button */}
                           <Button
-
                             onClick={() => onEdit(tag._id)}
                             size="sm"
-
-                            className="rounded-lg bg-white/5 px-2 py-1 hover:bg-white/10 text-xs flex items-center gap-1"
+                            variant="shadow"
+                            color="default"
+                            className="text-[11px] rounded-[2px] w-auto h-[20px] flex items-center gap-1"
                           >
                             <FiEdit className="w-3 h-3" />
                             ویرایش
                           </Button>
+                          
                           {/* Delete button with loading state */}
                           <Button
                             onClick={() => onDelete(tag._id)}
                             size="sm"
-
+                            variant="shadow"
+                            color="danger"
                             disabled={activeDeletingId === tag._id}
-                            className="rounded-lg bg-white/5 px-2 py-1 hover:bg-white/10 text-xs text-rose-300 flex items-center gap-1 disabled:opacity-50"
+                            className="text-[11px] w-auto h-[20px] rounded-[2px] disabled:opacity-50 flex items-center gap-1"
                           >
                             {/* Show spinner when deleting, otherwise show trash icon */}
                             {activeDeletingId === tag._id ? (
@@ -132,14 +139,14 @@ const TagsTable = ({
                             ) : (
                               <FiTrash2 className="w-3 h-3" />
                             )}
-                            حذف
+                            <span className="whitespace-nowrap">حذف</span>
                           </Button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
