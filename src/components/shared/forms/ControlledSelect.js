@@ -32,8 +32,11 @@ const ControlledSelect = ({
           label={label}
           placeholder={placeholder}
           variant={variant}
-          onChange={(e) => {
-            field.onChange(e);
+          isClearable
+          selectedKeys={field.value ? [field.value] : []}
+          onSelectionChange={(keys) => {
+            const selectedKey = Array.from(keys)[0];
+            field.onChange(selectedKey);
           }}
         >
           {options.map((option) => (

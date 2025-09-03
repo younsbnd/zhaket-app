@@ -13,6 +13,7 @@ const ControlledSwitch = ({
   size = "md",
   variant = "bordered",
   color = "success",
+  labelClassName,
   ...rest
 }) => {
   return (
@@ -32,7 +33,7 @@ const ControlledSwitch = ({
           isSelected={value}
           onValueChange={onChange}
         >
-          {label}
+          <p className={`text-sm  ${labelClassName}`}>{label}</p>
         </Switch>
       )}
     />
