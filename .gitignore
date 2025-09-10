@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ignore all files in the secure_uploads folder
+secure_uploads/
