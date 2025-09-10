@@ -10,8 +10,10 @@ import {
   TableRow,
 } from "@heroui/react";
 import Link from "next/link";
+import AdminTableSkeleton from "../skeletons/admin/AdminTableSkeleton";
 
 const AdminTable = ({
+  isLoading,
   // Data props
   data = [],
   columns = [],
@@ -30,11 +32,16 @@ const AdminTable = ({
   // Table props
   emptyMessage = "داده‌ای وجود ندارد",
   tableId = "admin-table",
+  isActions = true,
 }) => {
   const handleDelete = (id) => {
     setDeleteId(id);
     onDelete();
   };
+
+  if (isLoading) {
+    return <AdminTableSkeleton />;
+  }
 
   return (
     <div className="glass rounded-2xl p-5">
@@ -70,7 +77,7 @@ const AdminTable = ({
             {columns.map((column, index) => (
               <TableColumn key={index}>{column.header}</TableColumn>
             ))}
-            <TableColumn>اقدامات</TableColumn>
+            {<TableColumn>اقدامات</TableColumn>}
           </TableHeader>
 
           {/* Table Body with no data */}
@@ -93,34 +100,36 @@ const AdminTable = ({
                 ))}
 
                 {/* Actions Column */}
-                <TableCell>
-                  <div className="flex items-center gap-1">
-                    {editLinkPrefix && (
+                {
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      {editLinkPrefix && (
+                        <Button
+                          size="sm"
+                          variant="shadow"
+                          color="default"
+                          className="text-[15px] rounded-[2px]"
+                          as={Link}
+                          href={`${editLinkPrefix}/${item._id}`}
+                        >
+                          ویرایش
+                        </Button>
+                      )}
+
                       <Button
                         size="sm"
                         variant="shadow"
-                        color="default"
-                        className="text-[15px] rounded-[2px]"
-                        as={Link}
-                        href={`${editLinkPrefix}/${item._id}`}
+                        color="danger"
+                        className="text-sm rounded-[2px]"
+                        onPress={() => handleDelete(item._id)}
+                        isLoading={isLoadingDelete && deleteId === item._id}
+                        isDisabled={isLoadingDelete}
                       >
-                        ویرایش
+                        <span className="whitespace-nowrap">حذف</span>
                       </Button>
-                    )}
-
-                    <Button
-                      size="sm"
-                      variant="shadow"
-                      color="danger"
-                      className="text-sm rounded-[2px]"
-                      onPress={() => handleDelete(item._id)}
-                      isLoading={isLoadingDelete && deleteId === item._id}
-                      isDisabled={isLoadingDelete}
-                    >
-                      <span className="whitespace-nowrap">حذف</span>
-                    </Button>
-                  </div>
-                </TableCell>
+                    </div>
+                  </TableCell>
+                }
               </TableRow>
             ))}
           </TableBody>

@@ -1,4 +1,4 @@
-import { BiCategory, BiHomeAlt2, BiTag, BiUser } from "react-icons/bi";
+import { BiCategory, BiFile, BiHomeAlt2, BiTag, BiUser } from "react-icons/bi";
 import { AiFillProduct } from "react-icons/ai";
 
 // admin navigation links for sidebar and mobile menu
@@ -36,6 +36,13 @@ export const ADMIN_NAVIGATIONS = [
     path: "/admin/products",
     icon: (
       <AiFillProduct className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
+    ),
+  },
+  {
+    name: "فایل ها",
+    path: "/admin/files",
+    icon: (
+      <BiFile className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
     ),
   },
 ];
