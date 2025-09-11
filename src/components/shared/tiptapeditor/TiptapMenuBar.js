@@ -199,18 +199,18 @@ export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEd
   }, [open]);
 
   return (
-    <div className="relative border-b bg-gray-50/90 backdrop-blur supports-[backdrop-filter]:bg-gray-50/60 dark:bg-default-100/60">
+    <div className="relative border-b border-slate-600 bg-slate-700">
       {/* Toolbar header */}
       <div className="flex items-center justify-between px-3 py-2">
-        <span className="text-sm font-medium">{title}</span>
+        <span className="text-sm font-medium text-slate-100">{title}</span>
         {/* Mobile toggle button */}
-        <Button size="sm" radius="sm" variant="flat" className="sm:hidden" onClick={() => setOpen(v => !v)}>
-          {open ? "Hide menu" : "Show menu"}
+        <Button size="sm" radius="sm" variant="flat" className="sm:hidden bg-slate-700 text-slate-100" onClick={() => setOpen(v => !v)}>
+          {open ? "پنهان کردن منو" : "نمایش منو"}
         </Button>
       </div>
 
       {/* Desktop toolbar */}
-      <div className="hidden border-t px-3 py-2 sm:block">
+      <div className="hidden border-t border-slate-500 px-3 py-2 sm:block">
         <ToolbarContent
           editor={editor}
           onAddOrEditLink={onAddOrEditLink}
@@ -225,7 +225,7 @@ export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEd
       {open && (
         <div
           ref={panelRef}
-          className="absolute left-3 right-3 top-12 z-20 origin-top rounded-md border bg-white p-2 shadow-xl ring-1 ring-black/5 transition-all dark:border-default-200 dark:bg-content1 sm:hidden"
+          className="absolute left-3 right-3 top-12 z-20 origin-top rounded-md border border-slate-500 bg-slate-700 p-2 shadow-xl transition-all sm:hidden"
         >
           <ToolbarContent
             editor={editor}

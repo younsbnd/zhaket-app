@@ -31,7 +31,16 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
   const { value = "", editable = true, className = "", linkOptions = {}, menuTitle = "Editor Menu", onChangeHtml, onChangeBlocks } = props;
 
   const extensions = useMemo(() => [
-    StarterKit.configure({ heading: { levels: [1,2,3] }, italic: false, strike: false, code: false, codeBlock: false, blockquote: false, horizontalRule: false }),
+    StarterKit.configure({ 
+      heading: { levels: [1,2,3] }, 
+      italic: false, 
+      strike: false, 
+      code: false, 
+      codeBlock: false, 
+      blockquote: false, 
+      horizontalRule: false,
+      link: false // Exclude link from StarterKit to avoid duplicate
+    }),
     Link.configure({ openOnClick: linkOptions.openOnClick ?? true, autolink: linkOptions.autolink ?? true, linkOnPaste: linkOptions.linkOnPaste ?? true, validate: href => urlAllowed(href, linkOptions.validate) }),
     Image.configure({}),
     TextAlign.configure({ types: ["heading", "paragraph"] })
@@ -46,7 +55,7 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
     editable,
     immediatelyRender: false,
     editorProps: {
-      attributes: { class: "prose max-w-full text-sm sm:text-base focus:outline-none dark:prose-invert", dir: "auto" },
+      attributes: { class: "prose max-w-none text-sm sm:text-base focus:outline-none prose-invert text-slate-100", dir: "rtl" },
       transformPastedHTML: stripEmptyTags,
       handlePaste: (_v, e) => {
         const files = e.clipboardData?.files;
@@ -102,22 +111,20 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
   if (!editor) return null;
 
   return (
-    <Card shadow="sm" className={`border w-full max-w-[700px] bg-white dark:bg-content1 dark:border-default-200 ${className}`}>
-      <CardBody className="p-0">
-        <TiptapMenuBar
-          title={menuTitle}
-          editor={editor}
-          headingLevel={headingLevel}
-          onAddOrEditLink={handleAddOrEditLink}
-          onInsertImage={handleInsertImage}
-        />
-        <div className="p-1">
-          <div className="min-h-[161px] sm:min-h-[192px] max-h-[420px] overflow-auto rounded-md border bg-white p-2 dark:bg-content1">
-            <EditorContent editor={editor} className="text-sm sm:text-base" />
-          </div>
+    <div className={`w-full border border-slate-600 rounded-md bg-slate-700 ${className}`}>
+      <TiptapMenuBar
+        title={menuTitle}
+        editor={editor}
+        headingLevel={headingLevel}
+        onAddOrEditLink={handleAddOrEditLink}
+        onInsertImage={handleInsertImage}
+      />
+      <div className="p-2">
+        <div className="min-h-[161px] sm:min-h-[192px] max-h-[420px] overflow-auto rounded-md border border-slate-600 bg-slate-800 p-3">
+          <EditorContent editor={editor} className="text-sm sm:text-base text-slate-100 prose prose-invert max-w-none" />
         </div>
-      </CardBody>
-    </Card>
+      </div>
+    </div>
   );
 });
 
