@@ -59,7 +59,7 @@ export default function Header() {
 
           {/* Navigation Menu with dropdowns for Academy and Service */}
           <nav className="hidden md:flex lg:flex items-center gap-[25px] xl:gap-[35px]">
-            {/* Categories Dropdown (unchanged) */}
+            {/* Categories Dropdown */}
             <div
               onMouseEnter={() => setIsPopoverOpen(true)}
               onMouseLeave={() => setIsPopoverOpen(false)}
