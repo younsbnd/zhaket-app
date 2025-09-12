@@ -6,13 +6,10 @@ import Link from "next/link";
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@heroui/react";
 import { TbCategory } from "react-icons/tb";
 import { FaChevronDown, FaUser } from "react-icons/fa";
- 
- 
+
 import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { useSession } from "next-auth/react";
- 
- 
 
 import { MAIN_TABS, POPULAR_PLUGINS, POPULAR_THEMES, TAB_CONTENT } from "@/constants/header/mainMenuData";
 
@@ -24,8 +21,6 @@ import AuthButton from "./MenuDrawer/AuthButton";
 
 import HeaderSkeletons from "@/components/skeletons/layout/header/HeaderSkeletons";
 import CascadingMenu from "./CascadingMenu";
- 
-
 
 /**
  * Desktop and mobile header component
@@ -96,8 +91,8 @@ export default function Header() {
                             <div
                               onMouseEnter={() => setActiveTab(tab.id)}
                               className={`flex items-center gap-3 px-[15px] xl:px-[19px] py-3 xl:py-4 rounded-md cursor-pointer transition ${activeTab === tab.id
-                                  ? "bg-white shadow-sm text-[#FF9606]"
-                                  : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
+                                ? "bg-white shadow-sm text-[#FF9606]"
+                                : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
                                 }`}
                             >
                               {tab.icon}
@@ -131,12 +126,6 @@ export default function Header() {
             <CascadingMenu
               label="ژاکت آکادمی"
               items={[
-                { label: "دوره طراحی سایت", href: "https://academy.zhaket.com/webdesign/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "follow" },
-                { label: "دوره سئو کاربردی", href: "https://academy.zhaket.com/seo/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "follow" },
-                { label: "دوره تولید محتوا", href: "https://academy.zhaket.com/product/content-writing/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "nofollow" },
-                { label: "دوره اینستاگرام", href: "https://academy.zhaket.com/product/instagram-marketing/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "follow" },
-                { label: "دوره آنالیتیکس GA4", href: "https://academy.zhaket.com/product/google-analytics/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "nofollow" },
-                { label: "بازاریابی برای فروشگاه‌های اینترنتی", href: "https://academy.zhaket.com/product/get-started-digital-marketing/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound&utm_content=14010216" },
                 { label: "سئو بعداز راه‌اندازی سایت", href: "https://academy.zhaket.com/product/essential-seo-actions-after-launching-site/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound&utm_content=14010216", rel: "nofollow" },
                 { label: "افزایش سرعت (رایگان)", href: "https://academy.zhaket.com/product/webinar-website-optimization/?utm_source=zhaket&utm_medium=navmenu&utm_campaign=inbound", rel: "nofollow" },
               ]}
