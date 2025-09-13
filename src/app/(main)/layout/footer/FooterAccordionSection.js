@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HiChevronDown } from "react-icons/hi";
-import { FaInstagram, FaLinkedin, FaTelegramPlane } from "react-icons/fa";
+ 
 
 
 // Accordion component for mobile footer links

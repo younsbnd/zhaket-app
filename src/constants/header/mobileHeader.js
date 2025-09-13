@@ -73,7 +73,7 @@ export const TAB_CONTENT = {
   "wordpress-themes": [
     [{ label: "قالب وردپرس", href: "/web/category/wordpress-themes" }],
     [{ label: "قالب آموزشی وردپرس", href: "/web/category/education" }],
-    [{ label: "قالب وبلاگ", href: "/web/tag/weblog-wordpress-theme" }]
+
   ],
   "wordpress-plugins": [
     [{ label: "افزونه فروشگاهی", href: "/plugins/shop" }],

@@ -2,15 +2,13 @@
 
 import React, { useState } from "react";
 import { FcExpand, FcNext } from "react-icons/fc";
-import { AiOutlineHeart } from "react-icons/ai";
-import { BiPlug } from "react-icons/bi";
-import { IoCodeSlashOutline, IoSearchOutline } from "react-icons/io5";
+import { AiOutlineClose} from "react-icons/ai";
 import Image from "next/image";
 import Link from "next/link";
-import { POPULAR_PLUGINS, POPULAR_THEMES } from "@/constants/header/mainMenuData";
+import { POPULAR_PLUGINS, POPULAR_THEMES, TAB_CONTENT } from "@/constants/header/mainMenuData";
 import { mainTabs } from "@/constants/header/mobileMenuData";
 
- 
+
 
 export default function MobileMenuSidebar({ isOpen, onClose }) {
   const [openAccordions, setOpenAccordions] = useState({});
@@ -27,7 +25,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
   const renderAccordionContent = (tabId) => {
     if (tabId === "most-popular") {
       return (
-        <div className="px-4 py-3 bg-white rounded-md mt-2 shadow-sm">
+        <div className="px-2 py-3 bg-white rounded-md mt-2 shadow-sm">
           <div className="grid grid-cols-1 gap-4">
             {/* Popular themes section */}
             <div>
@@ -113,8 +111,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
 
       {/* Mobile menu sidebar */}
       <div
-        className={`fixed top-0 right-0 z-30 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
+        className={`fixed top-0 right-0 z-30 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} md:hidden`}
       >
         {/* Mobile menu header with logo and close button */}
         <div className="flex items-center justify-between rounded-md px-[20px]">
@@ -131,38 +128,18 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
 
           <button
             data-cy="menu-close-button"
-            className="font-semibold cursor-pointer flex items-center justify-center gap-[10px] rounded-lg text-white transition duration-300 focus:outline-hidden focus:outline-0 px-4 py-3 text-xs hover:bg-secondary/80 h-[33px] w-[33px] bg-[#F7F8F9]"
             type="button"
-            onClick={onClose}
             aria-label="Close mobile menu"
+            onClick={onClose}
+            className="cursor-pointer flex items-center justify-center rounded-lg 
+             bg-[#F7F8F9] text-[#5B5C60] hover:bg-[#EDEEEF] 
+             transition duration-300 px-2 py-2 h-[33px] w-[33px]"
           >
-            <svg
-              stroke="currentColor"
-              fill="currentColor"
-              strokeWidth="0"
-              viewBox="0 0 512 512"
-              color="#878F9B"
-              height="20"
-              className=""
-              width="20"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="m289.94 256 95-95A24 24 0 0 0 351 127l-95 95-95-95a24 24 0 0 0-34 34l95 95-95 95a24 24 0 1 0 34 34l95-95 95 95a24 24 0 0 0 34-34z" />
-            </svg>
+            <AiOutlineClose size={18} />
           </button>
         </div>
 
-        {/* Search bar inside mobile menu */}
-        <div className="mt-4 px-[21px]">
-          <div className="flex items-center rounded-md bg-[#F9FAFC] px-4 h-12 w-full">
-            <input
-              className="flex-1 bg-transparent text-sm text-[#76767C] outline-none"
-              placeholder="جستجو در ژاکت"
-              type="search"
-            />
-            <IoSearchOutline className="cursor-pointer" color="#878F9B" size={24} />
-          </div>
-        </div>
+
 
         {/* Mobile menu categories with accordion functionality */}
         <div className="mt-6 flex w-full flex-col gap-[15px] rounded-[10px] bg-[#F9FAFC] p-2 px-[21px] py-[28px]" data-cy="menu-container">

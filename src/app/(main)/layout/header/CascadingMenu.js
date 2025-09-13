@@ -45,7 +45,7 @@ export default function CascadingMenu({ label, items, highlightColor = 'text-[#F
       </div>
       {/* Dropdown Menu */}
       <div
-        className={`flex absolute right-0 top-10 z-50 w-[300px] items-start justify-start rounded-[10px] bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] transition-all duration-200 ease-in-out ${open ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
+        className={`flex absolute right-0 top-10 z-50 w-[300px] items-start justify-start rounded-[10px] bg-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] transition-all duration-200 ease-in-out hidden lg:block ${open ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
       >
         <div className="rounded-[10px] w-full p-0">
           <ul>

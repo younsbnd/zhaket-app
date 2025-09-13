@@ -2,92 +2,93 @@
 
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { CiMenuBurger } from "react-icons/ci";
-import { BiUser } from "react-icons/bi";
-import { FiShoppingCart } from "react-icons/fi";
 import { IoSearchOutline } from "react-icons/io5";
 import Image from "next/image";
 import Link from "next/link";
-import { Popover, PopoverTrigger } from "@heroui/react";
 import MobileMenuSidebar from "./MobileMenuSidebar";
 import UserProfileDropdown from "./MobileUserProfile";
 import AuthButton from "./AuthButton";
- 
- 
+import SearchModal from "../searchbox/Searchbox";
+import { AiOutlineMenu } from "react-icons/ai";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { MdOutlineShoppingCart } from "react-icons/md";
 
 
 export default function MobileHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false); // <-- New state for modal
   const { data: session, status } = useSession();
 
-  // Close mobile menu handler
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   return (
     <>
-      {/* Mobile Header - visible only on mobile devices */}
+      {/* Mobile Header */}
       <header className="flex items-center top-0 z-60 justify-between px-4 pb-4 pt-6 md:hidden bg-white">
         <div className="flex items-center gap-5">
-          {/* Hamburger menu button - increased icon size for better accessibility and visual clarity */}
+          {/* Hamburger */}
           <button
-            data-cy="mobile-menu-button"
-            className="font-semibold cursor-pointer flex items-center justify-center gap-[10px] rounded-lg text-white transition duration-300 focus:outline-hidden focus:outline-0 px-4 py-3 text-xs hover:bg-secondary/80 h-12 w-12 bg-white shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)]"
-            type="button"
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label="Open mobile menu"
+            className="flex justify-center items-center h-10 w-10 rounded-lg bg-white shadow-md"
           >
-            {/* Increased from text-2xl to text-3xl for larger hamburger icon */}
-            <CiMenuBurger className="text-[#EB8800] text-3xl" />
+            <AiOutlineMenu className="text-[#EB8800] text-2xl" />
           </button>
 
           {/* Logo */}
           <Link href="/" aria-label="Go to homepage">
             <Image
-              alt="ژاکت"
-              width={60}
-              height={43}
-              className="min-h-[39px] min-w-[55px]"
               src="/images/logo.svg"
+              alt="Zhaket"
+              width={50}
+              height={35}
+              className="min-h-[39px] min-w-[55px]"
               priority
             />
           </Link>
         </div>
 
-        {/* Right side controls - cart and user auth */}
+        {/* Right Controls */}
         <div className="flex items-center gap-2">
-          {/* Shopping cart button - uses react-icons/fi for the cart icon, with Tailwind and hover effect */}
+          {/* Search Icon (opens modal) */}
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            aria-label="Search"
+            className="flex justify-center items-center h-10 w-10 rounded-lg bg-white shadow-md hover:bg-[#FFF5E6]"
+          >
+            <IoSearchOutline className="text-[#878F9B]" size={20} />
+          </button>
+          {/* Shopping Cart */}
           <Popover placement="bottom-end">
             <PopoverTrigger>
               <button
-                data-cy="data-cy-cart-button"
-                className="outline-hidden group ui-open:bg-[#FFF5E6] relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border-0 bg-white shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)] transition duration-300 hover:bg-[#FFF5E6] md:h-12 md:w-12 md:bg-[#F9FAFC] md:shadow-none"
+                className="h-[40px] w-[54px] flex justify-center items-center rounded-lg hover:bg-[#fef6e8] bg-white shadow-sm"
                 aria-label="Cart"
-                type="button"
               >
-                {/* Cart icon from react-icons/fi, with color and hover effect */}
-                <FiShoppingCart className="ui-open:text-[#FF9606] text-[#878F9B] transition duration-300 group-hover:text-[#FF9606]" size={20} />
+                <MdOutlineShoppingCart
+                  size={20}
+                  className="text-[#878F9B] hover:text-[#efd8b4]"
+                />
               </button>
             </PopoverTrigger>
+            <PopoverContent className="p-4">
+              سبد خرید خالی است
+            </PopoverContent>
           </Popover>
-
-          {/* User authentication section */}
+          {/* Auth */}
           {status === "authenticated" ? (
-            <UserProfileDropdown
-              session={session}
-              onMenuClose={closeMobileMenu}
-            />
+            <UserProfileDropdown session={session} onMenuClose={closeMobileMenu} />
           ) : (
-            // Use the AuthButton component for login/register
             <AuthButton />
           )}
         </div>
       </header>
 
       {/* Mobile Menu Sidebar */}
-      <MobileMenuSidebar
-        isOpen={isMobileMenuOpen}
-        onClose={closeMobileMenu}
-      />
+      <MobileMenuSidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }

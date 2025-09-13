@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { FaInstagram, FaLinkedin, FaTelegramPlane } from "react-icons/fa";
+ 
 
 
 
@@ -35,7 +35,7 @@ export default function FooterAboutSection({ socials }) {
             <p className="transition duration-300 text-sm leading-7 font-medium text-[#5D6877] text-center md:text-right">
               مرجع وردپرس فارسی و رهبر بازار اولین پلتفرم ارائه دهنده خدمات و محصولات دیجیتال در ایران که با گردهم آوری منابع انسانی توانمند و برجسته بدنبال خلق ارزش برای ذینفعان خود می باشد. ژاکت دارای 6 فاز توسعه در سمت محصول با تیم قدرتمند فنی و تیم کارکشته و با تجربه بازاریابی برای افزایش سهم بازار حداکثری خود است.
             </p>
-            <Link href="https://trustseal.enamad.ir/?id=53151&Code=hsRG8VHtoayAfhStqcfA" target="_blank" rel="noopener noreferrer">
+            <Link className="flex" href=" " target="_blank" rel="noopener noreferrer">
               {/* E-namad trust seal image: always set both width and height, and use style to maintain aspect ratio if CSS changes one */}
               <Image
                 alt="E-namad trust seal"

@@ -31,7 +31,7 @@ export default function Footer() {
   return (
     <>
       {/* Main footer wrapper */}
-  <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 *:w-full md:px-0 md:pt-0">
+      <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 *:w-full md:px-0 md:pt-0">
         {/* Mobile social section (pixel-perfect, matches provided HTML) */}
         <div className="flex items-center w-full justify-between pt-10 md:hidden" data-cy="data-cy-footer-social_media">
           {/* Logo section */}
