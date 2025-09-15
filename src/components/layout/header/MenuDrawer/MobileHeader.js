@@ -41,8 +41,8 @@ export default function MobileHeader() {
               src="/images/logo.svg"
               alt="Zhaket"
               width={50}
-              height={35}
-              className="min-h-[39px] min-w-[55px]"
+              height={50}
+              className="min-h-[39px] min-w-[55px] object-contain"
               priority
             />
           </Link>

@@ -1,29 +1,13 @@
 "use client";
 import React from "react";
 import Link from "next/link";
- 
-
-
-
-
-
 import Image from "next/image";
-
-
-
-
 /**
  * FooterAboutSection component
  * Renders the about section with e-namad trust seal and social icons.
  * Uses next/image for all images and next/link for all links.
  */
 export default function FooterAboutSection({ socials }) {
-  // Dropdown menu items for Zhaket Academy
-
-
-
-
-
   return (
     <>
       {/* About us section with e-namad trust seal and dropdown menus */}
@@ -36,7 +20,7 @@ export default function FooterAboutSection({ socials }) {
               مرجع وردپرس فارسی و رهبر بازار اولین پلتفرم ارائه دهنده خدمات و محصولات دیجیتال در ایران که با گردهم آوری منابع انسانی توانمند و برجسته بدنبال خلق ارزش برای ذینفعان خود می باشد. ژاکت دارای 6 فاز توسعه در سمت محصول با تیم قدرتمند فنی و تیم کارکشته و با تجربه بازاریابی برای افزایش سهم بازار حداکثری خود است.
             </p>
             <Link className="flex" href=" " target="_blank" rel="noopener noreferrer">
-              {/* E-namad trust seal image: always set both width and height, and use style to maintain aspect ratio if CSS changes one */}
+              {/* E-namad trust seal image: always set both width and height, and use style to divtain aspect ratio if CSS changes one */}
               <Image
                 alt="E-namad trust seal"
                 src="/images/footer/download.jpg"

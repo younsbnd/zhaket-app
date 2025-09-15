@@ -63,24 +63,30 @@ export default function MostPopularSection({ POPULAR_THEMES, POPULAR_PLUGINS }) 
       {/* Advertisement banners */}
       <div className="hidden lg:flex flex-col gap-3 max-w-[260px]">
         <Link href="">
-          <Image
-            alt="ad1"
-            src="/images/header/67723f16966cc82e97038df3.png"
-            width={260}
-            height={200}
-            className="rounded-[10px]"
-          />
+          <div className="relative w-[260px] h-[200px]">
+            <Image
+              alt="ad1"
+              src="/images/header/67723f16966cc82e97038df3.png"
+              fill
+              sizes="240px"
+              className="object-cover  "
+            />
+          </div>
         </Link>
         <Link href="">
-          <Image
-            alt="ad2"
-            src="/images/header/67724097e0240bc7cb0377a3.png"
-            width={260}
-            height={200}
-            className="rounded-[10px]"
-          />
+          <div className="relative w-[260px] h-[200px]">
+            <Image
+              alt="ad2"
+              src="/images/header/67724097e0240bc7cb0377a3.png"
+              fill
+              sizes="200px"
+              className="object-cover"
+            />
+          </div>
         </Link>
+
       </div>
+
     </div>
   );
 }

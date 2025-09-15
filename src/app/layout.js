@@ -4,8 +4,9 @@ import "./globals.css";
 import { HeroProviders } from "@/components/providers/heroProviders";
 import ToastHeroProvider from "@/components/providers/ToastHeroProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
-import Header from "./(main)/layout/header/header";
-import Footer from "./(main)/layout/footer/footer";
+import Header from "@/components/layout/header/header";
+import Footer from "@/components/layout/footer/footer";
+ 
 
 export default function RootLayout({ children }) {
   return (

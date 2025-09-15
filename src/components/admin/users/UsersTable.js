@@ -4,22 +4,11 @@ import React from "react";
 import { Chip } from "@heroui/react";
 import { FiUser, FiAlertTriangle } from "react-icons/fi";
 import AdminTable from "@/components/shared/AdminTable";
- 
- 
+
 /**
  * UsersTable component
- * Displays a list of users with details and action buttons using AdminTable structure
- *
- * @param {Object} props - Component props
- * @param {Array} props.users - List of user objects
- * @param {boolean} props.isFetching - Indicates if data is currently loading
- * @param {string|null} props.fetchError - Error message for loading users
- * @param {string|null} props.activeDeletingId - ID of the user currently being deleted
- * @param {string|null} props.deleteError - Error message for deleting user
- * @param {Function} props.onCreate - Callback to create a new user
- * @param {Function} props.onEdit - Callback to edit a user
- * @param {Function} props.onDelete - Callback to delete a user
- * @param {Function} props.setDeleteId - Function to set the ID of user being deleted
+ * Displays a list of users using the central AdminTable component
+ * Includes error messages, empty state, and predefined table columns
  */
 const UsersTable = ({
   users,
@@ -32,11 +21,15 @@ const UsersTable = ({
   onDelete,
   setDeleteId,
 }) => {
+  // Ensure we have a valid data array
   const userList = users?.data || [];
 
   /**
-   * Define table columns configuration
-   * Each column defines how to display user data
+   * Table columns configuration
+   * Each column contains:
+   * - header: Display title for the table header
+   * - key: Fallback property to display when no render method is defined
+   * - render: Custom render function to return JSX for each cell
    */
   const columns = [
     {
@@ -44,27 +37,25 @@ const UsersTable = ({
       key: "fullName",
       render: (user) => (
         <div className="flex items-center gap-5">
+          {/* Avatar container */}
           <div className="size-12 rounded-lg bg-blue-500/15 flex items-center justify-center">
             <FiUser className="text-blue-400 w-6 h-6" />
           </div>
-          <div>
-            <div className="font-medium text-white text-[15px]">{user.fullName}</div>
-          </div>
+
+          {/* Full name */}
+          <div className="font-medium text-white text-[15px]">{user.fullName}</div>
         </div>
       ),
     },
     {
-      header: "ایمیل",
-      key: "email",
+      header: "اطلاعات تماس",
+      key: "contact",
       render: (user) => (
-        <span className="text-slate-300 text-[14px]">{user.email || "-"}</span>
-      ),
-    },
-    {
-      header: "شماره موبایل",
-      key: "phoneNumber",
-      render: (user) => (
-        <span className="text-slate-300 text-[14px]">{user.phoneNumber || "-"}</span>
+        <span className="text-slate-300 text-[14px]">
+          {user.email && user.phoneNumber
+            ? `${user.email} / ${user.phoneNumber}`
+            : user.email || user.phoneNumber || "-"}
+        </span>
       ),
     },
     {
@@ -76,14 +67,18 @@ const UsersTable = ({
           color={user.role === "user" ? "success" : "primary"}
           className="capitalize font-semibold"
         >
-          {user.role === "admin" ? "ادمین" : user.role === "user" ? "کاربر عادی" : "نامشخص"}
+          {user.role === "admin"
+            ? "ادمین"
+            : user.role === "user"
+              ? "کاربر عادی"
+              : "نامشخص"}
         </Chip>
       ),
     },
   ];
 
   /**
-   * Custom empty state message for when no users exist
+   * Custom empty state to show when there is no data
    */
   const emptyMessage = (
     <div className="text-center text-slate-400 py-12">
@@ -95,12 +90,8 @@ const UsersTable = ({
 
   return (
     <div className="text-slate-100 min-h-screen selection:bg-blue-600/30">
-      {/* Background layers for styling */}
-      <div className="fixed inset-0 -z-20 bg-cover bg-center" />
-      <div className="fixed inset-0 -z-10" />
-
-      <main className="mx-auto w-full max-w-7xl px-6 py-10">
-        {/* Page Header */}
+      <div className="mx-auto w-full max-w-7xl px-6 py-10">
+        {/* Page heading */}
         <div className="mb-10">
           <h2 className="text-3xl font-bold flex items-center gap-4">
             <FiUser className="text-blue-400 w-7 h-7" />
@@ -108,45 +99,42 @@ const UsersTable = ({
           </h2>
         </div>
 
-        {/* Error Messages */}
-        {/* Display fetch error if data loading failed */}
+        {/* Fetch error message */}
         {fetchError && (
           <div className="flex items-center gap-4 p-5 bg-red-500/10 border border-red-400/40 rounded-lg text-red-400 mb-8">
             <FiAlertTriangle className="w-7 h-7 shrink-0" />
-            <span className="text-[15px]">خطا در بارگذاری کاربران: {fetchError}</span>
+            <span className="text-[15px]">
+              خطا در بارگذاری کاربران: {fetchError}
+            </span>
           </div>
         )}
 
-        {/* Display delete error if user deletion failed */}
+        {/* Delete error message */}
         {deleteError && (
           <div className="flex items-center gap-4 p-5 bg-red-500/10 border border-red-400/40 rounded-lg text-red-400 mb-8">
             <FiAlertTriangle className="w-7 h-7 shrink-0" />
-            <span className="text-[15px]">خطا در حذف کاربر: {deleteError}</span>
+            <span className="text-[15px]">
+              خطا در حذف کاربر: {deleteError}
+            </span>
           </div>
         )}
 
-        {/* Users Table using AdminTable component */}
+        {/* Centralized AdminTable */}
         <AdminTable
-          // Data configuration
+          isLoading={isFetching}
           data={userList}
           columns={columns}
-          
-          // Create button configuration
           createLink="/admin/users/create"
           createButtonText="کاربر جدید"
-          
-          // Edit/Delete configuration
-          editLinkPrefix="/admin/users/"
+          editLinkPrefix="/admin/users/edite"
           onDelete={onDelete}
           deleteId={activeDeletingId}
           setDeleteId={setDeleteId}
           isLoadingDelete={isFetching}
-          
-          // Table customization
           emptyMessage={emptyMessage}
           tableId="users-table"
         />
-      </main>
+      </div>
     </div>
   );
 };

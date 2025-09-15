@@ -1,4 +1,5 @@
-import EditUserLogic from '@/components/admin/users/[id]/EditUserLogic';
+ 
+import EditUserLogic from '@/components/admin/users/edite/EditUserLogic';
 import React from 'react';
 
 const page = () => {
@@ -6,7 +7,7 @@ const page = () => {
         <div>
             <EditUserLogic/>
         </div>
-    );
+    );k
 };
 
 export default page;

@@ -26,7 +26,7 @@ const UsersTableSkeleton = () => {
       <div className="fixed inset-0 -z-20 bg-cover bg-center" />
       <div className="fixed inset-0 -z-10" />
 
-      <main className="mx-auto w-full max-w-7xl px-6 py-10">
+      <div className="mx-auto w-full max-w-7xl px-6 py-10">
         <div className="glass rounded-2xl p-6">
           {/* Header skeleton */}
           <div className="flex items-center justify-between mb-10">
@@ -104,7 +104,7 @@ const UsersTableSkeleton = () => {
             </Table>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

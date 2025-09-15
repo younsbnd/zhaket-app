@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
 // Table and CRUD utilities
-
 import { useCrud } from "@/hooks/useCrud";
 import { fetcher } from "@/lib/api/fetcher";
 import { logger } from "@/lib/utils/logger";
 import UsersTable from "../UsersTable";
-import UsersTableSkeleton from "@/components/skeletons/users/UsersTableSkeleton";
 
 /**
  * UsersManagement component
@@ -28,6 +26,9 @@ export default function UsersManagement() {
     mutate
   } = useSWR("/api/admin/users", fetcher);
 
+  // Debug: Log the API response structure
+
+
   // CRUD helper hook
   const { deleteRecord, error: deleteError } = useCrud("/admin/users");
 
@@ -41,7 +42,7 @@ export default function UsersManagement() {
     try {
       setActiveDeletingId(id);
       await deleteRecord(id);
-      mutate();
+      mutate(); // Refresh data after successful deletion
     } catch (err) {
       logger.error("User deletion error:", err);
     } finally {
@@ -54,11 +55,9 @@ export default function UsersManagement() {
    * @param {string} id - User ID
    */
   const handleEdit = (id) => {
-    router.push(`/admin/users/${id}`);
+    router.push(`/admin/users/edit/${id}`); // Fixed: edite → edit
   };
-if (isFetching) {
-  return <UsersTableSkeleton />;
-}
+
   /**
    * Navigate to create new user page
    */
@@ -66,17 +65,18 @@ if (isFetching) {
     router.push("/admin/users/create");
   };
 
-  // Render table component
+  // Render table component with all required props
   return (
     <UsersTable
       users={users}
       isFetching={isFetching}
-      fetchError={fetchError}
+      fetchError={fetchError?.message || fetchError}
       activeDeletingId={activeDeletingId}
       deleteError={deleteError}
       onCreate={handleCreate}
       onEdit={handleEdit}
       onDelete={handleDelete}
+      setDeleteId={setActiveDeletingId} // Added missing prop
     />
   );
 }

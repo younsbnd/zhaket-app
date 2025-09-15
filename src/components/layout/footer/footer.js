@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 
-import FooterAboutSection from "./FooterAboutSection";
-import { footerLinks, socials } from "@/constants/footer/FooterConfig";
-import FooterDesktopSection from "./FooterDesktopSection";
-import FooterAccordionSection from "./FooterAccordionSection";
+ 
 import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaTelegramPlane, FaTimes } from "react-icons/fa";
+import FooterAboutSection from "./FooterAboutSection";
+import { footerLinks, socials } from "@/constants/footer/FooterConfig";
+import FooterAccordionSection from "./FooterAccordionSection";
 import FooterSkeleton from "@/components/skeletons/layout/footer/FooterSkleton";
-
-
+import FooterDesktopSection from "./FooterDesktopSection";
+ 
 export default function Footer() {
   // State to control the floating rating panel visibility
   const [showRatingPanel, setShowRatingPanel] = useState(false);
@@ -30,20 +30,20 @@ export default function Footer() {
 
   return (
     <>
-      {/* Main footer wrapper */}
+      {/* div footer wrapper */}
       <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 *:w-full md:px-0 md:pt-0">
         {/* Mobile social section (pixel-perfect, matches provided HTML) */}
         <div className="flex items-center w-full justify-between pt-10 md:hidden" data-cy="data-cy-footer-social_media">
           {/* Logo section */}
           <Link href="/">
             <Image
-              alt="ژاکت"
-              width={60}
-              height={43}
-              className="min-h-[39px] min-w-[55px]"
-              src="/images/logo.svg"
-              priority
-            />
+    alt="ژاکت"
+    width={60}
+    height={60}
+    src="/images/logo.svg"
+    priority
+    className="w-auto h-auto max-w-[60px] max-h-[60px]"
+  />
           </Link>
           {/* Social icons (Instagram, LinkedIn, Telegram) */}
           <div className="flex gap-3">
@@ -102,8 +102,8 @@ export default function Footer() {
               </button>
             </div>
           </div>
-          {/* Social icons (desktop and mobile) */}
-          <div className="flex gap-3 md:py-2">
+          {/* Social icons (desktop only) */}
+          <div className="hidden md:flex gap-3 md:py-2">
             <a target="_blank" aria-label="instagram" className="group/item flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC]" href="http://instagram.com/zhaketcom">
               <FaInstagram size={27} color="#C1C3C8" className="group-hover/item:text-[#FF9606]!" />
             </a>
@@ -142,7 +142,7 @@ export default function Footer() {
               </span>
             </button>
           </div>
-          {/* Panel main content (currently empty) */}
+          {/* Panel div content (currently empty) */}
           <section className="p-4"></section>
           {/* Panel action buttons (matches provided HTML) */}
           <div className="p-4 flex items-center gap-2 pt-0">

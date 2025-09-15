@@ -15,8 +15,8 @@ const UserFormSkeleton = () => {
       <div className="fixed inset-0 -z-20 bg-cover bg-center" />
       <div className="fixed inset-0 -z-10" />
 
-      {/* Main container */}
-      <main className="mx-auto w-full max-w-7xl px-4 py-8">
+      {/* div container */}
+      <div className="mx-auto w-full max-w-7xl px-4 py-8">
         <div className="glass rounded-2xl p-5">
           {/* Header skeleton */}
           <div className="mb-6 flex items-center gap-2">
@@ -65,7 +65,7 @@ const UserFormSkeleton = () => {
             <Skeleton className="h-10 w-full rounded-xl bg-gradient-to-l from-blue-600/30 to-indigo-700/30" />
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

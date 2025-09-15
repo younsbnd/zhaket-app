@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import ControlledInput from "@/components/shared/forms/ControlledInput";
 import { FaFire } from "react-icons/fa";
 import Image from "next/image";
+import { logger } from "@/lib/utils/logger";
 
 /**
  * SearchModal
@@ -24,7 +25,7 @@ export default function SearchModal({ isOpen, onClose }) {
 
   // Handle submission
   const onSubmit = (data) => {
-    console.log("🔍 Search value:", data.searchQuery);
+   logger.debug("🔍 Search value:", data.searchQuery);
     onClose();
   };
 

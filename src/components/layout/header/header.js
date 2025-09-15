@@ -52,8 +52,8 @@ export default function Header() {
               src="/images/logo.svg"
               alt="Zhaket"
               width={40}
-              height={31}
-              className=" md:w-12  lg:w-[60px] w-auto h-auto"
+              height={40}
+              className=" md:w-12  lg:w-[60px] w-auto h-auto object-contain"
               priority
             />
           </Link>
@@ -67,7 +67,7 @@ export default function Header() {
               onFocus={() => setIsPopoverOpen(true)}
               onBlur={() => setIsPopoverOpen(false)}
               tabIndex={0}
-              style={{ outline: "none" }}
+            className="outline-none"
             >
               <Popover
                 placement="bottom-end"
@@ -164,8 +164,9 @@ export default function Header() {
           {/* Right Utilities Section */}
           <div className="flex items-center gap-[10px]">
             {/* Search: Desktop = full searchbar, Tablet = icon only */}
-            <div className="hidden lg:flex items-center rounded-md bg-[#F9FAFC] px-2 h-12 w-[250px] xl:w-[275px]">
+            <div className="hidden lg:flex items-center rounded-md bg-[#F9FAFC] px-2 h-12 w-[250px] xl:w-[275px] cursor-pointer" onClick={() => setIsSearchOpen(true)}>
               <input
+                readOnly
                 className="flex-1 bg-transparent text-sm text-[#76767C] outline-none"
                 placeholder="جستجو در ژاکت"
               />
@@ -183,21 +184,31 @@ export default function Header() {
 
             {/* Shopping Cart */}
             <Popover placement="bottom-end">
-              <PopoverTrigger>
-                <button
-                  className="h-[40px] w-[54px] flex justify-center items-center rounded-lg hover:bg-[#fef6e8] bg-white shadow-sm"
-                  aria-label="Cart"
-                >
-                  <MdOutlineShoppingCart
-                    size={20}
-                    className="text-[#878F9B] hover:text-[#efd8b4]"
-                  />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="p-4">
-                سبد خرید خالی است
-              </PopoverContent>
-            </Popover>
+      <PopoverTrigger>
+        {/*
+          'group' is added so children can react to hover on the parent button
+        */}
+        <button
+          className="group h-[40px] w-[54px] flex justify-center items-center rounded-lg bg-white shadow-sm hover:bg-[#fef6e8]"
+          aria-label="Cart"
+        >
+          {/*
+            Icon changes color and slightly scales up when the group (button) is hovered
+          */}
+          <MdOutlineShoppingCart
+            size={20}
+            className="text-[#878F9B] transition duration-300 group-hover:text-[#f6b93b] group-hover:scale-110"
+          />
+        </button>
+      </PopoverTrigger>
+
+      {/*
+        Popover content displayed below the trigger button
+      */}
+      <PopoverContent className="p-4">
+        سبد خرید خالی است
+      </PopoverContent>
+    </Popover>
 
             {/* Auth/User Menu */}
             {status === "authenticated" ? (

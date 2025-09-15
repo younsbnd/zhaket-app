@@ -119,9 +119,9 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
             <Image
               alt="ژاکت"
               width={60}
-              height={43}
+              height={60}
               priority
-              className="min-h-[31px] min-w-[44px]"
+              className="min-h-[31px] min-w-[44px] object-contain"
               src="/images/logo.svg"
             />
           </Link>

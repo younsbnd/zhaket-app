@@ -9,6 +9,15 @@ import bcrypt from "bcrypt";
 import { registerSchema } from "@/lib/validations/userValidation";
 
 /**
+ * Validation helper functions
+ */
+ 
+ 
+ 
+ 
+
+ 
+/**
  * Delete user by ID
  * @route DELETE /api/admin/users/[id]
  * @access Admin
@@ -17,14 +26,14 @@ async function deleteUser(request, { params }) {
   try {
     await connectToDb();
 
-    const { id } = params;
+    const { id } = await params;
     if (!id || !isValidObjectId(id)) {
-      throw createBadRequestError("شناسه کاربر معتبر نیست");
+      throw createBadRequestError("شناسه کاربر نامعتبر است");
     }
 
     const user = await User.findById(id);
     if (!user) {
-      throw createNotFoundError("کاربر پیدا نشد");
+      throw createNotFoundError("کاربر یافت نشد");
     }
 
     await User.findByIdAndDelete(id);
@@ -40,116 +49,157 @@ async function deleteUser(request, { params }) {
 }
 
 /**
- * Update user by ID with validation
+ * Update user by ID with conditional field creation
  * @route PUT /api/admin/users/[id]  
  * @access Admin
  */
-async function updateUser(request, { params }) {
+export async function PUT(request, { params }) {
   try {
     await connectToDb();
-    
-    const { id } = await params;
-    if (!isValidObjectId(id)) {
-      throw createBadRequestError("شناسه کاربر معتبر نیست");
+
+    // ✅ اینجا await برمی‌داریم
+    const { id } = params;
+    if (!id || !isValidObjectId(id)) {
+      throw createBadRequestError("شناسه کاربر نامعتبر است");
     }
 
     const body = await request.json();
+    const cleanedBody = {};
 
-    // Create partial schema for updates with contact validation
-    const updateSchema = registerSchema.partial().refine(
-      (data) => {
-        if (data.hasOwnProperty('email') || data.hasOwnProperty('phoneNumber')) {
-          return !!data.phoneNumber || !!data.email;
-        }
-        return true;
-      },
-      {
-        message: "حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید وجود داشته باشد",
-        path: ['contact']
-      }
-    );
-
-    // Validate request data
-    const validationResult = updateSchema.safeParse(body);
-    if (!validationResult.success) {
-      const errors = validationResult.error.errors.reduce((acc, error) => {
-        const path = error.path.join('.');
-        acc[path] = error.message;
-        return acc;
-      }, {});
-      
-      logger.warn("User update validation failed", { errors, userId: id });
-      throw createBadRequestError("اطلاعات وارد شده معتبر نیست", errors);
+    // --- Full name ---
+    if (body.fullName?.trim()) {
+      cleanedBody.fullName = body.fullName.trim();
     }
 
-    const validatedData = validationResult.data;
+    // --- Email ---
+    if (body.email !== undefined) {
+      cleanedBody.email =
+        body.email.trim() !== "" ? body.email.trim().toLowerCase() : null;
+    }
 
-    // Check user exists
+    // --- Phone number ---
+    if (body.phoneNumber !== undefined) {
+      cleanedBody.phoneNumber =
+        body.phoneNumber.trim() !== "" ? body.phoneNumber.trim() : null;
+    }
+
+    // --- Password ---
+    if (body.password?.trim()) {
+      cleanedBody.password = body.password.trim();
+    }
+
+    // --- Role ---
+    if (body.role !== undefined) {
+      cleanedBody.role = body.role;
+    }
+
+    // --- Find existing user ---
     const existingUser = await User.findById(id).lean();
     if (!existingUser) {
-      throw createNotFoundError("کاربر پیدا نشد");
+      throw createNotFoundError("کاربر یافت نشد");
     }
 
-    // Verify contact info will remain after update
-    const finalEmail = validatedData.email !== undefined ? validatedData.email : existingUser.email;
-    const finalPhoneNumber = validatedData.phoneNumber !== undefined ? validatedData.phoneNumber : existingUser.phoneNumber;
+    // --- Final contact rule ---
+    const finalEmail = cleanedBody.hasOwnProperty("email")
+      ? cleanedBody.email
+      : existingUser.email;
+    const finalPhone = cleanedBody.hasOwnProperty("phoneNumber")
+      ? cleanedBody.phoneNumber
+      : existingUser.phoneNumber;
 
-    if (!finalEmail && !finalPhoneNumber) {
-      throw createBadRequestError("حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید وجود داشته باشد");
+    if (!finalEmail && !finalPhone) {
+      throw createBadRequestError(
+        "حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید پر باشد",
+        { contact: "حداقل یکی از ایمیل یا شماره باید پر باشد" }
+      );
     }
 
-    // Check email duplication
-    if (validatedData.email && validatedData.email !== existingUser.email) {
-      const duplicateEmail = await User.findOne({
-        email: validatedData.email,
+    // --- Validation ---
+    const validation = registerSchema.partial().safeParse(cleanedBody);
+    if (!validation.success) {
+      const formattedErrors = {};
+      for (const err of validation.error.errors) {
+        formattedErrors[err.path[0]] = err.message;
+      }
+      throw createBadRequestError("داده‌های ورودی نامعتبر", formattedErrors);
+    }
+
+    // --- Duplicate checks ---
+    const duplicateErrors = {};
+
+    if (
+      cleanedBody.email !== null &&
+      cleanedBody.email !== undefined &&
+      cleanedBody.email !== existingUser.email
+    ) {
+      const emailExists = await User.findOne({
+        email: cleanedBody.email,
         _id: { $ne: id },
       }).lean();
-      
-      if (duplicateEmail) {
-        throw createBadRequestError("این ایمیل قبلاً توسط کاربر دیگری استفاده شده است");
+      if (emailExists) {
+        duplicateErrors.email = "این ایمیل قبلاً استفاده شده است";
       }
     }
 
-    // Check phone duplication
-    if (validatedData.phoneNumber && validatedData.phoneNumber !== existingUser.phoneNumber) {
-      const duplicatePhone = await User.findOne({
-        phoneNumber: validatedData.phoneNumber,
+    if (
+      cleanedBody.phoneNumber !== null &&
+      cleanedBody.phoneNumber !== undefined &&
+      cleanedBody.phoneNumber !== existingUser.phoneNumber
+    ) {
+      const phoneExists = await User.findOne({
+        phoneNumber: cleanedBody.phoneNumber,
         _id: { $ne: id },
       }).lean();
-      
-      if (duplicatePhone) {
-        throw createBadRequestError("این شماره موبایل قبلاً توسط کاربر دیگری استفاده شده است");
+      if (phoneExists) {
+        duplicateErrors.phoneNumber =
+          "این شماره موبایل قبلاً استفاده شده است";
       }
     }
 
-    // Prepare update data
+    if (Object.keys(duplicateErrors).length > 0) {
+      throw createBadRequestError("اطلاعات تکراری شناسایی شد", duplicateErrors);
+    }
+
+    // --- Prepare $set and $unset ---
     const updateData = {};
-    Object.keys(validatedData).forEach(key => {
-      if (validatedData[key] !== undefined) {
-        updateData[key] = validatedData[key];
+    const unsetData = {};
+
+    if (cleanedBody.fullName) updateData.fullName = cleanedBody.fullName;
+    if (cleanedBody.role) updateData.role = cleanedBody.role;
+
+    if (cleanedBody.hasOwnProperty("email")) {
+      if (cleanedBody.email === null) {
+        unsetData.email = 1; // ✅ حذف واقعی
+      } else {
+        updateData.email = cleanedBody.email;
       }
-    });
-    
-    // Hash password if provided
-    if (updateData.password) {
-      const saltRounds = 12;
-      updateData.password = await bcrypt.hash(updateData.password, saltRounds);
-      logger.info("Password updated for user", { userId: id });
+    }
+
+    if (cleanedBody.hasOwnProperty("phoneNumber")) {
+      if (cleanedBody.phoneNumber === null) {
+        unsetData.phoneNumber = 1; // ✅ حذف واقعی
+      } else {
+        updateData.phoneNumber = cleanedBody.phoneNumber;
+      }
+    }
+
+    if (cleanedBody.password) {
+      updateData.password = await bcrypt.hash(cleanedBody.password, 12);
     }
 
     updateData.updatedAt = new Date();
 
-    // Update user in database
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password').lean();
+    const updateOps = {};
+    if (Object.keys(updateData).length) updateOps.$set = updateData;
+    if (Object.keys(unsetData).length) updateOps.$unset = unsetData;
 
-    logger.info("User updated successfully", { 
-      userId: id,
-      updatedFields: Object.keys(updateData)
-    });
+    const updatedUser = await User.findByIdAndUpdate(id, updateOps, {
+      new: true,
+    })
+      .select("-password")
+      .lean();
+
+    logger.info("User updated successfully", { userId: id });
 
     return NextResponse.json({
       success: true,
@@ -160,6 +210,8 @@ async function updateUser(request, { params }) {
     return errorHandler(error);
   }
 }
+
+
 
 /**
  * Get user by ID
@@ -172,15 +224,13 @@ async function getUserById(request, { params }) {
     
     const { id } = await params;
     if (!isValidObjectId(id)) {
-      throw createBadRequestError("شناسه کاربر معتبر نیست");
+      throw createBadRequestError("شناسه کاربر نامعتبر است");
     }
 
     const user = await User.findById(id).select('-password').lean();
     if (!user) {
-      throw createNotFoundError("کاربر پیدا نشد");
+      throw createNotFoundError("کاربر یافت نشد");
     }
-
-    logger.info("User data retrieved successfully", { userId: id });
 
     return NextResponse.json({
       success: true,
@@ -193,5 +243,5 @@ async function getUserById(request, { params }) {
 }
 
 export { getUserById as GET };
-export { updateUser as PUT };
+// export { updateUser as PUT };
 export { deleteUser as DELETE };

@@ -23,7 +23,7 @@ export default function FooterDesktopSection({ footerLinks }) {
                   width={60}
                   height={43}
                   src="/images/logo.svg"
-                  className="min-h-[31px] w-auto min-w-[44px]"
+                  className="min-h-[31px]  min-w-[44px]"
                   priority
                 />
               </Link>
@@ -53,7 +53,14 @@ export default function FooterDesktopSection({ footerLinks }) {
         {/* Newsletter card */}
         <div className="mt-4 h-[159px] rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
           <div className="flex items-center gap-3 pb-2">
-            <Image alt="ژاکت" priority width={22} height={22} src="/images/logo.svg" />
+        <Image 
+  alt="ژاکت" 
+  priority 
+  width={22} 
+  height={22} 
+  src="/images/logo.svg"
+  className="!w-[22px] !h-[22px]"
+/>
             <span className="text-lg leading-7 text-[#544C45]">
               خبرنامه ژاکت
             </span>

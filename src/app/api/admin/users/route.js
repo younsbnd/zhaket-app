@@ -1,25 +1,24 @@
 import connectToDb from "@/lib/utils/db";
 import { errorHandler } from "@/lib/utils/errorHandler";
 import { logger } from "@/lib/utils/logger";
-import { registerSchema } from "@/lib/validations/userValidation";
-import User from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
-  
-/**
- * GET handler for retrieving all users
- * @route   GET /api/users
- * @desc    Get all users list
+import User from "@/models/User";
+import { createBadRequestError } from "@/lib/utils/errors";
+import { registerSchema } from "@/lib/validations/userValidation";
+ 
+/** 
+ * @route   GET /api/admin/users
+ * @desc    Retrieve all users
  * @access  Admin
- * @returns {NextResponse} JSON response with users data
  */
-async function getAllUsers() {
+export async function GET() {
   try {
     await connectToDb();
 
-    // Retrieve all users with selected fields, excluding password
     const users = await User.find({})
       .select("fullName phoneNumber email role createdAt updatedAt")
+      .sort({ createdAt: -1 })
       .lean();
 
     logger.info("Users retrieved successfully", { count: users.length });
@@ -31,140 +30,90 @@ async function getAllUsers() {
       count: users.length,
     });
   } catch (error) {
-    logger.error("Error retrieving users", { error: error.message });
+    logger.error("Error retrieving users list", { error: error.message });
     return errorHandler(error);
   }
 }
 
-/**
- * POST handler for creating a new user
- * @route   POST /api/users
- * @desc    Create a new user (requires either email or phone number, not both)
+/** 
+ * @route   POST /api/admin/users
+ * @desc    Create new user with conditional field creation
  * @access  Admin
- * @param {Request} request - HTTP request object
- * @returns {NextResponse} JSON response with created user data
  */
-async function createUser(request) {
+
+export async function POST(request) {
   try {
     await connectToDb();
 
     const body = await request.json();
-    
-    // Validate input data with Zod schema
-    const validatedData = registerSchema.parse(body);
 
-    // Check if at least one contact method (email or phone) is provided
-    if (!validatedData.email && !validatedData.phoneNumber) {
-      logger.warn("User creation failed - no contact method provided");
-      
-      return NextResponse.json({
-        success: false,
-        message: "حداقل یکی از فیلدهای ایمیل یا شماره تلفن باید وارد شود"
-      }, { status: 400 });
-    }
+    // --- Remove empty fields completely ---
+    const cleanedBody = {};
+    if (body.fullName?.trim()) cleanedBody.fullName = body.fullName.trim();
+    if (body.email?.trim()) cleanedBody.email = body.email.trim().toLowerCase();
+    if (body.phoneNumber?.trim()) cleanedBody.phoneNumber = body.phoneNumber.trim();
+    if (body.password?.trim()) cleanedBody.password = body.password.trim();
+    if (body.role) cleanedBody.role = body.role;
 
-    // Build query to check for existing user based on provided contact methods
-    const existingUserQuery = [];
-    
-    if (validatedData.email) {
-      existingUserQuery.push({ email: validatedData.email });
-    }
-    
-    if (validatedData.phoneNumber) {
-      existingUserQuery.push({ phoneNumber: validatedData.phoneNumber });
-    }
-
-    // Check if user already exists with provided email or phone number
-    const existingUser = await User.findOne({
-      $or: existingUserQuery
-    });
-
-    if (existingUser) {
-      // Determine which field caused the conflict
-      let conflictField = "";
-      if (existingUser.email === validatedData.email) {
-        conflictField = "ایمیل";
-      } else if (existingUser.phoneNumber === validatedData.phoneNumber) {
-        conflictField = "شماره تلفن";
-      }
-
-      logger.warn("User creation failed - user already exists", { 
-        email: validatedData.email, 
-        phoneNumber: validatedData.phoneNumber,
-        conflictField
+    // --- Validate using Zod Schema ---
+    const validation = registerSchema.safeParse(cleanedBody);
+    if (!validation.success) {
+      const formattedErrors = {};
+      validation.error.errors.forEach(err => {
+        formattedErrors[err.path[0]] = err.message;
       });
-      
-      return NextResponse.json({
-        success: false,
-        message: `کاربر با این ${conflictField} قبلاً ثبت نام کرده است`
-      }, { status: 409 });
+      throw createBadRequestError("داده‌های ورودی نامعتبر است", formattedErrors);
     }
 
-    // Hash password if provided
-    let hashedPassword;
-    if (validatedData.password) {
-      const saltRounds = 12;
-      hashedPassword = await bcrypt.hash(validatedData.password, saltRounds);
+    const { fullName, email, phoneNumber, password, role } = validation.data;
+
+    // --- Duplicate checks (email or phone) ---
+    const duplicateErrors = {};
+    if (email) {
+      const emailExists = await User.findOne({ email }).lean();
+      if (emailExists) duplicateErrors.email = "این آدرس ایمیل قبلاً استفاده شده است";
+    }
+    if (phoneNumber) {
+      const phoneExists = await User.findOne({ phoneNumber }).lean();
+      if (phoneExists) duplicateErrors.phoneNumber = "این شماره موبایل قبلاً استفاده شده است";
+    }
+    if (Object.keys(duplicateErrors).length > 0) {
+      throw createBadRequestError("اطلاعات تکراری شناسایی شد", duplicateErrors);
     }
 
-    // Create new user object with only provided fields
-    const userData = {
-      fullName: validatedData.fullName,
-      role: validatedData.role
-    };
+    // --- Hash password ---
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Add contact methods only if provided
-    if (validatedData.email) {
-      userData.email = validatedData.email;
-    }
-    
-    if (validatedData.phoneNumber) {
-      userData.phoneNumber = validatedData.phoneNumber;
-    }
-    
-    if (hashedPassword) {
-      userData.password = hashedPassword;
-    }
- 
-    // Create and save new user
-    const newUser = new User(userData);
-    await newUser.save();
-
-    // Prepare response data without password
-    const userResponse = newUser.toObject();
-    delete userResponse.password;
-
-    logger.info("User created successfully", { 
-      userId: newUser._id, 
-      email: validatedData.email || "not provided",
-      phoneNumber: validatedData.phoneNumber || "not provided"
+    // --- Create user ---
+    const newUser = new User({
+      fullName,
+      role,
+      password: hashedPassword,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ...(email && { email }),
+      ...(phoneNumber && { phoneNumber })
     });
+
+    const savedUser = await newUser.save();
+
+    logger.info("User created successfully", { userId: savedUser._id });
 
     return NextResponse.json({
       success: true,
       message: "کاربر با موفقیت ایجاد شد",
-      data: userResponse
+      data: {
+        _id: savedUser._id,
+        fullName: savedUser.fullName,
+        email: savedUser.email || null,
+        phoneNumber: savedUser.phoneNumber || null,
+        role: savedUser.role,
+        createdAt: savedUser.createdAt,
+        updatedAt: savedUser.updatedAt
+      }
     }, { status: 201 });
 
   } catch (error) {
-    // Handle Zod validation errors
-    if (error.name === 'ZodError') {
-      logger.warn("User creation failed - validation error", { 
-        errors: error.errors 
-      });
-      
-      return NextResponse.json({
-        success: false,
-        message: "داده‌های ورودی نامعتبر است",
-        errors: error.errors
-      }, { status: 400 });
-    }
-
-    logger.error("Error creating user", { error: error.message });
     return errorHandler(error);
   }
 }
-
-// Export handlers with HTTP method aliases
-export { getAllUsers as GET };
-export { createUser as POST };

@@ -3,12 +3,12 @@
 import ControlledInput from "@/components/shared/forms/ControlledInput";
 import ControlledSelect from "@/components/shared/forms/ControlledSelect";
 import UserFormSkeleton from "@/components/skeletons/users/UserFormSkeleton";
- 
+
 import { Button } from "@heroui/react";
 import React from "react";
-import { FiSave, FiEdit, FiUser, FiLock } from "react-icons/fi";
- 
-// Available user roles; value must match backend enum
+import { FiSave, FiEdit, FiUser, FiLock, FiMail, FiPhone } from "react-icons/fi";
+
+// Available user roles
 const USER_ROLES = [
   { value: "admin", label: "ادمین" },
   { value: "user", label: "کاربر عادی" },
@@ -17,6 +17,7 @@ const USER_ROLES = [
 /**
  * UserForm component
  * Used for both creating and editing user data
+ * Handles conditional field creation based on user input
  */
 const UserForm = ({
   control,
@@ -30,7 +31,7 @@ const UserForm = ({
   watchedEmail,
   watchedPhoneNumber,
 }) => {
-  
+
   return (
     <div className="text-slate-100 min-h-screen selection:bg-blue-600/30">
       {/* Background layers */}
@@ -64,7 +65,7 @@ const UserForm = ({
 
           {/* User form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Full name */}
+            {/* Full name input */}
             <ControlledInput
               name="fullName"
               control={control}
@@ -73,8 +74,8 @@ const UserForm = ({
               rules={{
                 required: "وارد کردن نام کامل الزامی است",
                 minLength: {
-                  value: 2,
-                  message: "نام باید حداقل ۲ کاراکتر باشد",
+                  value: 3,
+                  message: "نام باید حداقل ۳ کاراکتر باشد",
                 },
               }}
               errors={errors}
@@ -83,7 +84,7 @@ const UserForm = ({
               className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600/50"
             />
 
-            {/* Email */}
+            {/* Email input - with conditional validation */}
             <ControlledInput
               name="email"
               control={control}
@@ -91,42 +92,52 @@ const UserForm = ({
               placeholder="آدرس ایمیل را وارد کنید"
               type="email"
               rules={{
-                required: !watchedPhoneNumber
-                  ? "ایمیل یا شماره موبایل حداقل یکی الزامی است"
-                  : false,
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: "فرمت ایمیل صحیح نیست",
+                validate: (value) => {
+                  // If neither email nor phone is provided, show error
+                  if (!value?.trim() && !watchedPhoneNumber?.trim()) {
+                    return "حداقل یکی از ایمیل یا شماره موبایل باید وارد شود";
+                  }
+                  // If email is provided, validate format
+                  if (value?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    return "فرمت ایمیل صحیح نیست";
+                  }
+                  return true;
                 },
               }}
               errors={errors}
               variant="bordered"
               color="primary"
               className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600/50"
+              startContent={<FiMail className="text-slate-400" />}
             />
 
-            {/* Phone number */}
+            {/* Phone number input - with conditional validation */}
             <ControlledInput
               name="phoneNumber"
               control={control}
               label="شماره موبایل"
-              placeholder="شماره موبایل را وارد کنید"
+              placeholder="مثال: 09123456789"
               rules={{
-                required: !watchedEmail
-                  ? "ایمیل یا شماره موبایل حداقل یکی الزامی است"
-                  : false,
-                pattern: {
-                  value: /^09[0-9]{9}$/,
-                  message: "شماره موبایل باید با 09 شروع شده و 11 رقم باشد",
+                validate: (value) => {
+                  // If neither phone nor email is provided, show error
+                  if (!value?.trim() && !watchedEmail?.trim()) {
+                    return "حداقل یکی از ایمیل یا شماره موبایل باید وارد شود";
+                  }
+                  // If phone is provided, validate format
+                  if (value?.trim() && !/^09[0-9]{9}$/.test(value)) {
+                    return "شماره موبایل باید با 09 شروع شده و 11 رقم باشد";
+                  }
+                  return true;
                 },
               }}
               errors={errors}
               variant="bordered"
               color="primary"
               className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600/50"
+              startContent={<FiPhone className="text-slate-400" />}
             />
 
-            {/* Password */}
+            {/* Password input */}
             <ControlledInput
               name="password"
               control={control}
@@ -151,7 +162,7 @@ const UserForm = ({
               startContent={<FiLock className="text-slate-400" />}
             />
 
-            {/* Role */}
+            {/* Role selection */}
             <ControlledSelect
               name="role"
               control={control}
@@ -164,6 +175,11 @@ const UserForm = ({
               errors={errors}
               variant="bordered"
               color="primary"
+              renderValue={(items) => {
+                const selectedItem = items[0];
+                if (!selectedItem) return null;
+                return <span className="text-white">{selectedItem.textValue}</span>;
+              }}
             />
 
             {/* Submit button */}
@@ -190,7 +206,7 @@ const UserForm = ({
               )}
             </Button>
           </form>
-          
+
         </div>
       </main>
     </div>
