@@ -7,21 +7,19 @@ import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { registerSchema } from "@/lib/validations/userValidation";
-
-/**
- * Validation helper functions
- */
- 
- 
- 
- 
-
- 
+import z from "zod";
 /**
  * Delete user by ID
  * @route DELETE /api/admin/users/[id]
  * @access Admin
  */
+const updateSchema = registerSchema
+  .extend({
+    email: registerSchema.shape.email.or(z.null()),
+    phoneNumber: registerSchema.shape.phoneNumber.or(z.null()),
+  })
+  .partial();
+
 async function deleteUser(request, { params }) {
   try {
     await connectToDb();
@@ -55,51 +53,45 @@ async function deleteUser(request, { params }) {
  */
 export async function PUT(request, { params }) {
   try {
+    // 1. Connect to the database
     await connectToDb();
 
-    // ✅ اینجا await برمی‌داریم
-    const { id } = params;
+    const { id } = await params;
+
+    // 2. Validate MongoDB ObjectId
     if (!id || !isValidObjectId(id)) {
       throw createBadRequestError("شناسه کاربر نامعتبر است");
     }
 
+    // 3. Parse request body
     const body = await request.json();
-    const cleanedBody = {};
 
-    // --- Full name ---
-    if (body.fullName?.trim()) {
-      cleanedBody.fullName = body.fullName.trim();
+    // 4. Trim only string values; keep null/undefined as is
+    const sanitizedBody = Object.fromEntries(
+      Object.entries(body).map(([key, value]) =>
+        typeof value === "string" ? [key, value.trim()] : [key, value]
+      )
+    );
+
+    // 5. Validate request body with Zod schema
+    const validation = updateSchema.safeParse(sanitizedBody);
+    if (!validation.success) {
+      const formattedErrors = {};
+      validation.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+        formattedErrors[field] = issue.message;
+      });
+      throw createBadRequestError("اطلاعات ورودی نامعتبر است", formattedErrors);
     }
+    const cleanedBody = validation.data;
 
-    // --- Email ---
-    if (body.email !== undefined) {
-      cleanedBody.email =
-        body.email.trim() !== "" ? body.email.trim().toLowerCase() : null;
-    }
-
-    // --- Phone number ---
-    if (body.phoneNumber !== undefined) {
-      cleanedBody.phoneNumber =
-        body.phoneNumber.trim() !== "" ? body.phoneNumber.trim() : null;
-    }
-
-    // --- Password ---
-    if (body.password?.trim()) {
-      cleanedBody.password = body.password.trim();
-    }
-
-    // --- Role ---
-    if (body.role !== undefined) {
-      cleanedBody.role = body.role;
-    }
-
-    // --- Find existing user ---
+    // 6. Retrieve the existing user
     const existingUser = await User.findById(id).lean();
     if (!existingUser) {
       throw createNotFoundError("کاربر یافت نشد");
     }
 
-    // --- Final contact rule ---
+    // 7. "At least one contact" rule (email or phoneNumber must be present)
     const finalEmail = cleanedBody.hasOwnProperty("email")
       ? cleanedBody.email
       : existingUser.email;
@@ -109,29 +101,15 @@ export async function PUT(request, { params }) {
 
     if (!finalEmail && !finalPhone) {
       throw createBadRequestError(
-        "حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید پر باشد",
-        { contact: "حداقل یکی از ایمیل یا شماره باید پر باشد" }
+        "حداقل یکی از ایمیل یا شماره موبایل باید وارد شود",
+        { contact: "ایمیل یا شماره موبایل الزامی است" }
       );
     }
 
-    // --- Validation ---
-    const validation = registerSchema.partial().safeParse(cleanedBody);
-    if (!validation.success) {
-      const formattedErrors = {};
-      for (const err of validation.error.errors) {
-        formattedErrors[err.path[0]] = err.message;
-      }
-      throw createBadRequestError("داده‌های ورودی نامعتبر", formattedErrors);
-    }
-
-    // --- Duplicate checks ---
+    // 8. Check for duplicate email/phone if changed
     const duplicateErrors = {};
 
-    if (
-      cleanedBody.email !== null &&
-      cleanedBody.email !== undefined &&
-      cleanedBody.email !== existingUser.email
-    ) {
+    if (cleanedBody.email && cleanedBody.email !== existingUser.email) {
       const emailExists = await User.findOne({
         email: cleanedBody.email,
         _id: { $ne: id },
@@ -141,58 +119,52 @@ export async function PUT(request, { params }) {
       }
     }
 
-    if (
-      cleanedBody.phoneNumber !== null &&
-      cleanedBody.phoneNumber !== undefined &&
-      cleanedBody.phoneNumber !== existingUser.phoneNumber
-    ) {
+    if (cleanedBody.phoneNumber && cleanedBody.phoneNumber !== existingUser.phoneNumber) {
       const phoneExists = await User.findOne({
         phoneNumber: cleanedBody.phoneNumber,
         _id: { $ne: id },
       }).lean();
       if (phoneExists) {
-        duplicateErrors.phoneNumber =
-          "این شماره موبایل قبلاً استفاده شده است";
+        duplicateErrors.phoneNumber = "این شماره موبایل قبلاً استفاده شده است";
       }
     }
 
     if (Object.keys(duplicateErrors).length > 0) {
-      throw createBadRequestError("اطلاعات تکراری شناسایی شد", duplicateErrors);
+      throw createBadRequestError("خطا: اطلاعات تکراری", duplicateErrors);
     }
 
-    // --- Prepare $set and $unset ---
+    // 9. Prepare $set and $unset operations for MongoDB
     const updateData = {};
     const unsetData = {};
 
-    if (cleanedBody.fullName) updateData.fullName = cleanedBody.fullName;
-    if (cleanedBody.role) updateData.role = cleanedBody.role;
-
-    if (cleanedBody.hasOwnProperty("email")) {
-      if (cleanedBody.email === null) {
-        unsetData.email = 1; // ✅ حذف واقعی
-      } else {
-        updateData.email = cleanedBody.email;
+    // Helper function for all nullable fields to apply unset logic
+    const handleField = (fieldName) => {
+      if (cleanedBody.hasOwnProperty(fieldName)) {
+        if (cleanedBody[fieldName] === null || cleanedBody[fieldName] === "") {
+          unsetData[fieldName] = 1; // Remove field
+        } else {
+          updateData[fieldName] = cleanedBody[fieldName]; // Update field
+        }
       }
-    }
+    };
 
-    if (cleanedBody.hasOwnProperty("phoneNumber")) {
-      if (cleanedBody.phoneNumber === null) {
-        unsetData.phoneNumber = 1; // ✅ حذف واقعی
-      } else {
-        updateData.phoneNumber = cleanedBody.phoneNumber;
-      }
-    }
+    // Apply to all relevant fields
+    handleField("fullName");
+    handleField("role");
+    handleField("email");
+    handleField("phoneNumber");
 
+    // Handle password hashing
     if (cleanedBody.password) {
       updateData.password = await bcrypt.hash(cleanedBody.password, 12);
     }
 
-    updateData.updatedAt = new Date();
-
+    // Build final update object for MongoDB
     const updateOps = {};
     if (Object.keys(updateData).length) updateOps.$set = updateData;
     if (Object.keys(unsetData).length) updateOps.$unset = unsetData;
 
+    // 10. Execute MongoDB update
     const updatedUser = await User.findByIdAndUpdate(id, updateOps, {
       new: true,
     })
@@ -201,17 +173,16 @@ export async function PUT(request, { params }) {
 
     logger.info("User updated successfully", { userId: id });
 
+    // 11. Return success response
     return NextResponse.json({
       success: true,
-      message: "کاربر با موفقیت به‌روزرسانی شد",
+      message: "کاربر با موفقیت بروزرسانی شد",
       data: updatedUser,
     });
   } catch (error) {
     return errorHandler(error);
   }
 }
-
-
 
 /**
  * Get user by ID
@@ -221,7 +192,7 @@ export async function PUT(request, { params }) {
 async function getUserById(request, { params }) {
   try {
     await connectToDb();
-    
+
     const { id } = await params;
     if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه کاربر نامعتبر است");

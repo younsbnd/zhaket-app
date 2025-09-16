@@ -76,57 +76,57 @@ export default function EditUserLogic() {
   }, [userData, reset]);
 
   const onSubmit = async (formData) => {
-  setIsSubmitting(true);
-  clearErrors();
+    setIsSubmitting(true);
+    clearErrors();
 
-  // ✅ Safe casting to string before trimming
-  const trimmedEmail = String(formData.email || "").trim();
-  const trimmedPhone = String(formData.phoneNumber || "").trim();
+    // ✅ Safe casting to string before trimming
+    const trimmedEmail = String(formData.email || "").trim();
+    const trimmedPhone = String(formData.phoneNumber || "").trim();
 
-  if (!trimmedEmail && !trimmedPhone) {
-    const msg = "حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید پر باشد";
-    setError("email", { message: msg });
-    setError("phoneNumber", { message: msg });
-    setIsSubmitting(false);
-    return;
-  }
-
-  if (trimmedEmail && !isValidEmail(trimmedEmail)) {
-    setError("email", { message: "فرمت ایمیل صحیح نیست" });
-    setIsSubmitting(false);
-    return;
-  }
-
-  if (trimmedPhone && !isValidPhone(trimmedPhone)) {
-    setError("phoneNumber", { message: "شماره موبایل باید با 09 شروع شده و 11 رقم باشد" });
-    setIsSubmitting(false);
-    return;
-  }
-
-  const payload = {
-    fullName: String(formData.fullName || "").trim(),
-    role: formData.role || "",
-    email: trimmedEmail || null,
-    phoneNumber: trimmedPhone || null
-  };
-
-  if (String(formData.password || "").trim()) {
-    payload.password = formData.password.trim();
-  }
-
-  try {
-    await updateRecord(userId, payload);
-    router.push("/admin/users");
-  } catch (err) {
-    if (err?.errors) {
-      Object.entries(err.errors).forEach(([field, message]) => {
-        setError(field, { message });
-      });
+    if (!trimmedEmail && !trimmedPhone) {
+      const msg = "حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید پر باشد";
+      setError("email", { message: msg });
+      setError("phoneNumber", { message: msg });
+      setIsSubmitting(false);
+      return;
     }
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+
+    if (trimmedEmail && !isValidEmail(trimmedEmail)) {
+      setError("email", { message: "فرمت ایمیل صحیح نیست" });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (trimmedPhone && !isValidPhone(trimmedPhone)) {
+      setError("phoneNumber", { message: "شماره موبایل باید با 09 شروع شده و 11 رقم باشد" });
+      setIsSubmitting(false);
+      return;
+    }
+
+    const payload = {
+      fullName: String(formData.fullName || "").trim(),
+      role: formData.role || "",
+      email: trimmedEmail || null,
+      phoneNumber: trimmedPhone || null
+    };
+
+    if (String(formData.password || "").trim()) {
+      payload.password = formData.password.trim();
+    }
+
+    try {
+      await updateRecord(userId, payload);
+      router.push("/admin/users");
+    } catch (err) {
+      if (err?.errors) {
+        Object.entries(err.errors).forEach(([field, message]) => {
+          setError(field, { message });
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
 
   // Show loading state
@@ -136,10 +136,10 @@ export default function EditUserLogic() {
   const serverError = fetchError
     ? "خطا در بارگذاری اطلاعات کاربر"
     : !userData?.data
-    ? "کاربر یافت نشد"
-    : updateError && !updateError?.errors
-    ? (typeof updateError === "string" ? updateError : updateError?.message)
-    : null;
+      ? "کاربر یافت نشد"
+      : updateError && !updateError?.errors
+        ? (typeof updateError === "string" ? updateError : updateError?.message)
+        : null;
 
   return (
     <UserForm

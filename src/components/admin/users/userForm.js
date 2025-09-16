@@ -4,7 +4,7 @@ import ControlledInput from "@/components/shared/forms/ControlledInput";
 import ControlledSelect from "@/components/shared/forms/ControlledSelect";
 import UserFormSkeleton from "@/components/skeletons/users/UserFormSkeleton";
 
-import { Button } from "@heroui/react";
+import { Button, Form } from "@heroui/react";
 import React from "react";
 import { FiSave, FiEdit, FiUser, FiLock, FiMail, FiPhone } from "react-icons/fi";
 
@@ -39,7 +39,7 @@ const UserForm = ({
       <div className="fixed inset-0 -z-10" />
 
       {/* Main container */}
-      <main className="mx-auto w-full max-w-7xl px-4 py-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8">
         <div className="glass rounded-2xl p-5">
           {/* Header */}
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -64,7 +64,7 @@ const UserForm = ({
           )}
 
           {/* User form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Full name input */}
             <ControlledInput
               name="fullName"
@@ -174,6 +174,7 @@ const UserForm = ({
               }}
               errors={errors}
               variant="bordered"
+              className="w-full rounded-xl border-0 bg-white/5 px-3 py-2.5 text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-600/50"
               color="primary"
               renderValue={(items) => {
                 const selectedItem = items[0];
@@ -205,10 +206,10 @@ const UserForm = ({
                 </>
               )}
             </Button>
-          </form>
+          </Form>
 
         </div>
-      </main>
+      </div>
     </div>
   );
 };

@@ -77,9 +77,7 @@ export default function CreateUserLogic() {
       }
     }
   });
-
   if (isInitialLoading) return <UserFormSkeleton />;
-
   return (
     <UserForm
       control={control}
@@ -89,9 +87,7 @@ export default function CreateUserLogic() {
       isEditMode={false}
       title="ساخت کاربر جدید"
       isLoading={isSubmitting}
-      serverError={
-        !error?.errors && (typeof error === "string" ? error : error?.message)
-      }
+      serverError={!error?.errors && (typeof error === "string" ? error : error?.message) }
       watchedEmail={watchedEmail}
       watchedPhoneNumber={watchedPhoneNumber}
     />

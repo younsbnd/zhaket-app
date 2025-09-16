@@ -55,7 +55,7 @@ export default function UsersManagement() {
    * @param {string} id - User ID
    */
   const handleEdit = (id) => {
-    router.push(`/admin/users/edit/${id}`); // Fixed: edite → edit
+    router.push(`/admin/users/edit/${id}`); 
   };
 
   /**

@@ -1,5 +1,5 @@
  
-import UsersManagement from '@/components/admin/users/usersmanagement/UsersManagement';
+import UsersManagement from '@/components/admin/users/users-management/UsersManagement';
 import React from 'react';
 
 const UsersPageAdmin = () => {

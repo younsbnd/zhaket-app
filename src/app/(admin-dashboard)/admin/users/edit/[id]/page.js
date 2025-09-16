@@ -1,5 +1,5 @@
  
-import EditUserLogic from '@/components/admin/users/edite/EditUserLogic';
+import EditUserLogic from '@/components/admin/users/edit/EditUserLogic';
 import React from 'react';
 
 const page = () => {
