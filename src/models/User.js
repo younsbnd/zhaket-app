@@ -13,19 +13,16 @@ const userSchema = new mongoose.Schema(
       sparse: true,
       minlength: 11,
       match: /^(09\d{9})$/,
-      default: null,
     },
     email: {
       type: String,
       unique: true,
       sparse: true,
       match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-      default: null,
     },
     password: {
       type: String,
       minlength: 8,
-      
     },
     role: {
       type: String,

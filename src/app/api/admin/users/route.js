@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import User from "@/models/User";
 import { createBadRequestError } from "@/lib/utils/errors";
 import { registerSchema } from "@/lib/validations/userValidation";
- 
+
 /** 
  * @route   GET /api/admin/users
  * @desc    Retrieve all users
@@ -43,77 +43,96 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    /** 1. Connect to MongoDB */
     await connectToDb();
 
+    /** 2. Parse the request body */
     const body = await request.json();
 
-    // --- Remove empty fields completely ---
-    const cleanedBody = {};
-    if (body.fullName?.trim()) cleanedBody.fullName = body.fullName.trim();
-    if (body.email?.trim()) cleanedBody.email = body.email.trim().toLowerCase();
-    if (body.phoneNumber?.trim()) cleanedBody.phoneNumber = body.phoneNumber.trim();
-    if (body.password?.trim()) cleanedBody.password = body.password.trim();
-    if (body.role) cleanedBody.role = body.role;
+    /** 3. Trim all string fields to avoid accidental spaces */
+    const sanitizedBody = Object.fromEntries(
+      Object.entries(body).map(([key, value]) =>
+        typeof value === "string" ? [key, value.trim()] : [key, value]
+      )
+    );
 
-    // --- Validate using Zod Schema ---
-    const validation = registerSchema.safeParse(cleanedBody);
+    /** 4. Validate request body with Zod schema */
+    const validation = registerSchema.safeParse(sanitizedBody);
     if (!validation.success) {
       const formattedErrors = {};
       validation.error.errors.forEach(err => {
         formattedErrors[err.path[0]] = err.message;
       });
-      throw createBadRequestError("داده‌های ورودی نامعتبر است", formattedErrors);
+      throw createBadRequestError("مشکل در اطلاعات ورودی  ", formattedErrors);
+    }
+    const cleanedBody = validation.data;
+
+    /** 5. Ensure at least one of email or phoneNumber is provided */
+    if (!cleanedBody.email && !cleanedBody.phoneNumber) {
+      throw createBadRequestError(
+        "ایمیل یا شماره مبایل  یک کدام باید وارد شوند",
+      );
     }
 
-    const { fullName, email, phoneNumber, password, role } = validation.data;
-
-    // --- Duplicate checks (email or phone) ---
+    /** 6. Check for duplicate email and phoneNumber in DB */
     const duplicateErrors = {};
-    if (email) {
-      const emailExists = await User.findOne({ email }).lean();
-      if (emailExists) duplicateErrors.email = "این آدرس ایمیل قبلاً استفاده شده است";
+    if (cleanedBody.email) {
+      const emailExists = await User.findOne({ email: cleanedBody.email }).lean();
+      if (emailExists) duplicateErrors.email = "این ایمیل قبلا استفاده شده است ";
     }
-    if (phoneNumber) {
-      const phoneExists = await User.findOne({ phoneNumber }).lean();
-      if (phoneExists) duplicateErrors.phoneNumber = "این شماره موبایل قبلاً استفاده شده است";
+    if (cleanedBody.phoneNumber) {
+      const phoneExists = await User.findOne({ phoneNumber: cleanedBody.phoneNumber }).lean();
+      if (phoneExists) duplicateErrors.phoneNumber = "شماره مبایل نباید تکراری باشد ";
     }
     if (Object.keys(duplicateErrors).length > 0) {
-      throw createBadRequestError("اطلاعات تکراری شناسایی شد", duplicateErrors);
+      throw createBadRequestError("کاربر تکراری پیدا شد", duplicateErrors);
     }
 
-    // --- Hash password ---
-    const hashedPassword = await bcrypt.hash(password, 12);
+    /** 7. Prepare the new user object, avoiding null/empty values */
+    const newUserData = {
+      password: await bcrypt.hash(cleanedBody.password, 12), // password hashing
+    };
 
-    // --- Create user ---
-    const newUser = new User({
-      fullName,
-      role,
-      password: hashedPassword,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ...(email && { email }),
-      ...(phoneNumber && { phoneNumber })
-    });
+    /**
+     * Helper: add a field only if it is provided and NOT null/empty string.
+     * This ensures undefined fields are not stored in MongoDB,
+     * which helps avoiding E11000 duplicate key errors for null values.
+     */
+    const handleField = (fieldName) => {
+      if (cleanedBody.hasOwnProperty(fieldName)) {
+        if (cleanedBody[fieldName] !== null && cleanedBody[fieldName] !== "") {
+          newUserData[fieldName] = cleanedBody[fieldName];
+        }
 
-    const savedUser = await newUser.save();
+      }
+    };
+
+    // Apply helper to all optional fields
+    handleField("fullName");
+    handleField("role");
+    handleField("email");
+    handleField("phoneNumber");
+
+    /** 8. Save the user document into DB */
+    const savedUser = await new User(newUserData).save();
 
     logger.info("User created successfully", { userId: savedUser._id });
 
+    /** 9. Return success response */
     return NextResponse.json({
       success: true,
-      message: "کاربر با موفقیت ایجاد شد",
+      message: "User created successfully",
       data: {
         _id: savedUser._id,
-        fullName: savedUser.fullName,
+        fullName: savedUser.fullName || null,
         email: savedUser.email || null,
         phoneNumber: savedUser.phoneNumber || null,
         role: savedUser.role,
-        createdAt: savedUser.createdAt,
-        updatedAt: savedUser.updatedAt
       }
     }, { status: 201 });
 
   } catch (error) {
     return errorHandler(error);
   }
+
 }

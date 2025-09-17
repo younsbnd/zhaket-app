@@ -37,11 +37,6 @@ const UsersTable = ({
       key: "fullName",
       render: (user) => (
         <div className="flex items-center gap-5">
-          {/* Avatar container */}
-          <div className="size-12 rounded-lg bg-blue-500/15 flex items-center justify-center">
-            <FiUser className="text-blue-400 w-6 h-6" />
-          </div>
-
           {/* Full name */}
           <div className="font-medium text-white text-[15px]">{user.fullName}</div>
         </div>
@@ -91,13 +86,7 @@ const UsersTable = ({
   return (
     <div className="text-slate-100 min-h-screen selection:bg-blue-600/30">
       <div className="mx-auto w-full max-w-7xl px-6 py-10">
-        {/* Page heading */}
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold flex items-center gap-4">
-            <FiUser className="text-blue-400 w-7 h-7" />
-            لیست کاربران
-          </h2>
-        </div>
+
 
         {/* Fetch error message */}
         {fetchError && (

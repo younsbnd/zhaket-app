@@ -33,16 +33,15 @@ export default function FooterDesktopSection({ footerLinks }) {
                 />
               </Link>
             )}
-            
+
             {/* Section title */}
             <h3
-              className={`text-base text-[#424244] leading-7 font-medium ${
-                index === 0 ? "hidden" : ""
-              } md:block`}
+              className={`text-base text-[#424244] leading-7 font-medium ${index === 0 ? "hidden" : ""
+                } md:block`}
             >
               {section.title}
             </h3>
-            
+
             {/* Section links */}
             <nav className="flex flex-col items-start gap-2" aria-label={`${section.title} لینک‌ها`}>
               {section.links.map((link) => (
@@ -64,11 +63,11 @@ export default function FooterDesktopSection({ footerLinks }) {
         {/* Newsletter subscription card */}
         <div className="mt-4 h-[159px] rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
           <div className="flex items-center gap-3 pb-2">
-            <Image 
-              alt="لوگو ژاکت" 
-              priority 
-              width={22} 
-              height={22} 
+            <Image
+              alt="لوگو ژاکت"
+              priority
+              width={22}
+              height={22}
               src="/images/logo.svg"
               style={{ width: 22, height: 22 }}
             />
@@ -114,7 +113,7 @@ export default function FooterDesktopSection({ footerLinks }) {
                 width={30}
                 height={30}
                 priority
-                src="/images/logo.svg"
+                src="/images/footer/contact-avatar-2.dccc43be.jpg"
                 className="-translate-x-3 -translate-y-3 rounded-full border-2 border-white shadow"
               />
               <Image
@@ -122,11 +121,11 @@ export default function FooterDesktopSection({ footerLinks }) {
                 width={36}
                 height={36}
                 priority
-                src="/images/logo.svg"
+                src="/images/footer/contact-avatar-1.61401764.png"
                 className="rounded-full border-2 border-white shadow"
               />
             </div>
-            
+
             {/* Support text */}
             <div>
               <p className="text-base leading-7 text-[#424244] font-medium">
@@ -137,7 +136,7 @@ export default function FooterDesktopSection({ footerLinks }) {
               </p>
             </div>
           </div>
-          
+
           {/* Contact button */}
           <Link href="/dashboard/tickets/new">
             <Button className="h-[40px] w-[70px] bg-[#F0F8FF] text-[#6097F3] hover:bg-[#F0F8FF]/80 transition-colors duration-300 font-medium">

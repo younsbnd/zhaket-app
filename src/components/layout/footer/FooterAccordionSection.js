@@ -26,9 +26,8 @@ function Disclosure({ children, title }) {
         </span>
         <span className="flex items-center justify-center h-[30px] w-[30px] rounded-md border border-[#EEF0F4] bg-white">
           <HiChevronDown
-            className={`w-4 h-4 text-[#878F9B] transition-transform duration-200 ${
-              isExpanded ? "rotate-180" : ""
-            }`}
+            className={`w-4 h-4 text-[#878F9B] transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+              }`}
           />
         </span>
       </button>

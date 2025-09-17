@@ -110,8 +110,8 @@ export default function Header() {
                             <div
                               onMouseEnter={() => setActiveTab(tab.id)}
                               className={`flex items-center gap-3 px-[15px] xl:px-[19px] py-3 xl:py-4 rounded-md cursor-pointer transition-all duration-200 ${activeTab === tab.id
-                                  ? "bg-white shadow-sm text-[#FF9606]"
-                                  : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
+                                ? "bg-white shadow-sm text-[#FF9606]"
+                                : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
                                 }`}
                             >
                               {tab.icon}

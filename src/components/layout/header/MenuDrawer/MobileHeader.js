@@ -33,19 +33,19 @@ export default function MobileHeader() {
 
   // Close mobile menu handler
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
-  
+
   // Open search modal handler
   const openSearchModal = () => setIsSearchOpen(true);
-  
+
   // Close search modal handler
   const closeSearchModal = () => setIsSearchOpen(false);
 
   return (
     <>
       {/* Mobile Header - visible only on mobile screens */}
-      <header className="flex items-center top-0 z-60 justify-between pb-4 pt-6 md:hidden bg-white">
+      <header className="flex items-center justify-around top-0 z-60   pb-4 pt-6 md:hidden bg-white">
         {/* Left Section - Menu and Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex  justify-around items-center gap-1">
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
@@ -56,8 +56,8 @@ export default function MobileHeader() {
           </button>
 
           {/* Logo */}
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             aria-label="Go to homepage"
             className="focus:outline-none focus:ring-2 focus:ring-[#EB8800] rounded-lg transition-all duration-200"
           >
@@ -103,9 +103,9 @@ export default function MobileHeader() {
 
           {/* Authentication Section */}
           {status === "authenticated" ? (
-            <UserProfileDropdown 
-              session={session} 
-              onMenuClose={closeMobileMenu} 
+            <UserProfileDropdown
+              session={session}
+              onMenuClose={closeMobileMenu}
             />
           ) : (
             <AuthButton />
@@ -114,15 +114,15 @@ export default function MobileHeader() {
       </header>
 
       {/* Mobile Menu Sidebar */}
-      <MobileMenuSidebar 
-        isOpen={isMobileMenuOpen} 
-        onClose={closeMobileMenu} 
+      <MobileMenuSidebar
+        isOpen={isMobileMenuOpen}
+        onClose={closeMobileMenu}
       />
 
       {/* Search Modal */}
-      <SearchModal 
-        isOpen={isSearchOpen} 
-        onClose={closeSearchModal} 
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={closeSearchModal}
       />
     </>
   );

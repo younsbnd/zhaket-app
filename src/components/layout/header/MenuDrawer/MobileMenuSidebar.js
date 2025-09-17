@@ -147,7 +147,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
               width={60}
               height={60}
               priority
-              className="min-h-[31px] min-w-[44px] object-contain"
+              className="w-[44px] h-auto object-contain"
               src="/images/logo.svg"
             />
           </Link>

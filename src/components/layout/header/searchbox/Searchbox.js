@@ -25,7 +25,7 @@ export default function SearchModal({ isOpen, onClose }) {
 
   // Handle submission
   const onSubmit = (data) => {
-   logger.debug("🔍 Search value:", data.searchQuery);
+    logger.debug("🔍 Search value:", data.searchQuery);
     onClose();
   };
 
@@ -77,7 +77,7 @@ export default function SearchModal({ isOpen, onClose }) {
           {/* Example for suggestion area (ready for real data) */}
           <div className="px-5 pb-6">
             <h4 className="flex items-center gap-2 text-sm font-medium text-[#5B5C60] mb-3">
-             <FaFire/>
+              <FaFire />
               پیشنهاد ژاکت
             </h4>
 

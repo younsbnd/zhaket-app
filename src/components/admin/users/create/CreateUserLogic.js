@@ -6,11 +6,14 @@ import { useForm } from "react-hook-form";
 import { useCrud } from "@/hooks/useCrud";
 import UserForm from "../userForm";
 import UserFormSkeleton from "@/components/skeletons/users/UserFormSkeleton";
+import { addToast } from "@heroui/react";
+
 
 export default function CreateUserLogic() {
   const router = useRouter();
   const { createRecord, error } = useCrud("/admin/users");
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+
 
   const {
     control,
@@ -57,17 +60,21 @@ export default function CreateUserLogic() {
     };
 
     // Only add email if entered
-    if (trimmedEmail) {
-      payload.email = trimmedEmail;
-    }
+    if (trimmedEmail) payload.email = trimmedEmail;
 
     // Only add phone number if entered
-    if (trimmedPhone) {
-      payload.phoneNumber = trimmedPhone;
-    }
+    if (trimmedPhone) payload.phoneNumber = trimmedPhone;
 
     try {
       await createRecord(payload);
+
+      //  Show toast after successful creation
+      addToast({
+        description: "کاربر جدید با موفقیت ساخته شد",
+        color: "success",
+        shouldShowTimeoutProgress: true
+      });
+
       router.push("/admin/users");
     } catch (err) {
       if (err?.errors) {
@@ -77,7 +84,9 @@ export default function CreateUserLogic() {
       }
     }
   });
+
   if (isInitialLoading) return <UserFormSkeleton />;
+
   return (
     <UserForm
       control={control}
@@ -87,7 +96,10 @@ export default function CreateUserLogic() {
       isEditMode={false}
       title="ساخت کاربر جدید"
       isLoading={isSubmitting}
-      serverError={!error?.errors && (typeof error === "string" ? error : error?.message) }
+      serverError={
+        !error?.errors &&
+        (typeof error === "string" ? error : error?.message)
+      }
       watchedEmail={watchedEmail}
       watchedPhoneNumber={watchedPhoneNumber}
     />

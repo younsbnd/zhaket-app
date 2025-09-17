@@ -23,7 +23,7 @@ const Footer = () => {
   }
 
   return (
-    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 *:w-full md:px-0 md:pt-0">
+    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0">
       {/* Mobile Social Section */}
       <div
         className="flex items-center w-full justify-between pt-10 md:hidden"
@@ -37,8 +37,9 @@ const Footer = () => {
               width={60}
               height={60}
               src="/images/logo.svg"
+              sizes="35"
+              className="w-[60px] h-[60px] object-contain"
               priority
-              className="w-auto h-auto max-w-[60px] max-h-[60px]"
             />
           </div>
         </Link>
@@ -124,7 +125,7 @@ const Footer = () => {
 
         {/* Desktop Social Icons */}
         <div className="hidden md:flex gap-3 py-2">
-          <a
+          <Link
             href="http://instagram.com/zhaketcom"
             target="_blank"
             rel="noopener noreferrer"
@@ -135,9 +136,9 @@ const Footer = () => {
               size={27}
               className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
             />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="https://linkedin.com/company/zhaket"
             target="_blank"
             rel="noopener noreferrer"
@@ -148,9 +149,9 @@ const Footer = () => {
               size={21}
               className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
             />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="https://t.me/s/zhaketcom"
             target="_blank"
             rel="noopener noreferrer"
@@ -161,7 +162,7 @@ const Footer = () => {
               size={20}
               className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
             />
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

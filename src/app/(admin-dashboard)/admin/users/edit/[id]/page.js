@@ -7,7 +7,7 @@ const page = () => {
         <div>
             <EditUserLogic/>
         </div>
-    );k
+    );
 };
 
 export default page;
