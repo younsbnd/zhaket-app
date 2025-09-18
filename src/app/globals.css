@@ -33,14 +33,30 @@
 }
 
 @theme {
-  --color-zhaket-primary: #ff9606; /*  For important buttons and links */
-  --color-zhaket-hover: #ffe6c0; /* For hover states. */
-  --color-zhaket-secondary: #424242; /* For secondary text and form elements. */
-  --color-zhaket-bg: #f5f5f5; /* For general backgrounds and cards. */
-  --color-zhaket-text: #212121; /* For main text and headings. */
-  --color-zhaket-button-hover: #b47510; /* For button hover state. */
-  --color-zhaket-link: #0288d1; /*  For links and hover states. */
-  --color-zhaket-cta: #ff5722; /* For call-to-action buttons. */
+  --color-zhaket-primary: #ff9606;
+  --color-zhaket-hover: #ffe6c0;
+  --color-zhaket-secondary: #424242;
+  --color-zhaket-bg: #f5f5f5;
+  --color-zhaket-text: #212121;
+  --color-zhaket-button-hover: #b47510;
+  --color-zhaket-link: #0288d1;
+  --color-zhaket-cta: #ff5722;
+  
+  /* New theme colors */
+  --color-zhaket-gray-100: #F9FAFC;
+  --color-zhaket-gray-200: #E5E8EB;
+  --color-zhaket-gray-300: #C1C3C8;
+  --color-zhaket-gray-400: #878F9B;
+  --color-zhaket-gray-500: #76767C;
+  --color-zhaket-gray-600: #5D6877;
+  --color-zhaket-gray-700: #424244;
+  
+  --color-zhaket-yellow-100: #FFF5E6;
+  --color-zhaket-yellow-500: #FFAE11;
+  --color-zhaket-yellow-600: #FF9606;
+  
+  --color-zhaket-blue-100: #F0F8FF;
+  --color-zhaket-blue-500: #6097F3;
 }
 
 body {

@@ -36,7 +36,7 @@ const AdminTable = ({
 }) => {
   const handleDelete = (id) => {
     setDeleteId(id);
-    onDelete();
+    onDelete(id);
   };
 
   if (isLoading) {
