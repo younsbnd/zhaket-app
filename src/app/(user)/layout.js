@@ -15,6 +15,7 @@ const PanelLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
       {/* Desktop Header - Hidden on mobile */}
       <div className="hidden lg:block">
         <UserHeader />

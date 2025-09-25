@@ -71,7 +71,7 @@ export const dropdownItems = [
     icon: <HiOutlineCog className="w-5 h-5 text-gray-600" />,
     children: [
       { title: 'پروفایل', href: '/panel/settings/profile' },
-      { title: 'تغییر رمز عبور', href: '/panel/settings/password' },
+      { title: 'تغییر رمز عبور', href: '/panel/settings/edit-profile/edit-password' },
       { title: 'اطلاعیه‌ها', href: '/panel/settings/notifications' }
     ]
   }
