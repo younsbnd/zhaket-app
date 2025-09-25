@@ -4,12 +4,15 @@ import { IoSearch } from "react-icons/io5";
 import { GoUnlock } from "react-icons/go";
 import { TbRefresh } from "react-icons/tb";
 
+// 
 const ZhaketMarketSection = () => {
   return (
     <div className="p-2 space-y-8 self-center">
+      {/* title */}
       <h1 className="text-lg md:items-start md:text-start text-center text-[#787676] mb-4">
         ژاکت، معتبرترین مارکت تخصصی قالب و افزونه وردپرس
       </h1>
+      {/* description */}
       <blockquote>
         <p className="transition duration-300 text-2xl leading-7 font-medium text-center tracking-[-2px] text-[#454545] md:text-right">
           راهکار برتر راه‌اندازی و توسعه وب‌سایت
@@ -26,6 +29,7 @@ const ZhaketMarketSection = () => {
         </p>
       </blockquote>
 
+      {/* search */}
       <div className="flex items-center rounded-md border-athens-gray p-1 transition duration-100 border-0 bg-white h-[60px] w-full max-w-[400px] md:max-w-[465px] shadow-[0px_5px_25px_0_rgba(126,137,155,0.12)] ">
         <input
           placeholder="مثلا قالب فروشگاه"
@@ -36,6 +40,8 @@ const ZhaketMarketSection = () => {
           جستجو
         </button>
       </div>
+
+      {/* features */}
       <div className="flex items-center gap-2 md:gap-6">
         <div className="flex items-center gap-2 text-[10px] sm:text-[12px] text-gray-600 font-semibold">
           <BsPatchCheck className="text-orange-400" size={15} />

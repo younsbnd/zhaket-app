@@ -6,6 +6,7 @@ import React from "react";
 const IraniProductsSection = () => {
   return (
     <div>
+      {/* background */}
       <Image
         src="/images/main/home/top-section/spotlight-bg.ca693c14.svg"
         alt="iran-products"
@@ -14,6 +15,7 @@ const IraniProductsSection = () => {
         priority
         className="-z-10 h-full w-full absolute top-0 left-0 right-0 bottom-0"
       />
+      {/* products */}
       <div className="flex justify-center items-end gap-2">
         <div className="flex items-center justify-center flex-col gap-2">
           <div className="flex flex-col justify-between overflow-hidden border border-[#F4F4F4] border-none rounded-md bg-white shadow-md p-4">
@@ -39,6 +41,7 @@ const IraniProductsSection = () => {
             </Link>
           </div>
         </div>
+        {/* products */}
         <div className="flex items-center justify-center flex-col gap-2 pb-3">
           <div className="flex flex-col justify-between overflow-hidden border border-[#F4F4F4] border-none rounded-md bg-white shadow-md p-4">
             <Link href={"#"} className="">
@@ -65,14 +68,14 @@ const IraniProductsSection = () => {
         </div>
       </div>
 
+      {/* title */}
       <div className="flex items-center justify-center flex-col pt-6">
-        <p className="font-bold text-[17px] text-yellow-900">
-          محصولات ایرانی
-        </p>
+        <p className="font-bold text-[17px] text-yellow-900">محصولات ایرانی</p>
         <p className="text-sm leading-7 font-semibold pt-1 text-yellow-800/50">
           پشتیبانی درجه یک
         </p>
       </div>
+      {/* buttons */}
       <div className="flex items-center justify-center gap-2">
         <Button className="relative mt-6 h-11 w-[120px] top-btn">
           قالب ایرانی

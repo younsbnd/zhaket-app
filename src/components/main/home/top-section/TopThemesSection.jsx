@@ -3,11 +3,7 @@ import { Button } from "@heroui/react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-
-// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-
-// Import Swiper modules
 import { Autoplay, EffectCoverflow } from "swiper/modules";
 
 // Import Swiper styles
@@ -18,6 +14,7 @@ import "swiper/css/autoplay";
 const TopThemesSection = () => {
   return (
     <>
+      {/* background */}
       <Image
         src="/images/main/home/top-section/rotating-slider-bg.png"
         alt="top-themes-section"
@@ -26,6 +23,7 @@ const TopThemesSection = () => {
         priority
         className="-z-10 h-full w-full absolute top-0 left-0 right-0 bottom-0"
       />
+      {/* swiper */}
       <div className="flex flex-col items-center p-0 min-w-[350px]">
         <div className="flex items-center justify-center w-full">
           <div className="relative z-[2] h-[220px] w-[400px]">
@@ -76,6 +74,7 @@ const TopThemesSection = () => {
           </div>
         </div>
       </div>
+      {/* title */}
       <div className="flex items-center justify-center flex-col ">
         <p className="transition duration-300 font-bold text-[17px] text-white">
           قالب های برتر فروشگاهی
