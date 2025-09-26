@@ -3,6 +3,7 @@ import TopSection from "@/components/main/home/top-section/TopSection";
 import { metadata } from "@/lib/seo/metadata";
 import React from "react";
 import DiscountsSetction from "@/components/main/home/discounts/DiscountsSetction";
+import NewService from "@/components/main/home/new-service/NewService";
 
 // generate metadata
 export const generateMetadata = () => {
@@ -21,6 +22,9 @@ const HomePage = () => {
       </div>
       <div className="mx-auto">
         <DiscountsSetction />
+      </div>
+      <div>
+        <NewService />
       </div>
     </div>
   );

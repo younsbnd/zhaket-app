@@ -22,11 +22,11 @@ const DescountsCarousel = () => {
             spaceBetween: 50,
           },
           480: {
-            slidesPerView: 2.5,
+            slidesPerView: 2.35,
             spaceBetween: 0,
           },
           576: {
-            slidesPerView: 3,
+            slidesPerView: 2.8,
             spaceBetween: 0,
           },
           768: {
