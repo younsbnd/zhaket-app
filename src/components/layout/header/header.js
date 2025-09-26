@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Popover, PopoverTrigger, PopoverContent, Button } from "@heroui/react";
@@ -32,6 +32,9 @@ import SearchModal from "./searchbox/Searchbox";
  * Includes logo, navigation menu, search functionality, shopping cart, and user authentication
  */
 export default function Header() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
   // State for tracking the active tab in the categories dropdown
   const [activeTab, setActiveTab] = useState(MAIN_TABS[0].id);
   // State for controlling the categories popover visibility
@@ -41,6 +44,34 @@ export default function Header() {
   // Session data from NextAuth
   const { data: session, status } = useSession();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > 1) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+
+      if (
+        currentScrollY > lastScrollY.current &&
+        currentScrollY > 20 // Hide after scrolling 200px down
+      ) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   // Show loading skeleton while session is being fetched
   if (status === "loading") {
     return <HeaderSkeletons />;
@@ -49,7 +80,11 @@ export default function Header() {
   return (
     <>
       {/* ======= DESKTOP / TABLET HEADER ======= */}
-      <header className="w-full bg-white hidden md:block">
+      <header
+        className={`w-full hidden md:block fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+        } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+      >
         <div className="max-w-[1279px] px-4 mx-auto flex items-center justify-between py-6">
 
           {/* Logo Section */}

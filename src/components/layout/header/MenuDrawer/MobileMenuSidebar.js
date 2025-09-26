@@ -118,7 +118,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
     <>
       {/* Mobile menu overlay - dark background when menu is open */}
       <div
-        className={`fixed top-0 left-0 z-20 h-full w-full bg-[#00000033] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`fixed top-0 left-0 z-50 h-full w-full bg-[#00000033] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           }`}
         onClick={onClose}
         onKeyDown={(e) => handleKeyDown(e, onClose)}
@@ -128,7 +128,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
 
       {/* Mobile menu sidebar */}
       <aside
-        className={`fixed top-0 right-0 z-30 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 z-60 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
           } md:hidden`}
         role="dialog"
         aria-modal="true"

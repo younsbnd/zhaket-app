@@ -1,6 +1,4 @@
 "use client";
-
-import { TbLayoutGrid } from "react-icons/tb";
 import { PiShoppingCartLight } from "react-icons/pi";
 import { IoNotificationsOutline } from "react-icons/io5";
 import UserAvatarButton from "./UserAvatarButton";
@@ -13,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 export default function UserHeader() {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const cartItems = []; // جایگزین با دیتا واقعی
+  const cartItems = [];
   const pathname = usePathname();
   const { title, Icon } = getUserHeaderMeta(pathname || "");
 
@@ -22,13 +20,13 @@ export default function UserHeader() {
       <div className="text-right mx-auto w-full md:max-w-2xl xl:max-w-5xl 2xl:max-w-[1400px] flex flex-row justify-between items-center h-full px-3 sm:px-4 py-4 md:py-0 lg:mr-[350px]">
 
         {/* Title */}
-        <div className="flex flex-row gap-3 items-center bor">
+        <div className="flex flex-row gap-3 items-center xl:mr-28 lg:mr-16 ">
           <Icon size={24} className="text-[#FF9606]" />
-          <p className="text-[1.5rem] font-bold text-gray-800">{title}</p>
+          <p className="text-[1.5rem] font-bold text-gray-600 ">{title}</p>
         </div>
 
         {/* Actions */}
-        <div className="flex flex-row gap-5">
+        <div className="flex flex-row gap-5 lg:ml-12 ">
           {/* Cart Popover */}
           <Popover open={isCartOpen} onOpenChange={setIsCartOpen} placement="bottom-end">
             <PopoverTrigger >

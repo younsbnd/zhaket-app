@@ -1,4 +1,4 @@
-import { FiGrid, FiDownload, FiUsers, FiHeart, FiSettings, FiDollarSign } from 'react-icons/fi';
+import { FiGrid, FiDownload, FiHeart, FiDollarSign } from 'react-icons/fi';
 import { MdOutlineGroups, MdOutlineAttachMoney } from 'react-icons/md';
 import { FaRegHandshake } from 'react-icons/fa';
 import { HiOutlineCog, HiOutlineLifebuoy } from 'react-icons/hi2';
@@ -35,12 +35,6 @@ export const USER_NAVIGATION = [
     title: 'مالی',
     path: '/panel/invoices',
     icon: <MdOutlineAttachMoney />,
-  },
-  {
-    title: 'پشتیبانی',
-    path: '/panel/support',
-    icon: <FiUsers />,
-    collapsible: true, // Example: collapsible group
   },
   {
     title: 'توسعه دهنده شو',
