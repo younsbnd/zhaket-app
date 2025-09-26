@@ -68,6 +68,90 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 30px rgba(32, 58, 223, 0.15),
+  box-shadow:
+    0 10px 30px rgba(32, 58, 223, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.top-btn {
+  @apply cursor-pointer flex items-center justify-center rounded-lg opacity-100 focus:outline-hidden focus:outline-0 px-4 py-3 bg-[#FFAE11] h-11 bg-linear-to-r from-[#FF9737] to-[#FFC107] hover:bg-linear-to-r hover:from-[#FFC107] hover:to-[#FF9737] text-[15px] font-bold text-white hover:opacity-100 transition-colors duration-300 ease-in-out;
+}
+
+/* Custom Swiper Styles*/
+.themes-swiper {
+  overflow: visible !important;
+  width: 100% !important;
+  height: 220px !important;
+}
+
+.themes-swiper .swiper-wrapper {
+  align-items: center !important;
+}
+
+.themes-swiper .swiper-slide {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.4s ease !important;
+  transform-origin: center !important;
+}
+
+.themes-swiper .swiper-slide-active {
+  transform: scale(1) rotateY(0deg) !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+.themes-swiper .swiper-slide:not(.swiper-slide-active) {
+  opacity: 0.9 !important;
+  z-index: 1 !important;
+}
+
+.themes-swiper .swiper-slide-prev,
+.themes-swiper .swiper-slide-next {
+  z-index: 2 !important;
+}
+
+.rotate-z-slider .swiper-slide-prev {
+  transform: scale(0.95) rotateZ(5deg) !important;
+  translate: 0 15px 0px !important;
+}
+
+.rotate-z-slider .swiper-slide-next {
+  transform: scale(0.95) rotateZ(-5deg) !important;
+  translate: 0 15px 0px !important;
+}
+
+/* Discounts Carousel Navigation Styles */
+.discounts-swiper {
+  position: relative !important;
+
+}
+
+.discounts-swiper .swiper-button-next,
+.discounts-swiper .swiper-button-prev {
+  color: rgb(118, 118, 118) !important;
+  background: white !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+.discounts-swiper .swiper-button-prev {
+  right: 0 !important;
+}
+.discounts-swiper .swiper-button-next {
+  left: 0 !important;
+}
+
+.discounts-swiper .swiper-button-next:hover,
+.discounts-swiper .swiper-button-prev:hover {
+  background: rgba(229, 228, 228, 0.9) !important;
+}
+
+.discounts-swiper .swiper-button-next:after,
+.discounts-swiper .swiper-button-prev:after {
+  font-size: 15px !important; 
 }

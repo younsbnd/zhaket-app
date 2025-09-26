@@ -1,7 +1,7 @@
 "use client";
 
 // React and Next.js imports
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -29,6 +29,7 @@ import SearchModal from "../searchbox/Searchbox";
 export default function MobileHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { data: session, status } = useSession();
 
   // Close mobile menu handler
@@ -40,17 +41,41 @@ export default function MobileHeader() {
   // Close search modal handler
   const closeSearchModal = () => setIsSearchOpen(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       {/* Mobile Header - visible only on mobile screens */}
-      <header className="flex items-center justify-around top-0 z-60   pb-4 pt-6 md:hidden bg-white">
+      <header
+        className={`flex items-center justify-around top-0 z-50 w-full pb-4 pt-6 md:hidden sticky transition-colors duration-300 ${
+          isScrolled ? "bg-white shadow-md" : "bg-transparent"
+        }`}
+      >
         {/* Left Section - Menu and Logo */}
         <div className="flex  justify-around items-center gap-1">
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label="Open mobile menu"
-            className="flex justify-center items-center h-10 w-10 rounded-lg bg-white shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200"
+            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
+              isScrolled
+                ? "bg-white"
+                : "bg-white/50 backdrop-blur-sm"
+            }`}
           >
             <AiOutlineMenu className="text-[#EB8800] text-2xl" />
           </button>
@@ -78,7 +103,11 @@ export default function MobileHeader() {
           <button
             onClick={openSearchModal}
             aria-label="Open search"
-            className="flex justify-center items-center h-10 w-10 rounded-lg bg-white shadow-md hover:bg-[#FFF5E6] focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200"
+            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-[#FFF5E6] focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
+              isScrolled
+                ? "bg-white"
+                : "bg-white/50 backdrop-blur-sm"
+            }`}
           >
             <IoSearchOutline className="text-[#878F9B]" size={20} />
           </button>
@@ -87,7 +116,11 @@ export default function MobileHeader() {
           <Popover placement="bottom-end">
             <PopoverTrigger>
               <button
-                className="h-10 w-[54px] flex justify-center items-center rounded-lg hover:bg-[#fef6e8] bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200"
+                className={`h-10 w-[54px] flex justify-center items-center rounded-lg hover:bg-[#fef6e8] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
+                  isScrolled
+                    ? "bg-white"
+                    : "bg-white/50 backdrop-blur-sm"
+                }`}
                 aria-label="Shopping cart"
               >
                 <MdOutlineShoppingCart
