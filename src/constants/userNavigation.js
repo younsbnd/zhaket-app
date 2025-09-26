@@ -43,12 +43,6 @@ export const USER_NAVIGATION = [
     collapsible: true, // Example: collapsible group
   },
   {
-    title: 'تنظیمات',
-    path: '/panel/settings',
-    icon: <FiSettings />,
-    collapsible: true,
-  },
-  {
     title: 'توسعه دهنده شو',
     path: '/panel/become-developer',
     icon: <FiDollarSign />,
