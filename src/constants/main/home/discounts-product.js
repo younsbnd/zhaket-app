@@ -1,0 +1,95 @@
+export const DISCOUNTS_PRODUCT = [
+  {
+    id: 1,
+    src: "/images/main/home/discounts-carousel/discounts-product-1.png",
+    alt: "discounts-product-1",
+    path: "#",
+    title: "افزونه قالب‌های ایمیل ووکامرس | Yith Woocommerce Email Templates",
+    discount: 90,
+  },
+  {
+    id: 2,
+    src: "/images/main/home/discounts-carousel/discounts-product-2.png",
+    alt: "discounts-product-2",
+    path: "#",
+    title: "افزونه Yith Woocommerce Affiliates | پلاگین همکاری در فروش",
+    discount: 80,
+  },
+  {
+    id: 3,
+    src: "/images/main/home/discounts-carousel/discounts-product-3.png",
+    alt: "discounts-product-3",
+    path: "#",
+    title: "پکیج افزونه‌های مدیریت پرداخت | EDD Payment & Financial Management",
+    discount: 70,
+  },
+  {
+    id: 4,
+    src: "/images/main/home/discounts-carousel/discounts-product-4.png",
+    alt: "discounts-product-4",
+    path: "#",
+    title:
+      "پکیج افزونه‌های مدیریت فایل و لایسنس | EDD Pro File & License Management",
+    discount: 70,
+  },
+
+  {
+    id: 5,
+    src: "/images/main/home/discounts-carousel/discounts-product-5.png",
+    alt: "discounts-product-5",
+    path: "#",
+    title:
+      "پکیج افزونه‌های اطلاع‌رسانی و گزارش‌گیری | EDD Pro Notifications & Reports",
+    discount: 70,
+  },
+  {
+    id: 6,
+    src: "/images/main/home/discounts-carousel/discounts-product-6.png",
+    alt: "discounts-product-6",
+    path: "#",
+    title:
+      "افزودنی های صفحه ساز قدرتمند المنتور | افزونه Anywhere Elementor Pro",
+    discount: 60,
+  },
+  {
+    id: 7,
+    src: "/images/main/home/discounts-carousel/discounts-product-7.png",
+    alt: "discounts-product-7",
+    path: "#",
+    title: "افزونه آیوماتیک | پلاگین هوش مصنوعی Aiomatic",
+    discount: 60,
+  },
+
+  {
+    id: 8,
+    src: "/images/main/home/discounts-carousel/discounts-product-8.jpg",
+    alt: "discounts-product-8",
+    path: "#",
+    title: "قالب رویال فایل | قالب فروش فایل RoyalFiles",
+    discount: 60,
+  },
+  {
+    id: 9,
+    src: "/images/main/home/discounts-carousel/discounts-product-9.png",
+    alt: "discounts-product-9",
+    path: "#",
+    title: "افزونه ویرا | پلاگین سیستم مدیریت کاربران Vira",
+    discount: 60,
+  },
+  {
+    id: 10,
+    src: "/images/main/home/discounts-carousel/discounts-product-10.png",
+    alt: "discounts-product-10",
+    path: "#",
+    title: "قالب HTML پرشین هاست | قالب PersianHost",
+    discount: 60,
+  },
+  {
+    id: 11,
+    src: "/images/main/home/discounts-carousel/discounts-product-11.png",
+    alt: "discounts-product-11",
+    path: "#",
+    title: "افزونه نقشه ایران نما | پلاگین Iran Nama",
+    discount: 60,
+  },
+];
