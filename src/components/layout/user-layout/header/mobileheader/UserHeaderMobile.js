@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 const UserHeaderMobile = ({ onMenuToggle }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const cartItems = []; // دیتا واقعی
+  const cartItems = [];
   const pathname = usePathname();
   const { title, Icon } = getUserHeaderMeta(pathname || "");
 
