@@ -18,35 +18,35 @@ export const MAIN_TABS = [
     icon: "SiWordpress",
     color: "#878F9B",
     label: "قالب وردپرس",
-    href: "/web/category/wordpress-themes"
+    href: "/category/wordpress-themes"
   },
   {
     id: "wordpress-plugins",
     icon: "BiPlug",
     color: "#878F9B",
     label: "افزونه وردپرس",
-    href: "/web/category/wordpress-plugins"
+    href: "/category/wordpress-plugins"
   },
   {
     id: "scripts",
     icon: "RiFileCodeLine",
     color: "#878F9B",
     label: "اسکریپت",
-    href: "/web/category/script"
+    href: "/category/scripts"
   },
   {
     id: "html-templates",
     icon: "AiOutlineHtml5",
     color: "#878F9B",
     label: "قالب HTML",
-    href: "/web/category/html-site-templates"
+    href: "/category/html-site-templates"
   },
   {
     id: "amazing-bundles",
     icon: "MdLocalOffer",
     color: "#878F9B",
     label: "بسته‌های شگفت‌انگیز",
-    href: "/web/category/amazing-bundles"
+    href: "/category/amazing-bundles"
   }
 ];
 
