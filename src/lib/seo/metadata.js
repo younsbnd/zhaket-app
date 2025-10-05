@@ -1,6 +1,6 @@
 // import the site config from the environment variables
 const siteConfig = {
-  siteName: "فروشگاه قالب و افزونه ژاکت کلون",
+  siteName: "فروشگاه قالب و افزونه ژاکت",
   baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
   defaultDescription: "جدیدترین قالب‌ها و افزونه‌های وب را از ما بخواهید.",
 };
