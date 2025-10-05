@@ -3,6 +3,8 @@ import React from "react";
 import { HiArrowNarrowDown } from "react-icons/hi";
 import { HiCheck } from "react-icons/hi2";
 import { FaStar } from "react-icons/fa";
+import { MEDAL_CATEGORIES } from "@/constants/main/category/category-filtering/filterOptions";
+import Image from "next/image";
 
 /**
  * Checkbox icon component with gradient background when checked
@@ -22,15 +24,7 @@ const CheckboxIcon = React.memo(({ isChecked }) => (
 
 CheckboxIcon.displayName = "CheckboxIcon";
 
-/**
- * Medal categories configuration with their respective icon paths
- */
-const MEDAL_CATEGORIES = [
-  { id: "main", label: "محصولات اصلی", icon: "/images/main/category/icons/main-products-icon.svg" },
-  { id: "special", label: "محصولات ویژه", icon: "/images/main/category/icons/special-products-icon.svg" },
-  { id: "iranian-medal", label: "محصولات ایرانی", icon: "/images/main/category/icons/iranian-products-icon.svg" },
-  { id: "licensed", label: "دارای لایسنس ژاکت گارد", icon: "/images/main/category/icons/zhaket-licenced-icon.svg" },
-];
+// Medal categories are provided from centralized constants to avoid duplication
 
 /**
  * Medal filters component
@@ -76,7 +70,7 @@ const MedalFilters = ({ activeFilters, onFilterToggle }) => {
                     {medal.label}
                   </p>
                   {/* Decorative icon for the medal item (uses static SVG asset) */}
-                  <img
+                  <Image
                     alt={medal.label}
                     loading="lazy"
                     width={36}

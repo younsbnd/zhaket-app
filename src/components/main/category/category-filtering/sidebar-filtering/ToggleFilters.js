@@ -2,6 +2,7 @@
 import React from "react";
 import { CiShop } from "react-icons/ci";
 import { LuMonitor } from "react-icons/lu";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 /**
  * Toggle switch component for on/off states
@@ -76,16 +77,8 @@ const ToggleFilters = ({ toggles, onToggleChange }) => {
               </span>
             </div>
             <div className="z-10">
-              {/* Info tooltip icon for demo search */}
-              <img
-                alt="جستجوی دمو"
-                loading="lazy"
-                width={16}
-                height={16}
-                decoding="async"
-                src="/images/main/category/icons/info-icon.svg"
-                className="select-none"
-              />
+              {/* Info tooltip icon for demo search (react-icons) */}
+              <AiOutlineInfoCircle className="text-[#878F9B]" size={16} aria-hidden />
             </div>
           </div>
         </div>

@@ -1,17 +1,9 @@
 "use client";
 import React, { useCallback, useMemo } from "react";
 import { TfiAlignCenter } from "react-icons/tfi";
+import { SORT_OPTIONS } from "@/constants/main/category/category-filtering/filterOptions";
 
-/**
- * Sorting options configuration for products
- */
-const SORT_OPTIONS = [
-  { id: "latest", label: "جدید‌ترین", sortBy: "createdAt", sortOrder: "desc" },
-  { id: "bestseller", label: "پرفروش‌ترین", sortBy: "bestseller", sortOrder: "desc" },
-  { id: "discount", label: "پرتخفیف‌ها", sortBy: "discount", sortOrder: "desc" },
-  { id: "price-asc", label: "ارزان‌ترین", sortBy: "price", sortOrder: "asc" },
-  { id: "price-desc", label: "گران‌ترین", sortBy: "price", sortOrder: "desc" },
-];
+// Sort options are provided from centralized constants
 
 /**
  * Grid view icon component

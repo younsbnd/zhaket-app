@@ -198,10 +198,20 @@ const CategoryLogic = () => {
         <div className="bg-[#F4F5F6] h-[1px] w-full hidden md:block"></div>
         <div className="w-full md:bg-[#FFFFFF]">
           <div className="max-w-[1279px] md:mx-auto md:flex md:justify-between md:gap-4 md:px-4 2xl:px-0">
-            <FilteringSkeleton type="both" />
+            {/* Sidebar skeleton (25%) */}
+            <div className="md:relative md:w-[25%]">
+              <FilteringSkeleton type="sidebar" />
+            </div>
+
+            <div className="bg-[#F4F5F6] w-[1px]"></div>
+
+            {/* Main skeleton (75%) */}
+            <div className="w-full md:w-[75%] md:pb-4">
+              <FilteringSkeleton type="navbar" />
+              <ProductSkeleton viewMode={viewMode} count={12} />
+            </div>
           </div>
         </div>
-        <ProductSkeleton viewMode={viewMode} count={12} />
       </main>
     );
   }
