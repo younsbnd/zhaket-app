@@ -36,7 +36,6 @@ const ProductForm = ({
       <ControlledTipTap
         name={"description"}
         control={control}
-      
         errors={errors}
       />
 

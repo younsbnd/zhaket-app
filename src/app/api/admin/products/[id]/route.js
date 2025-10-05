@@ -5,6 +5,7 @@ import { productValidation } from "@/lib/validations/ProductValidation";
 import Product from "@/models/Product";
 import { NextResponse } from "next/server";
 import { isValidObjectId } from "mongoose";
+import ProductCategory from "@/models/ProductCategory";
 
 // get product
 const getProduct = async (req, { params }) => {
@@ -12,16 +13,24 @@ const getProduct = async (req, { params }) => {
     const { id } = await params;
     await connectToDb();
 
-    // validate id
-    if (!isValidObjectId(id)) {
-      throw createBadRequestError("شناسه محصول معتبر نیست.");
-    }
-    // find product by id
-    const product = await Product.findById(id)
-      .populate("category", "name slug")
-      .populate("tags", "name slug");
-    if (!product) {
-      throw createNotFoundError("محصول یافت نشد.");
+    let product;
+    if (isValidObjectId(id)) {
+      // find product by id
+      product = await Product.findById(id)
+        .populate("category", "name slug")
+        .populate("tags", "name slug");
+      if (!product) {
+        throw createNotFoundError("محصول یافت نشد.");
+      }
+    } else {
+      // find product by slug
+      product = await Product.findOne({ slug: id }).populate(
+        "category",
+        "name slug"
+      );
+      if (!product) {
+        throw createNotFoundError("محصول یافت نشد.");
+      }
     }
     return NextResponse.json({
       data: product,
@@ -61,9 +70,7 @@ const updateProduct = async (req, { params }) => {
       _id: { $ne: id },
     });
     if (title) {
-      throw createBadRequestError(
-        "عنوان محصول تکراری است و قبلا ثبت شده است"
-      );
+      throw createBadRequestError("عنوان محصول تکراری است و قبلا ثبت شده است");
     }
     // check if slug is unique
     const slug = await Product.findOne({
@@ -71,9 +78,7 @@ const updateProduct = async (req, { params }) => {
       _id: { $ne: id },
     });
     if (slug) {
-      throw createBadRequestError(
-        "نامک محصول تکراری است و قبلا ثبت شده است"
-      );
+      throw createBadRequestError("نامک محصول تکراری است و قبلا ثبت شده است");
     }
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -121,8 +126,4 @@ const deleteProduct = async (req, { params }) => {
   }
 };
 
-export {
-  getProduct as GET,
-  updateProduct as PUT,
-  deleteProduct as DELETE,
-};
+export { getProduct as GET, updateProduct as PUT, deleteProduct as DELETE };
