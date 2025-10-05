@@ -1,5 +1,6 @@
 "use client";
 
+import FooterUser from '@/components/layout/user-layout/footer/FooterUser';
 import UserHeaderMobile from '@/components/layout/user-layout/header/mobileheader/UserHeaderMobile';
 import UserHeader from '@/components/layout/user-layout/header/UserHeader';
 import MobileSidebar from '@/components/layout/user-layout/sidebar/sidebarmobile/UserSidebarMobile';
@@ -14,7 +15,8 @@ const PanelLayout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+
       {/* Desktop Header - Hidden on mobile */}
       <div className="hidden lg:block">
         <UserHeader />
@@ -25,7 +27,7 @@ const PanelLayout = ({ children }) => {
         <UserHeaderMobile onMenuToggle={toggleMobileSidebar} />
       </div>
 
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Desktop Sidebar - Hidden on mobile */}
         <div className="hidden lg:block">
           <UserSidebar />
@@ -39,8 +41,15 @@ const PanelLayout = ({ children }) => {
 
         {/* Main Content */}
         <main className="flex-1 lg:mr-[350px]">
-          {children}
+          <div className="w-full max-w-[1279px] mx-auto px-4">
+            {children}
+          </div>
         </main>
+      </div>
+      
+      {/* Footer - Responsive margin */}
+      <div className="lg:mr-[340px] mb-8">
+        <FooterUser />
       </div>
     </div>
   );

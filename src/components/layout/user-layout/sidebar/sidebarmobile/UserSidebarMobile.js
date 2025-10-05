@@ -28,12 +28,12 @@ const MobileSidebar = ({ isOpen, onClose }) => {
     <>
       {/* Backdrop */}
       <div
-        className="lg:hidden fixed inset-0   z-40 transition-opacity duration-300"
+        className="lg:hidden fixed inset-0 bg-black/30 z-40 transition-opacity duration-300"
         onClick={onClose}
       />
 
       {/* Sidebar */}
-      <div className={`lg:hidden fixed right-0 top-0 h-screen w-[280px] bg-white shadow-[0px_0px_45px_0px_#7E899B1A] z-50 transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`lg:hidden fixed right-0 top-0 h-screen w-[280px] bg-white shadow-[0px_0px_45px_0px_#7E899B1A] z-50 transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'} flex flex-col`}>
         {/* Header */}
         <div className="flex items-center h-[80px] p-4 border-b border-gray-100 justify-between">
           <Image width={50} height={36} className="w-[50px] h-[36px] object-contain" src="/images/logo.svg" alt="zhaket logo" />

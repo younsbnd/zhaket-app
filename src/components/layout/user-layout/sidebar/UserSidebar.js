@@ -23,7 +23,7 @@ const UserSidebar = () => {
   const isActive = (href) => pathname === href;
 
   return (
-    <div className="fixed right-0 top-0 h-screen w-[350px] bg-white shadow-[0px_0px_45px_0px_#7E899B1A] z-50 transition-all duration-300">
+    <div className="fixed right-0 top-0 h-screen w-[350px] bg-white shadow-[0px_0px_45px_0px_#7E899B1A] z-50 transition-all duration-300 flex flex-col">
       {/* Header */}
       <div className="flex items-center h-[100px] p-5 border-b border-gray-100 justify-between">
         <Image width={60} height={43} className="w-[60px] h-[43px] object-contain" src="/images/logo.svg" alt="zhaket logo" />
