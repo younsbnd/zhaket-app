@@ -1,142 +1,74 @@
 "use client";
-import React, { useMemo, memo, useCallback } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 
 /**
- * Pagination Component
- * 
- * Feature-rich pagination with smart ellipsis and hover animations
- * Built according to Next.js and React best practices
- * 
- * Features:
- * - Smart ellipsis for large page counts
- * - Hover animations with gradient overlay
- * - Full accessibility (ARIA labels, keyboard navigation)
- * - SEO-friendly with rel attributes (prev/next/canonical)
- * - Performance optimized with useMemo and useCallback
- * - Maximum 100 pages limit for performance
- * - Responsive design with Tailwind CSS
- * 
- * @component
- * @param {Object} props - Component properties
- * @param {number} [props.currentPage=1] - Current active page number (1-indexed)
- * @param {number} [props.totalPages=1] - Total number of available pages
- * @param {Function} [props.onPageChange] - Callback fired when page changes
- * @param {string} [props.baseUrl=""] - Base URL for generating page links
- * @param {number} [props.siblingCount=1] - Number of page siblings to display on each side
- * @param {number} [props.maxPages=100] - Maximum pages allowed for navigation
- * @returns {JSX.Element|null} Pagination UI or null if single page
- * 
- * @example
- * <Pagination 
- *   currentPage={5}
- *   totalPages={20}
- *   onPageChange={(page) => router.push(`/products?page=${page}`)}
- * />
+ * PaginationExact Component
+ * - Pixel-perfect pagination matching provided HTML/CSS structure
+ * - Uses exact gradient colors and hover effects
+ * - Includes ellipsis (...) for large page ranges
+ *
+ * Props:
+ * @param {number} currentPage        - Active page number
+ * @param {number} totalPages         - Total number of pages
+ * @param {string} baseUrl            - Base URL before page number (e.g., "/search/page/")
+ * @param {number} siblingCount       - Number of pages to show on each side of current (default: 2)
+ * @param {function} onPageChange     - Optional callback when a page is clicked
  */
-const Pagination = ({
-  currentPage = 1,
-  totalPages = 1,
-  onPageChange,
-  baseUrl = "",
-  siblingCount = 1,
-  maxPages = 100,
-}) => {
+export default function PaginationExact({
+  currentPage,
+  totalPages,
+  baseUrl,
+  siblingCount = 2,
+  onPageChange
+}) {
   /**
-   * Generate page numbers array with smart ellipsis
-   * 
-   * Algorithm:
-   * 1. If total pages < threshold, show all pages
-   * 2. Otherwise, show: first + siblings + current + siblings + last
-   * 3. Insert ellipsis (...) for gaps > 1
-   * 
-   * Performance: Memoized to recalculate only when dependencies change
-   * 
-   * @returns {Array<number|string>} Array of page numbers and "..." for ellipsis
+   * Generate array of page numbers with ellipsis logic
    */
-  const pageNumbers = useMemo(() => {
-    const effectiveTotalPages = Math.min(totalPages, maxPages);
-    const totalNumbers = siblingCount * 2 + 5; // siblings + current + first + last + 2
-
-    // Simple case: show all pages if count is small
-    if (effectiveTotalPages <= totalNumbers) {
-      return Array.from({ length: effectiveTotalPages }, (_, i) => i + 1);
+  const pages = useMemo(() => {
+    const pageList = [];
+    
+    // Always show first page
+    pageList.push(1);
+    
+    // Calculate range around current page
+    const startPage = Math.max(2, currentPage - siblingCount);
+    const endPage = Math.min(totalPages - 1, currentPage + siblingCount);
+    
+    // Add left ellipsis if needed
+    if (startPage > 2) {
+      pageList.push('ellipsis-left');
     }
-
-    // Calculate sibling boundaries
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, effectiveTotalPages);
-
-    // Determine if ellipsis should be shown
-    const shouldShowLeftEllipsis = leftSiblingIndex > 2;
-    const shouldShowRightEllipsis = rightSiblingIndex < effectiveTotalPages - 1;
-
-    // First and last page indices
-    const FIRST_PAGE = 1;
-    const LAST_PAGE = effectiveTotalPages;
-
-    // Pattern: [1, 2, 3, 4, 5, ..., 100]
-    if (!shouldShowLeftEllipsis && shouldShowRightEllipsis) {
-      const leftItemCount = 3 + 2 * siblingCount;
-      const leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
-      return [...leftRange, "...", LAST_PAGE];
+    
+    // Add pages in range
+    for (let p = startPage; p <= endPage; p++) {
+      pageList.push(p);
     }
-
-    // Pattern: [1, ..., 96, 97, 98, 99, 100]
-    if (shouldShowLeftEllipsis && !shouldShowRightEllipsis) {
-      const rightItemCount = 3 + 2 * siblingCount;
-      const rightRange = Array.from(
-        { length: rightItemCount },
-        (_, i) => LAST_PAGE - rightItemCount + i + 1
-      );
-      return [FIRST_PAGE, "...", ...rightRange];
+    
+    // Add right ellipsis if needed
+    if (endPage < totalPages - 1) {
+      pageList.push('ellipsis-right');
     }
-
-    // Pattern: [1, ..., 45, 46, 47, ..., 100]
-    if (shouldShowLeftEllipsis && shouldShowRightEllipsis) {
-      const middleRange = Array.from(
-        { length: rightSiblingIndex - leftSiblingIndex + 1 },
-        (_, i) => leftSiblingIndex + i
-      );
-      return [FIRST_PAGE, "...", ...middleRange, "...", LAST_PAGE];
+    
+    // Always show last page if more than 1 page
+    if (totalPages > 1) {
+      pageList.push(totalPages);
     }
-
-    return [];
-  }, [currentPage, totalPages, siblingCount, maxPages]);
+    
+    return pageList;
+  }, [currentPage, totalPages, siblingCount]);
 
   /**
-   * Generate page URL for Link href
-   * @param {number} page - Target page number
-   * @returns {string} Formatted URL string
+   * Handle page click
    */
-  const getPageUrl = useCallback(
-    (page) => (baseUrl ? `${baseUrl}${page}` : `?page=${page}`),
-    [baseUrl]
-  );
+  const handleClick = (pageNum, e) => {
+    e.preventDefault();
+    if (pageNum !== currentPage && onPageChange) {
+      onPageChange(pageNum);
+    }
+  };
 
-  /**
-   * Handle page navigation click
-   * Prevents default behavior and triggers callback if provided
-   * @param {number} page - Target page number
-   */
-  const handlePageClick = useCallback(
-    (page) => {
-      if (onPageChange && page !== currentPage && page >= 1 && page <= totalPages) {
-        onPageChange(page);
-      }
-    },
-    [onPageChange, currentPage, totalPages]
-  );
-
-  // Guard clause: hide pagination if only one page exists
-  if (totalPages <= 1) {
-    return null;
-  }
-
-  // Calculate pagination state
-  const effectiveTotalPages = Math.min(totalPages, maxPages);
-  const hasPrevious = currentPage > 1;
-  const hasNext = currentPage < effectiveTotalPages;
+  if (totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-center my-8">
@@ -145,31 +77,26 @@ const Pagination = ({
         role="navigation"
         aria-label="Pagination"
       >
-        {/* Previous Button */}
-        {hasPrevious && (
+        {/* Previous button */}
+        {currentPage > 1 && (
           <li className="previous">
             <Link
-              href={getPageUrl(currentPage - 1)}
-              onClick={(e) => {
-                if (onPageChange) {
-                  e.preventDefault();
-                  handlePageClick(currentPage - 1);
-                }
-              }}
+              href={`${baseUrl}${currentPage - 1}`}
+              onClick={(e) => onPageChange ? handleClick(currentPage - 1, e) : null}
               tabIndex={0}
               role="button"
+              aria-disabled="false"
               aria-label="Previous page"
               rel="prev"
-              className="block"
             >
               <button
-                className="cursor-pointer flex items-center justify-center gap-[10px] rounded-lg transition duration-300 focus:outline-hidden focus:outline-0 h-10 hover:bg-secondary/80 relative ml-2.5 bg-[#FFFFFF] px-5 py-2 text-[12px] font-medium text-[#8E8E8E] shadow-[0px_2px_8px_-2px_#B0B0B038] group"
+                className="cursor-pointer flex items-center justify-center gap-[10px] rounded-lg transition duration-300 focus:outline-hidden focus:outline-0 h-10 hover:bg-secondary/80 relative ml-2.5 bg-[#FFFFFF] px-5 py-2 text-[12px] font-medium text-[#8E8E8E] shadow-[0px_2px_8px_-2px_#B0B0B038]"
                 type="button"
               >
-                <div className="flex items-center justify-center relative">
-                  <span className="relative z-10 group-hover:opacity-0 transition-opacity duration-300">Previous</span>
-                  <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-lg bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] font-medium text-[#FFFFFF] opacity-0 transition-all duration-300 group-hover:opacity-100">
-                    Previous
+                <div className="flex items-center justify-center">
+                  قبلی
+                  <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-lg bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] font-medium text-[#FFFFFF] opacity-0 transition-all duration-300 hover:opacity-100">
+                    قبلی
                   </div>
                 </div>
               </button>
@@ -177,45 +104,41 @@ const Pagination = ({
           </li>
         )}
 
-        {/* Page Numbers */}
-        {pageNumbers.map((pageNumber, index) => {
-          if (pageNumber === "...") {
+        {/* Page numbers */}
+        {pages.map((pageNum, index) => {
+          // Handle ellipsis
+          if (typeof pageNum === 'string' && pageNum.startsWith('ellipsis')) {
             return (
-              <li key={`ellipsis-${index}`} className="text-[#5B5C60]">
-                <span role="button" tabIndex={0} aria-label="Jump forward">
+              <li key={pageNum} className="text-[#5B5C60]">
+                <a role="button" tabIndex={0} aria-label="Jump forward">
                   ...
-                </span>
+                </a>
               </li>
             );
           }
 
-          const isActive = pageNumber === currentPage;
-          const isPrev = pageNumber === currentPage - 1;
-          const isNext = pageNumber === currentPage + 1;
+          const isActive = pageNum === currentPage;
+          const isPrev = pageNum === currentPage - 1;
+          const isNext = pageNum === currentPage + 1;
 
           return (
             <li
-              key={pageNumber}
-              className={`text-[#5B5C60] cursor-pointer w-9 h-9 text-[13px] font-medium rounded-[3px] flex items-center justify-center transition duration-300 hover:bg-[#878F9B] hover:text-white ${
+              key={pageNum}
+              className={`text-[#5B5C60] cursor-pointer! w-9 h-9 text-[13px] font-medium rounded-[3px] flex items-center justify-center transition duration-300 hover:bg-[#878F9B] hover:text-white ${
                 isActive
-                  ? "bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] text-[#FFFFFF] font-bold"
+                  ? "bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] text-[#FFFFFF] font-bold!"
                   : ""
               }`}
             >
               <Link
-                href={getPageUrl(pageNumber)}
-                onClick={(e) => {
-                  if (onPageChange) {
-                    e.preventDefault();
-                    handlePageClick(pageNumber);
-                  }
-                }}
+                href={`${baseUrl}${pageNum}`}
+                onClick={(e) => onPageChange ? handleClick(pageNum, e) : null}
                 className="w-full text-center h-full leading-9"
                 tabIndex={isActive ? -1 : 0}
                 aria-label={
                   isActive
-                    ? `Page ${pageNumber} is your current page`
-                    : `Page ${pageNumber}`
+                    ? `Page ${pageNum} is your current page`
+                    : `Page ${pageNum}`
                 }
                 rel={
                   isActive
@@ -228,38 +151,33 @@ const Pagination = ({
                 }
                 aria-current={isActive ? "page" : undefined}
               >
-                {pageNumber}
+                {pageNum}
               </Link>
             </li>
           );
         })}
 
-        {/* Next Button */}
-        {hasNext && (
+        {/* Next button */}
+        {currentPage < totalPages && (
           <li className="next">
             <Link
-              href={getPageUrl(currentPage + 1)}
-              onClick={(e) => {
-                if (onPageChange) {
-                  e.preventDefault();
-                  handlePageClick(currentPage + 1);
-                }
-              }}
+              href={`${baseUrl}${currentPage + 1}`}
+              onClick={(e) => onPageChange ? handleClick(currentPage + 1, e) : null}
               tabIndex={0}
               role="button"
+              aria-disabled="false"
               aria-label="Next page"
               rel="next"
-              className="block"
             >
               <button
                 data-cy="data-cy-page-number-next"
-                className="cursor-pointer flex items-center justify-center gap-[10px] rounded-lg transition duration-300 focus:outline-hidden focus:outline-0 h-10 hover:bg-secondary/80 relative mr-2.5 bg-[#FFFFFF] px-6 py-2 text-[12px] font-medium text-[#8E8E8E] shadow-[0px_2px_8px_-2px_#B0B0B038] group"
+                className="cursor-pointer flex items-center justify-center gap-[10px] rounded-lg transition duration-300 focus:outline-hidden focus:outline-0 h-10 hover:bg-secondary/80 relative mr-2.5 bg-[#FFFFFF] px-6 py-2 text-[12px] font-medium text-[#8E8E8E] shadow-[0px_2px_8px_-2px_#B0B0B038]"
                 type="button"
               >
-                <div className="flex items-center justify-center relative">
-                  <span className="relative z-10 group-hover:opacity-0 transition-opacity duration-300">Next</span>
-                  <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-lg bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] font-medium text-[#FFFFFF] opacity-0 transition-all duration-300 group-hover:opacity-100">
-                    Next
+                <div className="flex items-center justify-center">
+                  بعدی
+                  <div className="absolute inset-0 flex h-full w-full items-center justify-center rounded-lg bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)] font-medium text-[#FFFFFF] opacity-0 transition-all duration-300 hover:opacity-100">
+                    بعدی
                   </div>
                 </div>
               </button>
@@ -269,8 +187,4 @@ const Pagination = ({
       </ul>
     </div>
   );
-};
-
-// Memoize component to prevent unnecessary re-renders
-// Only re-renders when props change
-export default memo(Pagination);
+}

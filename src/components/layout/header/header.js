@@ -72,10 +72,7 @@ export default function Header() {
     };
   }, []);
 
-  // Show loading skeleton while session is being fetched
-  if (status === "loading") {
-    return <HeaderSkeletons />;
-  }
+  // Avoid rendering skeleton for static header
 
   return (
     <>
