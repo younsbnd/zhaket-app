@@ -61,9 +61,9 @@ export async function GET(req) {
       // 'images.url': { $exists: true, $ne: '' }  // Temporarily allow without images
     };
 
-    // Debug: Show actual query
+    // warn: Show actual query
     if (process.env.NODE_ENV === 'development') {
-      logger.debug('[All Products Query]:', JSON.stringify(productQuery, null, 2));
+      logger.warn('[All Products Query]:', JSON.stringify(productQuery, null, 2));
     }
 
     // Calculate pagination skip value
@@ -107,9 +107,9 @@ export async function GET(req) {
       Product.countDocuments(productQuery)
     ]);
 
-    // Log for debugging (only in development)
+    // Log for warn (only in development)
     if (process.env.NODE_ENV === 'development') {
-      logger.debug(`[Products API] Found ${totalProducts} total products, returning ${products.length} products for page ${page}`);
+      logger.warn(`[Products API] Found ${totalProducts} total products, returning ${products.length} products for page ${page}`);
     }
 
     // Calculate pagination metadata

@@ -45,9 +45,7 @@ const getProductsByCategory = async (req, { params }) => {
     }
 
     // Debug: Check category status
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug(`[Category Status] ${category.name}: isActive = ${category.isActive}`);
-    }
+  
 
     // Extract and validate query parameters
     const { searchParams } = new URL(req.url);
@@ -94,9 +92,7 @@ const getProductsByCategory = async (req, { params }) => {
         ]
       });
       
-      logger.debug(`\n[Category Debug] ${category.name} (${category.slug}):`);
-      logger.debug(`  - Category Active: ${category.isActive}`);
-      logger.debug(`  - Category IDs Count: ${categoryIds.length}`);
+      logger.warn(`\n[Category Debug] ${category.name} (${category.slug}):`);
     }
 
     // Build product query with filters
@@ -109,10 +105,7 @@ const getProductsByCategory = async (req, { params }) => {
       // 'images.url': { $exists: true, $ne: null, $ne: '' }
     };
 
-    // Debug: Show actual query
-    if (process.env.NODE_ENV === 'development') {
-      logger.debug('[Product Query]:', JSON.stringify(productQuery, null, 2));
-    }
+  
 
     // Calculate pagination skip value
     const skip = (page - 1) * limit;
@@ -159,9 +152,9 @@ const getProductsByCategory = async (req, { params }) => {
       Product.countDocuments(productQuery)
     ]);
 
-    // Log for debugging (only in development)
+    // Log for warn (only in development)
     if (process.env.NODE_ENV === 'development') {
-      logger.debug(`[Category API] Category: ${category.name}, Found ${totalProducts} total products, returning ${products.length} products for page ${page}`);
+      logger.warn(`[Category API] Category: ${category.name}, Found ${totalProducts} total products, returning ${products.length} products for page ${page}`);
     }
 
     // Calculate pagination metadata
