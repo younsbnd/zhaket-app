@@ -69,7 +69,6 @@ export default function WalletLogic() {
       });
 
       logger.debug("result :", result);
-      console.log("result :", result);
 
       if (result.data.success) {
         router.push(result.data.data.paymentUrl);
