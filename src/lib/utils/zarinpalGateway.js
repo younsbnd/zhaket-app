@@ -33,6 +33,7 @@ export const zarinpalCreatePayment = async (
         description,
         callback_url: callbackUrl,
         merchant_id: process.env.ZARINPAL_PAYMENT_MERCHENT_ID,
+        currency: "IRT",
       }),
     });
 
