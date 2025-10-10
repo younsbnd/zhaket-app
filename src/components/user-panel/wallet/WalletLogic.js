@@ -10,6 +10,7 @@ import { addToast } from "@heroui/react";
 import { useCrud } from "@/hooks/useCrud";
 import { fetcher } from "@/lib/api/fetcher";
 import { logger } from "@/lib/utils/logger";
+import WalletSkeleton from "@/components/skeletons/user-panel/WalletSkeleton";
 
 export default function WalletLogic() {
   const router = useRouter();
@@ -95,11 +96,7 @@ export default function WalletLogic() {
 
   // Show loading while session is loading
   if (status === "loading") {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-gray-500">در حال بارگذاری...</div>
-      </div>
-    );
+    return <WalletSkeleton />;
   }
 
   // Redirect if not authenticated

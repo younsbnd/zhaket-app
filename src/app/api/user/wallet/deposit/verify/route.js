@@ -4,9 +4,17 @@ import { zarinpalVerifyPayment } from "@/lib/utils/zarinpalGateway";
 import Transaction from "@/models/Transaction";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
+import { createInternalServerError } from "@/lib/utils/errors";
 
 const verifyDeposit = async (req, res) => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.NEXT_PUBLIC_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی NEXT_PUBLIC_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     await connectToDb();
 
     const searchParams = req.nextUrl.searchParams;

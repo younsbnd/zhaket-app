@@ -4,13 +4,26 @@ import { authOptions } from "../../../auth/[...nextauth]/route";
 import connectDB from "@/lib/utils/db";
 import User from "@/models/User";
 import Transaction from "@/models/Transaction";
-import { createBadRequestError, createNotFoundError } from "@/lib/utils/errors";
+import { createBadRequestError, createNotFoundError, createInternalServerError } from "@/lib/utils/errors";
 import { errorHandler } from "@/lib/utils/errorHandler";
 import { logger } from "@/lib/utils/logger";
 import { zarinpalCreatePayment } from "@/lib/utils/zarinpalGateway";
 
 export async function POST(req) {
   try {
+    // Check if required environment variables are set
+    if (!process.env.ZARINPAL_PAYMENT_WALLET_CALLBACK_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_WALLET_CALLBACK_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
+    if (!process.env.ZARINPAL_PAYMENT_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     // Get authenticated user session
     const session = await getServerSession(authOptions);
 

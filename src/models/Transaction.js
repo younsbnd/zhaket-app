@@ -25,7 +25,6 @@ const transactionSchema = new mongoose.Schema(
     paymentResult: {
       refId: {
         type: String,
-        required: [true, "refId الزامی است"],
       },
       status: {
         type: String,

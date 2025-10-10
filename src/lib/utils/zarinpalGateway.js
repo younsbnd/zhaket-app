@@ -1,3 +1,5 @@
+import { createInternalServerError } from "./errors";
+
 // create payment request with zarinpal
 export const zarinpalCreatePayment = async (
   amountInRial,
@@ -5,6 +7,19 @@ export const zarinpalCreatePayment = async (
   callbackUrl
 ) => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.ZARINPAL_API_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_API_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
+    if (!process.env.ZARINPAL_PAYMENT_MERCHENT_ID) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_MERCHENT_ID تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     const url = process.env.ZARINPAL_API_BASE_URL + "/request.json";
 
     const response = await fetch(url, {
@@ -40,6 +55,19 @@ export const zarinpalCreatePayment = async (
 // verify payment with zarinpal
 export const zarinpalVerifyPayment = async (authority, amount) => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.ZARINPAL_API_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_API_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
+    if (!process.env.ZARINPAL_PAYMENT_MERCHENT_ID) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_MERCHENT_ID تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     const url = process.env.ZARINPAL_API_BASE_URL + "/verify.json";
 
     const response = await fetch(url, {

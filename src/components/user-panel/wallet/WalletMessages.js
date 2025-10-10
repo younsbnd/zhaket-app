@@ -2,8 +2,8 @@
 import { logger } from "@/lib/utils/logger";
 import { addToast } from "@heroui/react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef } from "react";
-
 
 const TOAST_MESSAGES = {
   PAID: {
@@ -19,6 +19,7 @@ const TOAST_MESSAGES = {
 const WalletMessages = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { update } = useSession();
 
   //  for prevent multiple toast
   const hasShownToast = useRef(false);
@@ -41,6 +42,11 @@ const WalletMessages = () => {
       return;
     }
 
+    // Update session if payment was successful to refresh balance
+    if (type === "PAID") {
+      update();
+    }
+
     // show toast with custom message or default message
     addToast({
       description: message || toastConfig.message,
@@ -54,7 +60,7 @@ const WalletMessages = () => {
 
     // remove query parameters from URL immediately
     router.replace("/panel/wallet", { scroll: false });
-  }, [type, message, router]);
+  }, [type, message, router, update]);
 
   return null;
 };
