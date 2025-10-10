@@ -16,3 +16,7 @@ export const createUnauthorizedError = (message) =>
 // create a not found error
 export const createNotFoundError = (message) =>
   createApiError(404, "Not Found", message);
+
+// create a internal server error
+export const createInternalServerError = (message) =>
+  createApiError(500, "Internal Server Error", message);
