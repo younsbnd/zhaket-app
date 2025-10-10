@@ -32,6 +32,11 @@ export const USER_NAVIGATION = [
     icon: <MdOutlineGroups />,
   },
   {
+    title: 'کیف پول',
+    path: '/panel/wallet',
+    icon: <FiDollarSign />,
+  },
+  {
     title: 'مالی',
     path: '/panel/invoices',
     icon: <MdOutlineAttachMoney />,
