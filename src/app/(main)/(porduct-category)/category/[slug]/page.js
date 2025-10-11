@@ -1,11 +1,11 @@
-import CategoryLogic from "@/components/main/category/catgoryLogic";
+import CategoryDesignLogic from "@/components/main/category/CategoryDesignLogic";
 import { metadata } from "@/lib/seo/metadata";
 import React from "react";
 
 // generate metadata for the page
 export const generateMetadata = async ({ params }) => {
   const { slug } = await params;
-  
+
   return metadata({
     title: `دسته‌بندی ${slug}`,
     description: `محصولات دسته‌بندی ${slug}`,
@@ -15,10 +15,9 @@ export const generateMetadata = async ({ params }) => {
 const CategoryPage = () => {
   return (
     <div>
-      <CategoryLogic />
+      <CategoryDesignLogic />
     </div>
   );
 };
 
 export default CategoryPage;
-

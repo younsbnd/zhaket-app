@@ -3,190 +3,132 @@ import { errorHandler } from "@/lib/utils/errorHandler";
 import { createNotFoundError, createBadRequestError } from "@/lib/utils/errors";
 import Product from "@/models/Product";
 import ProductCategory from "@/models/ProductCategory";
-import { Tag } from "@/models/Tags";
-import File from "@/models/File";
 import { NextResponse } from "next/server";
-import { logger } from "@/lib/utils/logger";
- 
-/**
- * Route Configuration for Next.js App Router
- * - dynamic: Force dynamic rendering for real-time data
- * - revalidate: Cache revalidation interval in seconds
- */
-export const dynamic = 'force-dynamic';
+
+export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 /**
  * GET /api/main/category/category-filtering/[slug]
- * Fetch products by category slug with filtering, sorting, and pagination
- * @param {Request} req - Next.js request object
- * @param {Object} params - Route parameters
- * @returns {Promise<NextResponse>} JSON response with products and category info
+ * Fetch products from given category (and subcategories)
+ * Apply optional price filter, sorting, and pagination
  */
-const getProductsByCategory = async (req, { params }) => {
+export const GET = async (req, { params }) => {
   try {
-    const { slug } = await params;
+    // Connect to the database
     await connectToDb();
 
-    // Validate slug parameter
-    if (!slug || typeof slug !== 'string' || slug.trim().length === 0) {
+    /** -----------------------
+     * 1. Validate category slug
+     * ---------------------- */
+    const { slug } = await params;
+    if (!slug || typeof slug !== "string" || slug.trim().length === 0) {
       throw createBadRequestError("Invalid category slug");
     }
 
-    // Find category by slug (check isActive status)
-    const category = await ProductCategory.findOne({ 
-      slug: slug.trim()
-      // Temporarily allow inactive categories for debugging
-      // isActive: true 
-    });
-
-    if (!category) {
+    /** -----------------------
+     * 2. Find main category by slug
+     * ---------------------- */
+    const mainCategory = await ProductCategory.findOne({ slug: slug.trim() });
+    if (!mainCategory) {
       throw createNotFoundError("Category not found");
     }
 
-    // Debug: Check category status
-  
+    /** -----------------------
+     * 3. Build category IDs array (main + subcategories)
+     * ---------------------- */
+    const subCategoryDocs = await ProductCategory.find({
+      parent: mainCategory._id
+    }).select("_id").lean();
 
-    // Extract and validate query parameters
+    const categoryIds = [mainCategory._id, ...subCategoryDocs.map(c => c._id)];
+
+    /** -----------------------
+     * 4. Parse query parameters
+     * ---------------------- */
     const { searchParams } = new URL(req.url);
-    const page = Math.max(1, parseInt(searchParams.get('page')) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit')) || 12));
-    const sortBy = searchParams.get('sortBy') || 'createdAt';
-    const sortOrder = searchParams.get('sortOrder') === 'asc' ? 1 : -1;
-    const minPrice = Math.max(0, parseFloat(searchParams.get('minPrice')) || 0);
-    const maxPrice = parseFloat(searchParams.get('maxPrice')) || Number.MAX_VALUE;
+    const currentPage = Math.max(1, Number(searchParams.get("page")) || 1);
+    const itemsPerPage = Math.min(100, Math.max(1, Number(searchParams.get("limit")) || 5));
+    const sortBy = searchParams.get("sortBy") || "createdAt";
+    const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
+    const minPrice = Math.max(0, parseFloat(searchParams.get("minPrice")) || 0);
+    const maxPrice = parseFloat(searchParams.get("maxPrice")) || Number.MAX_VALUE;
 
-    // Find all subcategories (temporarily allow inactive for debugging)
-    const subcategories = await ProductCategory.find({
-      parent: category._id
-      // Temporarily allow inactive subcategories for debugging
-      // isActive: true
-    }).select('_id').lean();
-
-    // Build category IDs array (current category + subcategories)
-    const categoryIds = [category._id, ...subcategories.map(sub => sub._id)];
-
-    // Debug: Check products in category without filters (development only)
-    if (process.env.NODE_ENV === 'development') {
-      const totalInCategory = await Product.countDocuments({ category: { $in: categoryIds } });
-      const publishedInCategory = await Product.countDocuments({ 
-        category: { $in: categoryIds }, 
-        status: 'PUBLISHED' 
-      });
-      const draftInCategory = await Product.countDocuments({ 
-        category: { $in: categoryIds }, 
-        status: 'DRAFT' 
-      });
-      const withImages = await Product.countDocuments({ 
-        category: { $in: categoryIds }, 
-        status: 'PUBLISHED',
-        'images.url': { $exists: true, $ne: null, $ne: '' }
-      });
-      const withoutImages = await Product.countDocuments({ 
-        category: { $in: categoryIds }, 
-        status: 'PUBLISHED',
-        $or: [
-          { 'images.url': { $exists: false } },
-          { 'images.url': null },
-          { 'images.url': '' }
-        ]
-      });
-      
-      logger.warn(`\n[Category Debug] ${category.name} (${category.slug}):`);
-    }
-
-    // Build product query with filters
-    // TEMPORARILY REMOVED ALL FILTERS FOR DEBUGGING
-    const productQuery = {
+    /** -----------------------
+     * 5. Build MongoDB filter query
+     * ---------------------- */
+    const filterQuery = {
       category: { $in: categoryIds },
-      // status: 'PUBLISHED',  // Temporarily allow all statuses
-      price: { $gte: minPrice, $lte: maxPrice },
-      // Uncomment the line below to hide products without images
-      // 'images.url': { $exists: true, $ne: null, $ne: '' }
+      price: { $gte: minPrice, $lte: maxPrice }
     };
 
-  
+    /** -----------------------
+     * 6. Calculate pagination values
+     * ---------------------- */
+    const skipItems = (currentPage - 1) * itemsPerPage;
 
-    // Calculate pagination skip value
-    const skip = (page - 1) * limit;
+    /** -----------------------
+     * 7. Build sort object
+     * ---------------------- */
+    const sortOptions = (() => {
+      switch (sortBy) {
+        case "bestseller":
+          return { salesCount: -1, createdAt: -1 };
+        case "price":
+          return { price: sortOrder };
+        case "title":
+          return { title: sortOrder };
+        case "rating":
+          return { "rating.average": -1 };
+        default:
+          return { createdAt: sortOrder };
+      }
+    })();
 
-    // Build sort object based on sort parameter
-    const sortObject = {};
-    
-    switch (sortBy) {
-      case 'newest':
-      case 'latest':
-        sortObject.createdAt = sortOrder;
-        break;
-      case 'bestseller':
-        sortObject.salesCount = -1;
-        sortObject.createdAt = -1; // Secondary sort
-        break;
-      case 'discount':
-        sortObject.discount = -1;
-        break;
-      case 'price':
-        sortObject.price = sortOrder;
-        break;
-      case 'title':
-        sortObject.title = sortOrder;
-        break;
-      case 'rating':
-        sortObject['rating.average'] = -1;
-        break;
-      default:
-        sortObject.createdAt = sortOrder;
-    }
-
-    // Fetch products and total count in parallel
-    const [products, totalProducts] = await Promise.all([
-      Product.find(productQuery)
-        .populate('category', 'name slug description')
-        .populate('tags', 'name slug')
-        .populate('files', 'fileName fileType fileSize')
-        .select('-__v')
-        .sort(sortObject)
-        .skip(skip)
-        .limit(limit)
+    /** -----------------------
+     * 8. Fetch products and count in parallel
+     * ---------------------- */
+    const [productList, totalItems] = await Promise.all([
+      Product.find(filterQuery)
+        .populate("category", "name slug description")
+        .select("-__v")
+        .sort(sortOptions)
+        .skip(skipItems)
+        .limit(itemsPerPage)
         .lean(),
-      Product.countDocuments(productQuery)
+      Product.countDocuments(filterQuery)
     ]);
 
-    // Log for warn (only in development)
-    if (process.env.NODE_ENV === 'development') {
-      logger.warn(`[Category API] Category: ${category.name}, Found ${totalProducts} total products, returning ${products.length} products for page ${page}`);
-    }
+    /** -----------------------
+     * 9. Calculate total pages
+     * ---------------------- */
+    const totalPages = totalItems > 0
+      ? Math.ceil(totalItems / itemsPerPage)
+      : 0;
 
-    // Calculate pagination metadata
-    const totalPages = Math.ceil(totalProducts / limit);
-
+    /** -----------------------
+     * 10. Return JSON response
+     * ---------------------- */
     return NextResponse.json({
       success: true,
       message: "Products fetched successfully",
-      data: products,
+      data: productList,
       category: {
-        _id: category._id,
-        name: category.name,
-        slug: category.slug,
-        description: category.description
+        _id: mainCategory._id,
+        name: mainCategory.name,
+        slug: mainCategory.slug,
+        description: mainCategory.description
       },
       pagination: {
-        currentPage: page,
+        currentPage,
         totalPages,
-        totalProducts,
-        limit,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
+        totalItems,
+        itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
       }
     });
-
   } catch (error) {
-    logger.error('[Category API Error]:', error);
     return errorHandler(error);
   }
 };
-
-/**
- * Export GET handler
- */
-export { getProductsByCategory as GET };

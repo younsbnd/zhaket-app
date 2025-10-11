@@ -3,8 +3,9 @@ import React from "react";
 import { HiArrowNarrowDown } from "react-icons/hi";
 import { HiCheck } from "react-icons/hi2";
 import { FaStar } from "react-icons/fa";
-import { MEDAL_CATEGORIES } from "@/constants/main/category/category-filtering/filterOptions";
+ 
 import Image from "next/image";
+import { MEDAL_CATEGORIES } from "@/constants/main/catgory/category-filtering/sidebar-filtering/filterOptions";
 
 /**
  * Checkbox icon component with gradient background when checked
@@ -59,10 +60,10 @@ const MedalFilters = ({ activeFilters, onFilterToggle }) => {
                 onClick={() => onFilterToggle(medal.id)}
                 role="checkbox"
                 tabIndex={0}
-                aria-checked={activeFilters.has(medal.id)}
+                aria-checked
                 aria-label={`Toggle ${medal.label} filter`}
               >
-                <CheckboxIcon isChecked={activeFilters.has(medal.id)} />
+                <CheckboxIcon  />
               </button>
               <span className="mr-4 w-full">
                 <div className="flex items-center justify-between">

@@ -102,16 +102,31 @@ export const authOptions = {
   ],
   //   callbacks for jwt and session
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session: updateSession }) {
       if (user) {
         token.id = user._id;
         token.role = user.role;
+        token.balance = user.balance || 0;
       }
+      
+      // Update balance when session is updated
+      if (trigger === "update" && updateSession?.balance !== undefined) {
+        token.balance = updateSession.balance;
+      }
+      
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token, trigger, newSession }) {
       session.user.id = token.id;
       session.user.role = token.role;
+      
+      // Fetch latest balance from database
+      if (session.user.id) {
+        await connectToDb();
+        const user = await User.findById(session.user.id).select('balance');
+        session.user.balance = user?.balance || 0;
+      }
+      
       return session;
     },
   },
