@@ -7,7 +7,6 @@ import BreadcrumbNavigation from "./BreadcrumbNavigation";
 import CategoryHeader from "./CategoryHeader";
 
 const BreadcrumbSection = ({
-
   routeLabels = {},
   categoryData = null,
   showHome = true,
@@ -15,50 +14,28 @@ const BreadcrumbSection = ({
   homeHref = "/",
 }) => {
   const pathname = usePathname();
+
   /**
    * Generate breadcrumb trail based on current pathname
+   * Only shows home link and category name (if exists)
+   * Prevents intermediate segments from creating broken links
    * Returns array of breadcrumb objects: { label, href, isActive }
    */
   const breadcrumbs = useMemo(() => {
-    // Split pathname into segments and remove empty strings
-    const segments = pathname.split("/").filter(Boolean);
     const trail = [];
 
-    // Add home link if enabled
+    // Add home link if enabled - this is the only always-visible link
     if (showHome) {
       trail.push({
         label: homeText,
         href: homeHref,
-        isActive: false
+        isActive: !categoryData // Home is active only when no category exists
       });
     }
 
-    // Build breadcrumb trail from path segments
-    let currentPath = "";
-    segments.forEach((seg, i) => {
-      currentPath += `/${seg}`;
-      const isLastSegment = i === segments.length - 1;
-
-      // Handle special "category" segment
-      if (seg === "category") {
-        trail.push({
-          label: "دسته‌بندی",
-          href: "/category",
-          isActive: false
-        });
-      }
-      // Handle labeled routes from routeLabels map
-      else if (routeLabels[seg]) {
-        trail.push({
-          label: routeLabels[seg],
-          href: currentPath,
-          isActive: isLastSegment
-        });
-      }
-    });
-
     // Add category-specific breadcrumb if category data exists
-    if (categoryData?.name && segments.includes("category")) {
+    // This is the final destination, so it's marked as active
+    if (categoryData?.name) {
       trail.push({
         label: categoryData.name,
         href: `/category/${categoryData.slug}`,
@@ -67,11 +44,11 @@ const BreadcrumbSection = ({
     }
 
     return trail;
-  }, [pathname, showHome, homeText, homeHref, categoryData, routeLabels]);
+  }, [showHome, homeText, homeHref, categoryData]);
 
   return (
     <section className="relative">
-      {/* Hero background image */}
+      {/* Hero background image - covers top section with gradient overlay */}
       <Image
         alt="Category background"
         className="absolute top-0 right-0 -z-10 w-full h-[55vh] object-cover md:h-[50vh]"
@@ -80,13 +57,15 @@ const BreadcrumbSection = ({
         priority
       />
 
-      {/* Content container */}
+      {/* Main content container with max-width and responsive padding */}
       <div className="mx-auto max-w-[1279px] md:px-4 2xl:px-0">
         <div className="gap-2 pb-2 pt-9 md:flex md:py-6">
+          {/* Breadcrumb and category header section */}
           <div className="flex flex-col justify-center gap-1 px-4 md:flex-1 md:gap-3 md:p-0">
-            {/* Breadcrumb navigation */}
+            {/* Breadcrumb navigation - shows only home and category */}
             <BreadcrumbNavigation breadcrumbs={breadcrumbs} />
-            {/* Category header (conditional) */}
+            
+            {/* Category header - displays category details when available */}
             {categoryData && <CategoryHeader categoryData={categoryData} />}
           </div>
         </div>
@@ -94,4 +73,5 @@ const BreadcrumbSection = ({
     </section>
   );
 };
+
 export default memo(BreadcrumbSection);

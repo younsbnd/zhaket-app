@@ -32,7 +32,7 @@ const ProductCard = ({ product = {}, viewMode = "grid" }) => {
   const productLink = `/web/${slug}`;
   const imageSrc =
     images?.url || product.image || "/images/default-product.svg";
-  const demoLink = demoUrl || `${productLink}/demo`;
+  const demoLink = demoUrl || "#";
 
   if (viewMode === "grid") {
     return (

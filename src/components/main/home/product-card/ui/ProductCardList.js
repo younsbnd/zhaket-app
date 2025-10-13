@@ -24,7 +24,7 @@ const ProductCardList = ({ product }) => {
     const productLink = `/web/${slug}`;
     const imageSrc =
         images?.url || product.image || "/images/default-product.svg";
-    const demoLink = demoUrl || `${productLink}/demo`;
+    const demoLink = demoUrl || `#`;
 
     return (
         <div className="rounded-xl border border-[#F4F4F4] shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] overflow-hidden">

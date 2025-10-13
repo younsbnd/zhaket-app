@@ -10,7 +10,7 @@ const ProductActions = ({ demoLink, isGrid = true }) => {
             {/* Preview Button */}
             <Link
                 href={demoLink}
-                target="_blank"
+                target="_parent"
                 className={isGrid ? "flex-1" : "w-[168px]"}
             >
                 <button

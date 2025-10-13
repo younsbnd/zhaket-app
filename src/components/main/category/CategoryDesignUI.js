@@ -25,7 +25,7 @@ export default function CategoryDesignUI({
   hasActiveSort,
   pushParams,
   slug,
-  currentSort, // ✅ highlight controlled by this
+  currentSort, // highlight controlled by this
 }) {
   return (
     <main className="relative overflow-x-hidden">
@@ -50,7 +50,7 @@ export default function CategoryDesignUI({
           <section className="w-full md:w-3/4 md:pb-4">
             <NavbarFiltering
               onSortChange={handleSortChange}
-              currentSort={currentSort}   // ✅ highlight uses this props
+              currentSort={currentSort}   //  highlight uses this props
               onViewModeChange={handleViewModeChange}
               viewMode={viewMode}
             />
