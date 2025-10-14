@@ -18,7 +18,7 @@ const getTransactions = async () => {
 
     // Fetch only successful user transactions, sorted by newest first
     const transactions = await Transaction.find({
-      userId: session.user.id,
+      user: session.user.id,
       "paymentResult.status": "PAID",
     })
       .sort({ createdAt: -1 })
