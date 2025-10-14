@@ -7,10 +7,18 @@ import Order from "@/models/Order";
 import Transaction from "@/models/Transaction";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
+import { createInternalServerError } from "@/lib/utils/errors";
 
 // verify order with zarinpal
 const verifyOrder = async (req, res) => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.NEXT_PUBLIC_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی NEXT_PUBLIC_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     // get search params
     const searchParams = req.nextUrl.searchParams;
     const authority = searchParams.get("Authority");
@@ -19,7 +27,7 @@ const verifyOrder = async (req, res) => {
     // if status is not OK or authority is not found, redirect to failed page
     if (status !== "OK" || !authority) {
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/checkout?type=FAILED"
+        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=FAILED"
       );
     }
 
@@ -33,14 +41,14 @@ const verifyOrder = async (req, res) => {
     // check if order is found
     if (!order) {
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/checkout?type=FAILED"
+        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=FAILED"
       );
     }
 
     // check if order is already paid
     if (order.status === "PAID" || order.paymentResult.status === "PAID") {
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/checkout?type=PAID"
+        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=PAID"
       );
     }
 
@@ -93,7 +101,7 @@ const verifyOrder = async (req, res) => {
       order.paymentResult.status = "FAILED";
       await order.save();
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/checkout?type=FAILED"
+        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=FAILED"
       );
     }
   } catch (error) {

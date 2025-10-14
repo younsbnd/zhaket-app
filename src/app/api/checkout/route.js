@@ -5,7 +5,7 @@ import { zarinpalCreatePayment } from "@/lib/utils/zarinpalGateway";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
-import { createBadRequestError, createNotFoundError } from "@/lib/utils/errors";
+import { createBadRequestError, createNotFoundError, createInternalServerError } from "@/lib/utils/errors";
 import Cart from "@/models/Cart";
 import Order from "@/models/Order";
 import User from "@/models/User";
@@ -15,6 +15,19 @@ import { getNextSequenceValue } from "@/lib/utils/generateOrderNumber";
 // checkout route for logic checkout
 const checkout = async (req, res) => {
   try {
+    // Check if required environment variables are set
+    if (!process.env.ZARINPAL_PAYMENT_CALLBACK_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_CALLBACK_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
+    if (!process.env.ZARINPAL_PAYMENT_BASE_URL) {
+      throw createInternalServerError(
+        "متغیر محیطی ZARINPAL_PAYMENT_BASE_URL تعریف نشده است. لطفاً فایل .env را بررسی کنید."
+      );
+    }
+
     const { useWallet } = await req.json();
     await connectToDb();
 
