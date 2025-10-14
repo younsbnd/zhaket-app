@@ -70,7 +70,7 @@ const verifyDeposit = async (req, res) => {
     if (payment.data.code === 100 || payment.data.code === 101) {
       // Update user balance (only if payment is successful)
       await User.updateOne(
-        { _id: transaction.userId },
+        { _id: transaction.user },
         { $inc: { balance: transaction.amount } }
       );
 
@@ -81,7 +81,7 @@ const verifyDeposit = async (req, res) => {
       await transaction.save();
 
       logger.info("Payment verified successfully", {
-        userId: transaction.userId,
+        userId: transaction.user,
         amount: transaction.amount,
         refId: payment.data.ref_id,
       });

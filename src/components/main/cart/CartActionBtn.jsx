@@ -1,16 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { Checkbox, addToast } from "@heroui/react";
+import { Button, Checkbox, addToast } from "@heroui/react";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa6";
 import { logger } from "@/lib/utils/logger";
+import { useCrud } from "@/hooks/useCrud";
+import { useRouter } from "next/navigation";
 
-const CartActionBtn = () => {
+const CartActionBtn = ({ useWallet }) => {
   const [isAcceptedCheckbox, setIsAcceptedCheckbox] = useState(false);
+  const { createRecord: createCheckout, isLoading } = useCrud("/checkout");
+  const router = useRouter();
 
   //   submit handler for checkout
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isAcceptedCheckbox) {
       addToast({
         title:
@@ -21,7 +25,35 @@ const CartActionBtn = () => {
       return;
     }
 
-    logger.debug("پرداخت انجام شد");
+    // try to create checkout
+    try {
+      const response = await createCheckout({
+        useWallet: useWallet,
+      });
+
+      // check if checkout is paid with wallet
+      if (response.data.isPaidWithWallet) {
+        addToast({
+          description: response.data.message,
+          color: "success",
+          shouldShowTimeoutProgress: true,
+        });
+        return;
+      }
+
+      // check if checkout is successful
+      if (response.data.success) {
+        logger.debug("checkout response is :", response.data.paymentUrl);
+        router.push(response.data.paymentUrl);
+      }
+    } catch (error) {
+      // show toast for error
+      addToast({
+        description: error?.error?.message || error.message,
+        color: "danger",
+        shouldShowTimeoutProgress: true,
+      });
+    }
   };
 
   return (
@@ -55,16 +87,18 @@ const CartActionBtn = () => {
         </Checkbox>
       </div>
       {/* submit button for checkout */}
-      <button
+      <Button
         type="button"
-        onClick={handleSubmit}
+        onPress={handleSubmit}
         className="mt-[29px] flex h-[59px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-lg bg-[#81CF33] px-4 py-3 text-base font-semibold text-[#F9FAFC] shadow-[0px_5px_25px_0px_rgba(52,168,85,0.17)] transition duration-300 hover:bg-[#F5FBED] hover:text-[#81CF33] focus:outline-0 focus:outline-hidden"
+        isLoading={isLoading}
+        isDisabled={isLoading}
       >
         <div className="flex items-center justify-center">
           ثبت و پرداخت
           <FaArrowLeft className="pr-2" size={24} />
         </div>
-      </button>
+      </Button>
     </div>
   );
 };
