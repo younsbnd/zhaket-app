@@ -15,11 +15,11 @@ import { MEDAL_CATEGORIES } from "@/constants/main/catgory/category-filtering/si
  */
 const CheckboxIcon = React.memo(({ isChecked }) => (
   <div
-    className={`border-i-gray flex items-center justify-center rounded-sm border-2 h-4 w-4 ${
+    className={`border-i-gray cursor-pointer flex items-center justify-center rounded-sm border-2 h-4 w-4 ${
       isChecked ? "border-none bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)]" : ""
     }`}
   >
-    {isChecked && <HiCheck className="h-3 w-3 text-white" />}
+    {isChecked && <HiCheck className="h-3  w-3 text-white" />}
   </div>
 ));
 
@@ -63,7 +63,7 @@ const MedalFilters = ({ activeFilters, onFilterToggle }) => {
                 aria-checked
                 aria-label={`Toggle ${medal.label} filter`}
               >
-                <CheckboxIcon  />
+                  <CheckboxIcon isChecked={activeFilters.has(medal.id)} />
               </button>
               <span className="mr-4 w-full">
                 <div className="flex items-center justify-between">

@@ -2,7 +2,11 @@
 import React, { useState, useCallback, useMemo } from "react";
 import SidebarFiltering from "../SidebarFiltering";
 
-const SidebarFilteringLogic = ({ onResetSort, hasActiveSort = false }) => {
+const SidebarFilteringLogic = ({
+  onResetSort,
+  hasActiveSort = false,
+  onFilterChange // NEW: Add this prop
+}) => {
   // Active filter IDs (brand, color, size, etc.)
   const [activeFilters, setActiveFilters] = useState(new Set());
 
@@ -33,7 +37,9 @@ const SidebarFilteringLogic = ({ onResetSort, hasActiveSort = false }) => {
       updated.has(id) ? updated.delete(id) : updated.add(id);
       return updated;
     });
-  }, []);
+    // Reset page to 1 when filter changes
+    onFilterChange?.();
+  }, [onFilterChange]);
 
   /**
    * Toggle category expansion in accordion
@@ -53,7 +59,9 @@ const SidebarFilteringLogic = ({ onResetSort, hasActiveSort = false }) => {
    */
   const handleToggleChange = useCallback((name) => {
     setToggles((prev) => ({ ...prev, [name]: !prev[name] }));
-  }, []);
+    // Reset page to 1 when toggle changes
+    onFilterChange?.();
+  }, [onFilterChange]);
 
   /**
    * Clear all active filters
@@ -66,7 +74,9 @@ const SidebarFilteringLogic = ({ onResetSort, hasActiveSort = false }) => {
       demoSearch: false,
       showUnavailable: false,
     });
-  }, []);
+    // Reset page to 1 when clearing filters
+    onFilterChange?.();
+  }, [onFilterChange]);
 
   /**
    * Clear all filters and sorting

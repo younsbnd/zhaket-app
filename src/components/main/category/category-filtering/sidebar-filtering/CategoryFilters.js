@@ -10,7 +10,7 @@ import { HiCheck, HiChevronDown } from "react-icons/hi2";
  */
 const CheckboxIcon = React.memo(({ isChecked }) => (
   <div
-    className={`flex h-4 w-4 items-center justify-center rounded-sm border-2 border-i-gray ${isChecked ? "border-none bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)]" : ""
+    className={`flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm border-2 border-i-gray ${isChecked ? "border-none bg-[linear-gradient(247.65deg,_#FFC107_-35.57%,_#FF9737_100%)]" : ""
       }`}
   >
     {isChecked && <HiCheck className="h-3 w-3 text-white" />}
@@ -83,7 +83,6 @@ const CategoryFilters = ({ activeFilters, expandedCategories, onFilterToggle, on
         <CiMenuBurger className="text-xl text-[#FF9606]" />
         <span className="text-base text-bold transition duration-300">دسته بندی محصولات</span>
       </div>
-
       {/* Categories list */}
       <ul>
         {categories.map((category) => (

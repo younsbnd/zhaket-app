@@ -31,7 +31,7 @@ const ProductStats = ({ rating = {}, salesCount = 0, isGrid = true }) => {
             {/* Rating */}
             <div className="flex items-center gap-1">
                 {isGrid ? (
-                    <FaStar className="h-4 w-4 text-[#FFC87B]" />
+                    <FaStar className="h-4 w-4  text-[#FFC87B]" />
                 ) : (
                     <PiStarThin className="text-2xl text-[#FF9606]" />
                 )}
