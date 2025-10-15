@@ -4,7 +4,7 @@ export default function RootLayout({ children }) {
   return (
     <div>
       <Header />
-      <main className="pt-0 md:pt-28">{children}</main>
+      <main className="pt-0 md:pt-24">{children}</main>
       <Footer />
     </div>
   );

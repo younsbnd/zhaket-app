@@ -74,7 +74,7 @@ export async function POST(req) {
     // Create transaction record with PENDING status
     // Balance will be updated only after successful payment verification
     await Transaction.create({
-      userId: session.user.id,
+      user: session.user.id,
       amount: amount,
       type: "DEPOSIT",
       description: `شارژ کیف پول به مبلغ ${new Intl.NumberFormat("fa-IR").format(amount)} تومان`,

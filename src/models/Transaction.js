@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema(
   {
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: [true, "userId الزامی است"],
+      required: [true, "user الزامی است"],
     },
     amount: {
       type: Number,
@@ -35,7 +35,6 @@ const transactionSchema = new mongoose.Schema(
         type: String,
         unique: [true, "authority باید منحصر به فرد باشد"],
         sparse: true,
-        required: [true, "authority الزامی است"],
       },
       paidAt: {
         type: Date,
