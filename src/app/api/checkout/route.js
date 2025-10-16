@@ -11,8 +11,12 @@ import Order from "@/models/Order";
 import User from "@/models/User";
 import Transaction from "@/models/Transaction";
 import { getNextSequenceValue } from "@/lib/utils/generateOrderNumber";
+import OtpEmail from "@/components/emails/OtpEmail";
+import { Resend } from "resend";
+import StatusOrderEmail from "@/components/emails/statusOrderEmail";
 
 // checkout route for logic checkout
+
 const checkout = async (req, res) => {
   try {
     // Check if required environment variables are set
@@ -79,7 +83,7 @@ const checkout = async (req, res) => {
       });
 
       // create order
-      await Order.create({
+      const walletOrder = await Order.create({
         user: session.user.id,
         items: orderItems,
         totalPrice: totalPrice,
@@ -107,6 +111,14 @@ const checkout = async (req, res) => {
 
       // update cart
       await Cart.findOneAndUpdate({ userId: session.user.id }, { items: [] });
+
+      // Send order completion email for wallet payment
+      try {
+        await sendEmailOrderCompleted(walletOrder._id);
+      } catch (emailError) {
+        logger.error("Failed to send wallet order completion email", emailError);
+        // Don't fail the entire process if email fails
+      }
 
       return NextResponse.json({
         success: true,
@@ -161,3 +173,50 @@ const checkout = async (req, res) => {
 };
 
 export { checkout as POST };
+
+
+
+
+const sendEmailOrderCompleted = async (orderId) => {
+  try {
+    await connectToDb();
+
+    // Get order with user details
+    const order = await Order.findById(orderId).populate('user');
+
+    if (!order) {
+      throw createNotFoundError("محصول خریداری شده یافت نشد ")
+    }
+    // Check if user has email
+    if (!order.user) {
+
+      throw createBadRequestError("کاربر یافت نشد ");
+    } if (!order.user.email) {
+
+      throw createBadRequestError("ایمیل کاربر یافت نشد ");
+    }
+
+    // Check if order is completed
+    if (order.status !== "COMPLETED") {
+      throw createBadRequestError("سفارش پرداخت نشده است");
+    }
+
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const result = await resend.emails.send({
+        from: "younes@nikgem.ir",
+        to: order.user.email,
+        subject: ` با موفقیت انجام شد سفارش شما با شماره ${order.orderNumber} `,
+        react: <StatusOrderEmail order={order} />,
+      });
+
+    } catch (error) {
+      logger.error("مشکلی در ارسال ایمیل وضعیت خرید پیش امده است "); 
+    } 
+  } catch (error) {
+    return errorHandler(error);
+
+  }
+};
+
+export { sendEmailOrderCompleted };
