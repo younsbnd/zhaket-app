@@ -72,10 +72,7 @@ export default function Header() {
     };
   }, []);
 
-  // Show loading skeleton while session is being fetched
-  if (status === "loading") {
-    return <HeaderSkeletons />;
-  }
+  // Avoid rendering skeleton for static header
 
   return (
     <>
@@ -128,7 +125,7 @@ export default function Header() {
                     className="flex items-center gap-[9px] font-bold text-[15px] text-[#424244] hover:text-[#FF9606] bg-transparent p-0 h-auto"
                   >
                     <TbCategory color="#FF9606" size={20} />
-                    <span>دسته‌بندی‌ها</span>
+                    <Link href="/category" className="hover:text-[#FF9606]">دسته‌بندی‌ها</Link>
                     <FaChevronDown color="#FF9606" />
                   </Button>
                 </PopoverTrigger>
@@ -137,21 +134,34 @@ export default function Header() {
                 <PopoverContent className="p-[5px] w-[95vw] max-w-[1200px] rounded-[10px] bg-white shadow-[0px_20px_60px_-15px_rgba(0,0,0,0.15)] hidden md:block">
                   <div className="flex flex-col md:flex-row min-h-[400px]">
 
-                    {/* Left Side - Category Tabs */}
                     <div className="bg-[#F9FAFC] rounded-[10px]   md:w-[190px] lg:w-[300px] xl:w-[320px] p-[5px] flex-shrink-0">
                       <ul>
                         {MAIN_TABS.map((tab) => (
                           <li key={tab.id}>
-                            <div
-                              onMouseEnter={() => setActiveTab(tab.id)}
-                              className={`flex items-center gap-3 px-[15px] xl:px-[19px] py-3 xl:py-4 rounded-md cursor-pointer transition-all duration-200 ${activeTab === tab.id
-                                ? "bg-white shadow-sm text-[#FF9606]"
-                                : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
-                                }`}
-                            >
-                              {tab.icon}
-                              <span className="text-sm md:text-base">{tab.label}</span>
-                            </div>
+                            {tab.href ? (
+                              <Link
+                                href={tab.href}
+                                onMouseEnter={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-3 px-[15px] xl:px-[19px] py-3 xl:py-4 rounded-md cursor-pointer transition-all duration-200 ${activeTab === tab.id
+                                  ? "bg-white shadow-sm text-[#FF9606]"
+                                  : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
+                                  }`}
+                              >
+                                {tab.icon}
+                                <span className="text-sm md:text-base">{tab.label}</span>
+                              </Link>
+                            ) : (
+                              <div
+                                onMouseEnter={() => setActiveTab(tab.id)}
+                                className={`flex items-center gap-3 px-[15px] xl:px-[19px] py-3 xl:py-4 rounded-md cursor-pointer transition-all duration-200 ${activeTab === tab.id
+                                  ? "bg-white shadow-sm text-[#FF9606]"
+                                  : "text-[#5B5C60] hover:bg-white hover:shadow-sm"
+                                  }`}
+                              >
+                                {tab.icon}
+                                <span className="text-sm md:text-base">{tab.label}</span>
+                              </div>
+                            )}
                           </li>
                         ))}
                       </ul>

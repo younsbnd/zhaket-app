@@ -31,13 +31,13 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
   const { value = "", editable = true, className = "", linkOptions = {}, menuTitle = "Editor Menu", onChangeHtml, onChangeBlocks } = props;
 
   const extensions = useMemo(() => [
-    StarterKit.configure({ 
-      heading: { levels: [1,2,3] }, 
-      italic: false, 
-      strike: false, 
-      code: false, 
-      codeBlock: false, 
-      blockquote: false, 
+    StarterKit.configure({
+      heading: { levels: [1, 2, 3] },
+      italic: false,
+      strike: false,
+      code: false,
+      codeBlock: false,
+      blockquote: false,
       horizontalRule: false,
       link: false // Exclude link from StarterKit to avoid duplicate
     }),
