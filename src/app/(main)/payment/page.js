@@ -1,9 +1,12 @@
+
 "use client";
 
 import SuccessMessage from '@/components/main/payment/success-message/SuccessMessage';
 import FailureMessage from '@/components/main/payment/failure-message/FailureMessage';
 import { useSearchParams, redirect } from 'next/navigation';
-import React from 'react';
+import React from "react";
+
+
 
 const PaymentPage = () => {
     // Get URL search parameters

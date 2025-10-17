@@ -8,7 +8,7 @@ import Transaction from "@/models/Transaction";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import { createInternalServerError } from "@/lib/utils/errors";
-import { sendEmailOrderCompleted } from "../../route";
+import { sendOrderCompletionEmail } from "@/lib/utils/sendOrderEmail";
 
 // verify order with zarinpal
 const verifyOrder = async (req, res) => {
@@ -96,11 +96,7 @@ const verifyOrder = async (req, res) => {
       await Cart.findOneAndUpdate({ userId: order.user }, { items: [] });
       
       // Send order completion email
-      try {
-        const emailResult = await sendEmailOrderCompleted(order._id); 
-      } catch (emailError) {
-        return errorHandler(emailError);
-      }
+      await sendOrderCompletionEmail(order._id);
       
       return NextResponse.redirect(
         process.env.NEXT_PUBLIC_BASE_URL + "/payment?status=success"

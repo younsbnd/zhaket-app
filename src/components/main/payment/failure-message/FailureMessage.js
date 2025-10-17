@@ -18,20 +18,20 @@ const FailureMessage = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row justify-center gap-3">
-                    <button
-                        onClick={() => (window.location.href = "/retry-payment")}
-                        className="flex items-center justify-center gap-2 h-[55px] rounded-lg bg-[#FF9606] hover:bg-[#EB8800] text-white font-semibold text-[13px] transition-colors duration-300 flex-1"
+                    <Link
+                        href="/cart"
+                        className="flex items-center justify-center gap-2 h-[55px] rounded-lg bg-[#FF9606] hover:bg-[#EB8800] text-white font-semibold text-[13px] transition-colors duration-300 flex-1 cursor-pointer"
                     >
                         <FaRedo className="w-4 h-4" />
                         تلاش مجدد
-                    </button>
+                    </Link>
 
                     <Link
                         href="/"
-                        className="flex text-xl items-center justify-center gap-2 h-[55px] rounded-lg bg-[#EAEEF380] hover:bg-[#878F9B] hover:text-white text-[#7E899B] font-bold text-[13px] transition-colors duration-300 flex-1"
+                        className="flex items-center justify-center gap-2 h-[55px] rounded-lg bg-[#EAEEF380] hover:bg-[#878F9B] hover:text-white text-[#7E899B] font-bold text-[13px] transition-colors duration-300 flex-1 cursor-pointer"
                     >
-                        <AiOutlineProduct className="text-xl" />
-                        محصولات
+                        <AiOutlineProduct className="w-4 h-4" />
+                        صفحه اصلی
                     </Link>
                 </div>
             </div>
