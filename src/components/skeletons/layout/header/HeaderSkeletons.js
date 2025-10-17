@@ -4,7 +4,6 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdOutlineShoppingCart } from "react-icons/md";
 // Import all required icons for skeletons (no duplicates)
-import { BiUser } from "react-icons/bi";
 import React from "react";
 
 /**

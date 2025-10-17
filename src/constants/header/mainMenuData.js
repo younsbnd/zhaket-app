@@ -15,31 +15,31 @@ export const MAIN_TABS = [
     id: "wordpress-themes",
     icon: <SiWordpress color="#878F9B" size={24} />,
     label: "قالب وردپرس",
-    href: "/web/category/wordpress-themes"
+    href: "/category/wordpress-themes"
   },
   {
     id: "wordpress-plugins",
     icon: <BiPlug color="#878F9B" size={24} />,
     label: "افزونه وردپرس",
-    href: "/web/category/wordpress-plugins"
+    href: "/category/wordpress-plugins"
   },
   {
     id: "scripts",
     icon: <RiFileCodeLine color="#878F9B" size={24} />,
     label: "اسکریپت",
-    href: "/web/category/script"
+    href: "/category/scripts"
   },
   {
     id: "html-templates",
     icon: <AiOutlineHtml5 color="#878F9B" size={24} />,
     label: "قالب HTML",
-    href: "/web/category/html-site-templates"
+    href: "/category/html-site-templates"
   },
   {
     id: "amazing-bundles",
     icon: <MdLocalOffer color="#878F9B" size={24} />,
     label: "بسته‌های شگفت‌انگیز",
-    href: "/web/category/amazing-bundles"
+    href: "/category/amazing-bundles"
   },
 ];
 
@@ -56,28 +56,28 @@ export const POPULAR_PLUGINS = [
 
 export const TAB_CONTENT = {
   "wordpress-themes": [
-    [{ label: "قالب وردپرس", href: "/web/category/wordpress-themes" }],
-    [{ label: "قالب آموزشی وردپرس", href: "/web/category/education" }],
+    [{ label: "قالب وردپرس", href: "/category/wordpress-themes" }],
+    [{ label: "قالب آموزشی وردپرس", href: "/category/education" }],
 
   ],
   "wordpress-plugins": [
-    [{ label: "افزونه فروشگاهی", href: "/plugins/shop" }],
-    [{ label: "افزونه ترجمه", href: "/plugins/translation" }],
-    [{ label: "افزونه رزرواسیون", href: "/plugins/reservation" }]
+    [{ label: "افزونه فروشگاهی", href: "/category/shop-plugins" }],
+    [{ label: "افزونه ترجمه", href: "/category/translation-plugins" }],
+    [{ label: "افزونه رزرواسیون", href: "/category/reservation-plugins" }]
   ],
   scripts: [
-    [{ label: "اسکریپت مدیریت پروژه", href: "/scripts/project-management" }],
-    [{ label: "اسکریپت شبکه اجتماعی", href: "/scripts/social" }],
-    [{ label: "اسکریپت چت", href: "/scripts/chat" }]
+    [{ label: "اسکریپت مدیریت پروژه", href: "/category/project-management-scripts" }],
+    [{ label: "اسکریپت شبکه اجتماعی", href: "/category/social-scripts" }],
+    [{ label: "اسکریپت چت", href: "/category/chat-scripts" }]
   ],
   "html-templates": [
-    [{ label: "قالب تک صفحه‌ای", href: "/html/onepage" }],
-    [{ label: "قالب لندینگ پیج", href: "/html/landing" }],
-    [{ label: "قالب رستوران", href: "/html/restaurant" }]
+    [{ label: "قالب تک صفحه‌ای", href: "/category/onepage-html" }],
+    [{ label: "قالب لندینگ پیج", href: "/category/landing-html" }],
+    [{ label: "قالب رستوران", href: "/category/restaurant-html" }]
   ],
   "amazing-bundles": [
-    [{ label: "بسته کامل وردپرس", href: "/bundles/wp" }],
-    [{ label: "بسته قالب‌ها", href: "/bundles/themes" }],
-    [{ label: "بسته توسعه", href: "/bundles/development" }]
+    [{ label: "بسته کامل وردپرس", href: "/category/wordpress-bundles" }],
+    [{ label: "بسته قالب‌ها", href: "/category/themes-bundles" }],
+    [{ label: "بسته توسعه", href: "/category/development-bundles" }]
   ],
 };

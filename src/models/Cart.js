@@ -6,7 +6,7 @@ const CartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: [true, "کاربر الزامی است"],
-      unique: [true, "هر کاربر فقط یک سبد خرید دارد"],
+      unique: true,
     },
     items: [
       {
