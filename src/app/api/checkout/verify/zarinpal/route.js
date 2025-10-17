@@ -8,6 +8,7 @@ import Transaction from "@/models/Transaction";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
 import { createInternalServerError } from "@/lib/utils/errors";
+import { sendOrderCompletionEmail } from "@/lib/utils/sendOrderEmail";
 
 // verify order with zarinpal
 const verifyOrder = async (req, res) => {
@@ -93,15 +94,19 @@ const verifyOrder = async (req, res) => {
       order.paymentResult.refId = verifyRefId;
       await order.save();
       await Cart.findOneAndUpdate({ userId: order.user }, { items: [] });
+      
+      // Send order completion email
+      await sendOrderCompletionEmail(order._id);
+      
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=PAID"
+        process.env.NEXT_PUBLIC_BASE_URL + "/payment?status=success"
       );
     } else {
       // if payment is failed, update order status to FAILED
       order.paymentResult.status = "FAILED";
       await order.save();
       return NextResponse.redirect(
-        process.env.NEXT_PUBLIC_BASE_URL + "/cart?type=FAILED"
+        process.env.NEXT_PUBLIC_BASE_URL + "/payment?status=failed"
       );
     }
   } catch (error) {
