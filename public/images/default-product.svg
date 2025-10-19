@@ -1,0 +1,8 @@
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" fill="#f3f4f6"/>
+  <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#9ca3af" font-size="16" font-family="Arial">
+    تصویر موجود نیست
+  </text>
+  <path d="M150 100 L200 150 L150 200 L100 150 Z" fill="#d1d5db" opacity="0.5"/>
+</svg>
+

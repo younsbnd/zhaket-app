@@ -1,0 +1,157 @@
+@import "tailwindcss";
+@plugin "../../hero.js";
+@source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  color-scheme: dark;
+  --bg: #000814;
+  --glass-border: rgba(56, 97, 251, 0.15);
+  --glass-top: rgba(23, 27, 56, 0.65);
+  --glass-bottom: rgba(10, 12, 24, 0.45);
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold;
+  }
+  h2 {
+    @apply text-3xl font-bold;
+  }
+  h3 {
+    @apply text-2xl font-bold;
+  }
+  h4 {
+    @apply text-xl font-bold;
+  }
+  h5 {
+    @apply text-lg font-bold;
+  }
+  h6 {
+    @apply text-base font-bold;
+  }
+}
+
+@theme {
+  --color-zhaket-primary: #ff9606;
+  --color-zhaket-hover: #ffe6c0;
+  --color-zhaket-secondary: #424242;
+  --color-zhaket-bg: #f5f5f5;
+  --color-zhaket-text: #212121;
+  --color-zhaket-button-hover: #b47510;
+  --color-zhaket-link: #0288d1;
+  --color-zhaket-cta: #ff5722;
+  
+  /* New theme colors */
+  --color-zhaket-gray-100: #F9FAFC;
+  --color-zhaket-gray-200: #E5E8EB;
+  --color-zhaket-gray-300: #C1C3C8;
+  --color-zhaket-gray-400: #878F9B;
+  --color-zhaket-gray-500: #76767C;
+  --color-zhaket-gray-600: #5D6877;
+  --color-zhaket-gray-700: #424244;
+  
+  --color-zhaket-yellow-100: #FFF5E6;
+  --color-zhaket-yellow-500: #FFAE11;
+  --color-zhaket-yellow-600: #FF9606;
+  
+  --color-zhaket-blue-100: #F0F8FF;
+  --color-zhaket-blue-500: #6097F3;
+}
+
+body {
+  font-family: var(--font-iranyekan), sans-serif;
+}
+
+.glass {
+  background: linear-gradient(180deg, var(--glass-top), var(--glass-bottom));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 10px 30px rgba(32, 58, 223, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.top-btn {
+  @apply cursor-pointer flex items-center justify-center rounded-lg opacity-100 focus:outline-hidden focus:outline-0 px-4 py-3 bg-[#FFAE11] h-11 bg-linear-to-r from-[#FF9737] to-[#FFC107] hover:bg-linear-to-r hover:from-[#FFC107] hover:to-[#FF9737] text-[15px] font-bold text-white hover:opacity-100 transition-colors duration-300 ease-in-out;
+}
+
+/* Custom Swiper Styles*/
+.themes-swiper {
+  overflow: visible !important;
+  width: 100% !important;
+  height: 220px !important;
+}
+
+.themes-swiper .swiper-wrapper {
+  align-items: center !important;
+}
+
+.themes-swiper .swiper-slide {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.4s ease !important;
+  transform-origin: center !important;
+}
+
+.themes-swiper .swiper-slide-active {
+  transform: scale(1) rotateY(0deg) !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+.themes-swiper .swiper-slide:not(.swiper-slide-active) {
+  opacity: 0.9 !important;
+  z-index: 1 !important;
+}
+
+.themes-swiper .swiper-slide-prev,
+.themes-swiper .swiper-slide-next {
+  z-index: 2 !important;
+}
+
+.rotate-z-slider .swiper-slide-prev {
+  transform: scale(0.95) rotateZ(5deg) !important;
+  translate: 0 15px 0px !important;
+}
+
+.rotate-z-slider .swiper-slide-next {
+  transform: scale(0.95) rotateZ(-5deg) !important;
+  translate: 0 15px 0px !important;
+}
+
+/* Discounts Carousel Navigation Styles */
+.discounts-swiper {
+  position: relative !important;
+
+}
+
+.discounts-swiper .swiper-button-next,
+.discounts-swiper .swiper-button-prev {
+  color: rgb(118, 118, 118) !important;
+  background: white !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 10px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+.discounts-swiper .swiper-button-prev {
+  right: 0 !important;
+}
+.discounts-swiper .swiper-button-next {
+  left: 0 !important;
+}
+
+.discounts-swiper .swiper-button-next:hover,
+.discounts-swiper .swiper-button-prev:hover {
+  background: rgba(229, 228, 228, 0.9) !important;
+}
+
+.discounts-swiper .swiper-button-next:after,
+.discounts-swiper .swiper-button-prev:after {
+  font-size: 15px !important; 
+}
