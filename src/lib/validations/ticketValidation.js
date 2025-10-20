@@ -8,6 +8,7 @@ export const createTicketValidation = z
     reportType: z.enum(["PRODUCT_SUPPORT", "OTHER_REPORT", "BUY_PRODUCT"]),
     description: z.string().min(10, "توضیحات باید حداقل 10 کاراکتر باشد"),
     product: z.string().optional(),
+    status: z.enum(["OPEN", "PENDING", "ANSWERED", "CLOSED"]).default("OPEN"),
   })
   .refine(
     (data) => {

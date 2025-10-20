@@ -56,4 +56,24 @@ const createTicket = async (req) => {
   }
 };
 
-export { createTicket as POST };
+const getTickets = async (req) => {
+  try {
+    // get session
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      throw createUnauthorizedError("برای دسترسی به این صفحه باید وارد شوید");
+    }
+    await connectToDb();
+    const tickets = await Ticket.find({ user: session.user.id }).sort({
+      createdAt: -1,
+    });
+    return NextResponse.json({
+      success: true,
+      tickets,
+    });
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
+export { createTicket as POST, getTickets as GET };
