@@ -155,3 +155,19 @@ body {
 .discounts-swiper .swiper-button-prev:after {
   font-size: 15px !important; 
 }
+
+/* Ticket Chat Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
