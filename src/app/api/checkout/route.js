@@ -11,8 +11,12 @@ import Order from "@/models/Order";
 import User from "@/models/User";
 import Transaction from "@/models/Transaction";
 import { getNextSequenceValue } from "@/lib/utils/generateOrderNumber";
+import OtpEmail from "@/components/emails/OtpEmail";
+import { Resend } from "resend";
+import { sendOrderCompletionEmail } from "@/lib/utils/sendOrderEmail";
 
 // checkout route for logic checkout
+
 const checkout = async (req, res) => {
   try {
     // Check if required environment variables are set
@@ -79,7 +83,7 @@ const checkout = async (req, res) => {
       });
 
       // create order
-      await Order.create({
+      const walletOrder = await Order.create({
         user: session.user.id,
         items: orderItems,
         totalPrice: totalPrice,
@@ -107,6 +111,9 @@ const checkout = async (req, res) => {
 
       // update cart
       await Cart.findOneAndUpdate({ userId: session.user.id }, { items: [] });
+
+      // Send order completion email for wallet payment
+      await sendOrderCompletionEmail(walletOrder._id);
 
       return NextResponse.json({
         success: true,
@@ -161,3 +168,7 @@ const checkout = async (req, res) => {
 };
 
 export { checkout as POST };
+
+
+
+

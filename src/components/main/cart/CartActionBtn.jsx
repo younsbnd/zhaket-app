@@ -38,6 +38,10 @@ const CartActionBtn = ({ useWallet }) => {
           color: "success",
           shouldShowTimeoutProgress: true,
         });
+        
+        // Redirect to payment success page after wallet payment
+        router.push("/payment?status=success");
+        
         return;
       }
 
