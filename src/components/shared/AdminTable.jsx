@@ -24,6 +24,7 @@ const AdminTable = ({
 
   // Edit/Delete props
   editLinkPrefix,
+  editButtonText = "ویرایش",
   onDelete,
   deleteId,
   setDeleteId,
@@ -112,7 +113,7 @@ const AdminTable = ({
                           as={Link}
                           href={`${editLinkPrefix}/${item._id}`}
                         >
-                          ویرایش
+                          {editButtonText}
                         </Button>
                       )}
 

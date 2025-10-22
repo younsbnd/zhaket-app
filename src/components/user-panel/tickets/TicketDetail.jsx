@@ -6,12 +6,13 @@ import { fetcher } from "@/lib/api/fetcher";
 import ReplyFormLogic from "./ReplyFormLogic";
 import { useSession } from "next-auth/react";
 import { Card, CardBody } from "@heroui/react";
-import { FiMessageSquare } from "react-icons/fi";
 import { useParams } from "next/navigation";
 import TicketDetailSkeleton from "@/components/skeletons/user-panel/TicketDetailSkeleton";
 import TicketHeader from "./ticket-detail/TicketHeader";
 import EmptyMessages from "./ticket-detail/EmptyMessages";
 import MessagesList from "./ticket-detail/MessagesList";
+import Link from "next/link";
+import { RiFileWarningLine } from "react-icons/ri";
 
 const TicketDetail = () => {
   const { data: session } = useSession();
@@ -26,7 +27,7 @@ const TicketDetail = () => {
       : null,
     fetcher,
     {
-      refreshInterval: 5000,
+      refreshInterval: 10000,
     }
   );
 
@@ -39,7 +40,6 @@ const TicketDetail = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [replies]);
-
 
   // if loading, show a skeleton
   if (isLoading) {
@@ -54,25 +54,13 @@ const TicketDetail = () => {
           <CardBody className="p-6 md:p-8">
             <div className="flex items-center justify-center min-h-[400px]">
               <div className="text-center space-y-3">
-                <svg
-                  className="w-16 h-16 md:w-20 md:h-20 text-red-300 mx-auto"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
+                <RiFileWarningLine className="w-16 h-16 md:w-20 md:h-20 text-red-300 mx-auto" />
                 <p className="text-gray-600 text-sm md:text-base font-semibold">
                   تیکت مورد نظر یافت نشد
                 </p>
                 <Link
                   href="/panel/tickets"
-                  className="text-blue-500 hover:text-blue-600 text-sm md:text-base underline"
+                  className="text-amber-700 hover:text-amber-800 transition duration-300 text-sm md:text-base bg-amber-50 px-4 py-2 rounded-md hover:bg-amber-100"
                 >
                   بازگشت به لیست تیکت‌ها
                 </Link>
@@ -96,7 +84,10 @@ const TicketDetail = () => {
             {replies.length === 0 ? (
               <EmptyMessages />
             ) : (
-              <MessagesList replies={replies} currentUserId={session?.user?.id} />
+              <MessagesList
+                replies={replies}
+                currentUserId={session?.user?.id}
+              />
             )}
           </div>
 

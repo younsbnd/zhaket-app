@@ -3,25 +3,43 @@ import { TICKETS_TABS } from "@/constants/main/user/tickets/tabsNavigation";
 import { Button } from "@heroui/react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaRegSquarePlus } from "react-icons/fa6";
 
-const TicketTabs = () => {
+const TicketTabs = ({ counts = {} }) => {
   const searchParams = useSearchParams();
   const status = searchParams.get("status");
   const [activeTab, setActiveTab] = useState(status || "open");
 
-  //   if the status is in the url, set the active tab to the status
+  // keep active tab in sync with URL
   useEffect(() => {
     if (status) {
       setActiveTab(status);
     }
   }, [status]);
+
+  // get tabs with counts
+  const tabsWithCounts = useMemo(() => {
+    return TICKETS_TABS.map((tab) => ({
+      ...tab,
+      count:
+        tab.id === "open"
+          ? (counts.open ?? tab.count)
+          : tab.id === "in_progress"
+            ? (counts.in_progress ?? tab.count)
+            : tab.id === "answered"
+              ? (counts.answered ?? tab.count)
+              : tab.id === "closed"
+                ? (counts.closed ?? tab.count)
+                : tab.count,
+    }));
+  }, [counts]);
+
   return (
     <div className="flex flex-row justify-between items-center border-b border-gray-200 md:py-6 py-3.5 px-6">
       <div className="h-14 items-center rounded-md p-1 text-muted-foreground flex flex-1 flex-row md:gap-6.5 gap-1 md:justify-start justify-between bg-white">
         {/* Tabs */}
-        {TICKETS_TABS.map((tab) => (
+        {tabsWithCounts.map((tab) => (
           <Link
             href={`/panel/tickets?status=${tab.id}`}
             key={tab.id}
@@ -48,10 +66,13 @@ const TicketTabs = () => {
         ))}
       </div>
       {/* Add Ticket Button */}
-      <Button className="items-center justify-center transition-all duration-300 whitespace-nowrap rounded-md leading-5 hover:text-white bg-blue-50 text-blue-500 hover:bg-blue-500 font-medium md:flex h-[44px] px-5 gap-1.5 text-[13px] hidden">
+      <Link
+        href="/panel/tickets/new"
+        className="items-center justify-center transition-all duration-300 whitespace-nowrap rounded-md leading-5 hover:text-white bg-blue-50 text-blue-500 hover:bg-blue-500 font-bold md:flex h-[44px] px-5 gap-1.5 text-[13px] hidden "
+      >
         <FaRegSquarePlus className="w-4 h-4" />
         افزود تیکت
-      </Button>
+      </Link>
     </div>
   );
 };

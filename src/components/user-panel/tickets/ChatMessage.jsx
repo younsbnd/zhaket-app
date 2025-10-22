@@ -62,7 +62,7 @@ const ChatMessage = ({ reply, isCurrentUser }) => {
               isCurrentUser
                 ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-tr-sm"
                 : isAdmin
-                  ? "bg-gradient-to-br from-green-50 to-green-100 text-gray-800 border border-green-200 rounded-bl-sm"
+                  ? "bg-gradient-to-br from-green-50 to-green-100 text-gray-800 border border-green-200 rounded-tr-sm"
                   : "bg-gray-100 text-gray-800 border border-gray-200 rounded-bl-sm"
             }`}
           >

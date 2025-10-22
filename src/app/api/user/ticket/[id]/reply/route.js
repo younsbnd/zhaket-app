@@ -6,6 +6,9 @@ import connectToDb from "@/lib/utils/db";
 import Ticket from "@/models/Ticket";
 import TicketReply from "@/models/TicketReply";
 import { NextResponse } from "next/server";
+import sendTicketNotification from "@/lib/utils/sendTicketNotification";
+import getAdminEmails from "@/lib/utils/getAdminEmails";
+import { logger } from "@/lib/utils/logger";
 
 export async function POST(req, { params }) {
   try {
@@ -15,7 +18,7 @@ export async function POST(req, { params }) {
       throw createUnauthorizedError("برای دسترسی به این صفحه باید وارد شوید");
     }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
     const { message } = body;
 
@@ -65,16 +68,45 @@ export async function POST(req, { params }) {
       message: message.trim(),
     });
 
+    // Check if status is changing
+    const statusChanged = ticket.status !== "PENDING";
+
     // update ticket status to PENDING (waiting for admin response)
     await Ticket.findByIdAndUpdate(id, { status: "PENDING" });
+
+    // Send email notifications to admins if status changed
+    if (statusChanged) {
+      try {
+        const adminEmails = await getAdminEmails();
+        const populatedTicket = await Ticket.findById(id).populate(
+          "user",
+          "fullName email"
+        );
+
+        // Send notification to each admin
+        for (const adminEmail of adminEmails) {
+          try {
+            await sendTicketNotification(adminEmail, populatedTicket, "admin");
+            logger.info(`User reply notification sent to admin: ${adminEmail}`);
+          } catch (emailError) {
+            logger.error(
+              `Failed to send notification to admin ${adminEmail}:`,
+              emailError
+            );
+          }
+        }
+      } catch (notificationError) {
+        logger.error("Error sending admin notifications:", notificationError);
+      }
+    }
 
     // populate user info
     await newReply.populate("user", "name email avatar role");
 
     return NextResponse.json(
-      { 
-        message: "پاسخ شما با موفقیت ارسال شد", 
-        data: newReply 
+      {
+        message: "پاسخ شما با موفقیت ارسال شد",
+        data: newReply,
       },
       { status: 201 }
     );
@@ -82,4 +114,3 @@ export async function POST(req, { params }) {
     return errorHandler(error);
   }
 }
-
