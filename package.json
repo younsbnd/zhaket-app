@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@heroui/react": "^2.8.2",
+    "@heroui/react": "^2.8.5",
     "@react-email/components": "0.5.0",
     "@react-email/render": "^1.2.0",
     "@tiptap/extension-image": "^3.1.0",

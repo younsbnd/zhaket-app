@@ -1,6 +1,6 @@
-import React from 'react' 
+import React from 'react'
 import InvoicesContainer from '@/components/user-panel/invoices/InvoicesLogic'
- const InvoicesPage = () => { 
+const InvoicesPage = () => {
     return (
         <div>
             <InvoicesContainer />
