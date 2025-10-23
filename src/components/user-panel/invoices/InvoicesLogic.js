@@ -5,73 +5,88 @@ import { useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/api/fetcher';
 import InvoicesDesignTable from './InvoicesDesignTable';
+import InvoicesDesignTableSkeleton from '@/components/skeletons/user-panel/invoices/InvoicesDesignTableSkeleton';
+import { addToast } from '@heroui/react';
 
 const InvoicesContainer = () => {
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    // Fetch invoices data
-    const { data: invoicesResponse, error: errorInvoices } = useSWR(
+    // Fetch invoices data from API
+    const { data: invoicesResponse, isLoading: isLoadingInvoices, error: errorInvoices } = useSWR(
         "/api/user/invoices",
-        fetcher,
+        fetcher
     );
 
-    // Handle authentication
+    // Check user authentication
     useEffect(() => {
         if (status === "loading") return;
-        if (!session) {
-            router.push("/login");
-        }
+        if (!session) router.push("/login");
     }, [session, status, router]);
 
-    // Handle view details action
-    const handleViewDetails = (invoice) => {
-        router.push(`/panel/invoices/${invoice._id}`);
-    };
+    // Navigate to order details page
+    const handleViewDetails = (invoice) => router.push(`/panel/invoices/${invoice._id}`);
 
-    // Format currency with Persian numbers
-    const formatCurrency = (amount) => {
-        if (!amount || amount === 0) return "۰";
-        return new Intl.NumberFormat('fa-IR').format(amount);
-    };
+    // Process and format invoices data
+    const processedInvoices = (invoicesResponse?.data || [])
+        .map(invoice => {
+            const status = invoice.paymentResult?.status;
+            return {
+                ...invoice,
+                formattedAmount: invoice.totalPrice ? new Intl.NumberFormat('fa-IR').format(invoice.totalPrice) : "۰",
+                formattedDate: invoice.paymentResult?.paidAt || invoice.createdAt ?
+                    new Date(invoice.paymentResult?.paidAt || invoice.createdAt).toLocaleDateString('fa-IR') : 'تاریخ نامشخص',
+                paymentStatus: status === "PAID" ? 'پرداخت شده' :
+                    status === "PENDING" || status === "FAILED" ? 'در انتظار پرداخت' : 'پرداخت نشده',
+                statusBadgeColor: status === "PAID" ? "bg-green-100 text-green-800" :
+                    status === "PENDING" || status === "FAILED" ? "bg-[#FEF3E2] text-[#E5A653]" :
+                        "bg-red-100 text-red-800"
+            };
+        })
+        .sort((a, b) => {
+            // Get payment status for both invoices
+            const statusA = a.paymentResult?.status || 'UNPAID';
+            const statusB = b.paymentResult?.status || 'UNPAID';
 
-    // Format date to Persian locale
-    const formatDate = (dateString) => {
-        if (!dateString) return 'تاریخ نامشخص';
-        return new Date(dateString).toLocaleDateString('fa-IR');
-    };
+            // Priority order: PAID first, then PENDING, then others
+            const getStatusPriority = (status) => {
+                if (status === 'PAID') return 1;
+                if (status === 'PENDING') return 2;
+                if (status === 'FAILED') return 3;
+                return 4; // UNPAID or unknown
+            };
 
-    // Get payment status text based on payment result
-    const getPaymentStatus = (invoice) => {
-        const status = invoice.paymentResult?.status;
-        if (status === "PAID") return 'پرداخت شده';
-        if (status === "PENDING" || status === "FAILED") return 'در انتظار پرداخت';
-        return 'پرداخت نشده';
-    };
+            // Compare by status priority first
+            const priorityA = getStatusPriority(statusA);
+            const priorityB = getStatusPriority(statusB);
 
-    // Get badge color based on payment status
-    const getStatusBadgeColor = (invoice) => {
-        const status = invoice.paymentResult?.status;
-        if (status === "PAID") return "bg-green-100 text-green-800";
-        if (status === "PENDING" || status === "FAILED") return "bg-[#FEF3E2] text-[#E5A653] ";
-        return "bg-red-100 text-red-800";
-    };
+            if (priorityA !== priorityB) {
+                return priorityA - priorityB; // Lower number = higher priority
+            }
 
-    // Process invoices data with helper functions
-    const processedInvoices = (invoicesResponse?.data || []).map(invoice => ({
-        ...invoice,
-        formattedAmount: formatCurrency(invoice.totalPrice),
-        formattedDate: formatDate(invoice.paymentResult?.paidAt),
-        paymentStatus: getPaymentStatus(invoice),
-        statusBadgeColor: getStatusBadgeColor(invoice)
-    }));
+            // If same status, sort by date (newest first)
+            const dateA = new Date(a.paymentResult?.paidAt || a.createdAt);
+            const dateB = new Date(b.paymentResult?.paidAt || b.createdAt);
+            return dateB - dateA;
+        });
 
-    const errorMessage = errorInvoices?.message || errorInvoices?.error?.message;
+    // Handle API errors with toast
+    useEffect(() => {
+        if (errorInvoices) {
+            addToast({
+                description: errorInvoices?.message || errorInvoices?.error?.message || 'خطا در بارگذاری فاکتورها',
+                color: "danger",
+                shouldShowTimeoutProgress: true,
+            });
+        }
+    }, [errorInvoices]);
+
+    if (isLoadingInvoices || (!invoicesResponse && !errorInvoices)) return <InvoicesDesignTableSkeleton />;
 
     return (
         <InvoicesDesignTable
             invoices={processedInvoices}
-            error={errorMessage}
+            error={errorInvoices?.message || errorInvoices?.error?.message}
             onViewDetails={handleViewDetails}
         />
     );

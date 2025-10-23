@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { errorHandler } from "@/lib/utils/errorHandler";
 import { createUnauthorizedError, createNotFoundError } from "@/lib/utils/errors";
 import { authOptions } from "../../auth/[...nextauth]/route";
+import User from "@/models/User";
  
 
 
@@ -17,8 +18,8 @@ const getInvoices = async (req, res) => {
         throw createUnauthorizedError("برای دسترسی به این صفحه باید وارد شوید");
     }
     await connectToDb();    
-        const orders = await Order.find({ user: session.user.id}).select('+createdAt');
-
+        const orders = await Order.find({ user: session.user.id}).select('+createdAt ').populate('user', 'fullName phoneNumber email');
+        
         if (!orders) {
             throw createNotFoundError("محصول خریداری شده یافت نشد");
         }

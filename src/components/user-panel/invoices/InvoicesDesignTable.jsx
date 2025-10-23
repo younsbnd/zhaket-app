@@ -67,8 +67,9 @@ const InvoicesDesignTable = ({ invoices = [], error, onViewDetails }) => (
                   <td className="pl-[1px] pr-9 py-6">
                     <button
                       onClick={() => onViewDetails && onViewDetails(invoice)}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-400 hover:bg-blue-600 text-white rounded-lg text-[12px] font-medium"
+                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-400 hover:bg-blue-600 text-white rounded-lg text-[12px] font-medium cursor-pointer transition-colors   "
                       type="button"
+                      aria-label="مشاهده جزئیات سفارش"
                     >
                       مشاهده جزئیات
                     </button>
