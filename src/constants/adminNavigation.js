@@ -8,6 +8,7 @@ import {
 } from "react-icons/bi";
 import { AiFillProduct } from "react-icons/ai";
 import { HiOutlineTicket } from "react-icons/hi";
+import { MdComment } from "react-icons/md";
 
 
 // admin navigation links for sidebar and mobile menu
@@ -66,6 +67,13 @@ export const ADMIN_NAVIGATIONS = [
     path: "/admin/tickets",
     icon: (
       <HiOutlineTicket className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
+    ),
+  },
+  {
+    name: "نظرات",
+    path: "/admin/comments",
+    icon: (
+      <MdComment className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
     ),
   },
 ];
