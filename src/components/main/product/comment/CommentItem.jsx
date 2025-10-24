@@ -22,8 +22,8 @@ const CommentItem = ({ comment, level = 0 }) => {
       {/* Border line for admin replies */}
       <div
         className={`mb-5 overflow-hidden rounded-lg ${
-          level === 0 ? "border-[1px] border-[#E9EBF1]" : ""
-        } p-[15px] last:mb-0 ${level > 0 ? "pr-8 md:pr-4" : ""}`}
+          level === 0 ? "border-[1px] border-[#E9EBF1]" : "bg-gray-50 border-l-2 border-l-blue-200"
+        } p-[15px] last:mb-0 ${level > 0 ? "ml-4" : ""}`}
       >
         <div>
           <div className="flex items-center justify-between gap-2.5">
@@ -60,11 +60,17 @@ const CommentItem = ({ comment, level = 0 }) => {
         </div>
         {/* Admin replies - only one level */}
         {comment.replies && comment.replies.length > 0 && (
-          <div className="flex gap- mt-4">
-            <div className="border-r h-8 w-4 border-b rounded-br-lg ms-3 border-gray-200"></div>
-            {comment.replies.map((reply) => (
-              <CommentItem key={reply._id} comment={reply} level={level + 1} />
-            ))}
+          <div className="mt-4">
+            <div className="flex">
+              <div className="w-6 flex-shrink-0">
+                <div className="w-4 h-8 border-r-2 border-b-2 border-gray-200 rounded-br-lg"></div>
+              </div>
+              <div className="flex-1 space-y-3">
+                {comment.replies.map((reply) => (
+                  <CommentItem key={reply._id} comment={reply} level={level + 1} />
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
