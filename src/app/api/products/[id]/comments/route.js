@@ -78,7 +78,7 @@ const getComments = async (req, { params }) => {
   } catch (error) {
     return errorHandler(error);
   }
-}
+};
 
 // create a new comment
 const createComment = async (req, { params }) => {
@@ -150,4 +150,4 @@ const createComment = async (req, { params }) => {
   }
 };
 
-export { createComment as POST , getComments as GET };
+export { createComment as POST, getComments as GET };
