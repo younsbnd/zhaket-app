@@ -25,6 +25,7 @@ import AuthButton from "./MenuDrawer/AuthButton";
 import HeaderSkeletons from "@/components/skeletons/layout/header/HeaderSkeletons";
 import CascadingMenu from "./CascadingMenu";
 import SearchModal from "./searchbox/Searchbox";
+import { useSettings } from "@/contexts/SettingsContext";
 
 /**
  * Header Component
@@ -43,6 +44,9 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   // Session data from NextAuth
   const { data: session, status } = useSession();
+  // Get settings from context
+  const { settings } = useSettings();
+  const logoUrl = settings?.logoUrl || "/images/logo.svg";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -90,7 +94,7 @@ export default function Header() {
             className="flex items-center ml-1 min-w-[32px] z-10 relative"
           >
             <Image
-              src="/images/logo.svg"
+              src={logoUrl}
               alt="Zhaket"
               width={40}
               height={40}
