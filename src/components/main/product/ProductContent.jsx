@@ -4,15 +4,17 @@ import { Tabs, Tab } from "@heroui/react";
 import { FaListUl } from "react-icons/fa";
 import { BsQuestionCircle, BsHeadphones } from "react-icons/bs";
 import { AiOutlineStar } from "react-icons/ai";
+import CommentSection from "./comment/CommentSection";
 
 const ProductContent = ({ product }) => {
   return (
     <div>
       <div className="relative ">
+        {/* tabs */}
         <Tabs
           aria-label="محتوای محصول"
           classNames={{
-            base: "w-full bg-white border-t-[1px] border-t-[#EDEEF2] mb-6 ",
+            base: "w-full bg-white border-t-[1px] border-t-[#EDEEF2] mb-6 px-5",
             tabList:
               "gap-6 w-full relative rounded-none p-0 max-w-[1279px] mx-auto",
             cursor: "w-full bg-[#FF9606] h-0.5",
@@ -24,65 +26,81 @@ const ProductContent = ({ product }) => {
           }}
           variant="underlined"
         >
-           <Tab
-             key="description"
-             title={
-               <div className="flex items-center gap-3 p-0 whitespace-nowrap">
-                 <FaListUl size={16} className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]" />
-                 <span className="transition duration-300 text-sm leading-7">
-                   توضیحات محصول
-                 </span>
-               </div>
-             }
-           >
+          {/* description tab */}
+          <Tab
+            key="description"
+            title={
+              <div className="flex items-center gap-3 p-0 whitespace-nowrap">
+                <FaListUl
+                  size={16}
+                  className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]"
+                />
+                <span className="transition duration-300 text-sm leading-7">
+                  توضیحات محصول
+                </span>
+              </div>
+            }
+          >
             <div className="py-8">
               <div dangerouslySetInnerHTML={{ __html: product?.description }} />
             </div>
           </Tab>
 
-           <Tab
-             key="comments"
-             title={
-               <div className="flex items-center gap-3 p-0">
-                 <AiOutlineStar size={20} className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]" />
-                 <span className="transition duration-300 text-sm leading-7">
-                   دیدگاه‌ها
-                 </span>
-               </div>
-             }
-           >
+          {/* comments tab */}
+          <Tab
+            key="comments"
+            title={
+              <div className="flex items-center gap-3 p-0">
+                <AiOutlineStar
+                  size={20}
+                  className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]"
+                />
+                <span className="transition duration-300 text-sm leading-7">
+                  دیدگاه‌ها
+                </span>
+              </div>
+            }
+          >
             <div className="py-8">
-              <p className="text-[#76767C]">دیدگاه‌ها به زودی...</p>
+              <CommentSection productId={product?._id} />
             </div>
           </Tab>
 
-           <Tab
-             key="questions"
-             title={
-               <div className="flex items-center gap-3 p-0">
-                 <BsQuestionCircle size={20} className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]" />
-                 <span className="transition duration-300 text-sm leading-7">
-                   پرسش‌ها
-                 </span>
-               </div>
-             }
-           >
+          {/* questions tab */}
+          <Tab
+            key="questions"
+            title={
+              <div className="flex items-center gap-3 p-0">
+                <BsQuestionCircle
+                  size={20}
+                  className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]"
+                />
+                <span className="transition duration-300 text-sm leading-7">
+                  پرسش‌ها
+                </span>
+              </div>
+            }
+          >
             <div className="py-8">
               <p className="text-[#76767C]">پرسش‌ها به زودی...</p>
             </div>
           </Tab>
 
-           <Tab
-             key="support"
-             title={
-               <div className="flex items-center gap-3 p-0">
-                 <BsHeadphones size={20} className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]" />
-                 <span className="transition duration-300 text-sm leading-7">
-                   پشتیبانی
-                 </span>
-               </div>
-             }
-           >
+          {/* support tab */}
+          <Tab
+            key="support"
+            title={
+              <div className="flex items-center gap-3 p-0">
+                <BsHeadphones
+                  size={20}
+                  className="transition duration-300 group-data-[selected=true]:text-[#FFA22B] text-[#76767C]"
+                />
+                <span className="transition duration-300 text-sm leading-7">
+                  پشتیبانی
+                </span>
+              </div>
+            }
+          >
             <div className="py-8">
               <p className="text-[#76767C]">اطلاعات پشتیبانی به زودی...</p>
             </div>
