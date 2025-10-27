@@ -9,12 +9,6 @@ import { NextResponse } from "next/server";
 // get settings
 const getSettings = async () => {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      throw createBadRequestError("شما اجازه دسترسی به این صفحه را ندارید");
-    }
-
     await connectToDb();
 
     let settings = await Setting.findOne({ siteId: "global" });
