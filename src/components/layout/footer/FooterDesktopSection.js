@@ -12,7 +12,7 @@ import { Button, Input } from "@heroui/react";
  */
 export default function FooterDesktopSection({ footerLinks, logoUrl }) {
   return (
-    <div className="justify-between md:flex md:pt-[50px]">
+    <div className="justify-between md:flex md:pt-[50px] w-full">
       {/* Navigation columns for desktop */}
       <div className="hidden md:grid md:grid-cols-3 w-[calc(100%_-_377px)] pt-[25px] gap-x-10">
         {footerLinks.map((section, index) => (
