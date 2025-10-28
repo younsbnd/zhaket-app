@@ -31,7 +31,7 @@ const Footer = () => {
   const logoUrl = settings?.logoUrl || "/images/logo.svg";
 
   return (
-    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0">
+    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0 md:w-full">
       {/* Mobile Social Section */}
       <div
         className="flex items-center w-full justify-between pt-10 md:hidden"

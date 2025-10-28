@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 // UI Component imports
-import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
+import { Badge, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 
 // Icon imports
 import { IoSearchOutline } from "react-icons/io5";
@@ -19,6 +19,7 @@ import MobileMenuSidebar from "./MobileMenuSidebar";
 import UserProfileDropdown from "./MobileUserProfile";
 import AuthButton from "./AuthButton";
 import SearchModal from "../searchbox/Searchbox";
+import { useCartStore } from "@/stores/useCartStore";
 
 /**
  * MobileHeader Component
@@ -57,24 +58,24 @@ export default function MobileHeader() {
     };
   }, []);
 
+  const { items: cartItems } = useCartStore();
+
   return (
     <>
       {/* Mobile Header - visible only on mobile screens */}
       <header
-        className={`flex items-center justify-around top-0 z-50 w-full pb-4 pt-6 md:hidden sticky transition-colors duration-300 ${
+        className={`flex items-center justify-between top-0 z-50 w-full px-4 pb-4 pt-6 md:hidden sticky transition-colors duration-300 ${
           isScrolled ? "bg-white shadow-md" : "bg-transparent"
         }`}
       >
         {/* Left Section - Menu and Logo */}
-        <div className="flex  justify-around items-center gap-1">
+        <div className="flex items-center gap-4">
           {/* Hamburger Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label="Open mobile menu"
-            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
-              isScrolled
-                ? "bg-white"
-                : "bg-white/50 backdrop-blur-sm"
+            className={`flex justify-center items-center h-10 w-10 rounded-lg !bg-white border border-gray-50 shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)] transition-colors duration-200 cursor-pointer ${
+              isScrolled ? "bg-white" : "bg-white/50 backdrop-blur-sm"
             }`}
           >
             <AiOutlineMenu className="text-[#EB8800] text-2xl" />
@@ -98,41 +99,32 @@ export default function MobileHeader() {
         </div>
 
         {/* Right Section - Search, Cart, and Authentication */}
-        <nav className="flex items-center gap-2" aria-label="Header navigation">
+        <nav className="flex items-center gap-3" aria-label="Header navigation">
           {/* Search Button */}
           <button
             onClick={openSearchModal}
             aria-label="Open search"
-            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-[#FFF5E6] focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
-              isScrolled
-                ? "bg-white"
-                : "bg-white/50 backdrop-blur-sm"
+            className={`flex justify-center items-center h-10 w-10 rounded-lg !bg-white border border-gray-50 shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)] transition-colors duration-200 cursor-pointer ${
+              isScrolled ? "bg-white" : "bg-white/50 backdrop-blur-sm"
             }`}
           >
             <IoSearchOutline className="text-[#878F9B]" size={20} />
           </button>
 
-          {/* Shopping Cart with Popover */}
-          <Popover placement="bottom-end">
-            <PopoverTrigger>
-              <button
-                className={`h-10 w-[54px] flex justify-center items-center rounded-lg hover:bg-[#fef6e8] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
-                  isScrolled
-                    ? "bg-white"
-                    : "bg-white/50 backdrop-blur-sm"
-                }`}
-                aria-label="Shopping cart"
-              >
-                <MdOutlineShoppingCart
-                  size={20}
-                  className="text-[#878F9B] transition-colors duration-200"
-                />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="p-4">
-              <p className="text-sm text-gray-600">سبد خرید خالی است</p>
-            </PopoverContent>
-          </Popover>
+          <Badge content={cartItems.length} color="danger">
+            <Link
+              href="/cart"
+              className={`h-10 w-[54px] flex justify-center items-center rounded-lg !bg-white border border-gray-50 shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)] transition-colors duration-200 cursor-pointer hover:!bg-amber-50 group ${
+                isScrolled ? "bg-white" : "bg-white/50 backdrop-blur-sm"
+              }`}
+              aria-label="Shopping cart"
+            >
+              <MdOutlineShoppingCart
+                size={20}
+                className="text-[#878F9B] transition-colors duration-200 group-hover:text-amber-500"
+              />
+            </Link>
+          </Badge>
 
           {/* Authentication Section */}
           {status === "authenticated" ? (
@@ -147,16 +139,10 @@ export default function MobileHeader() {
       </header>
 
       {/* Mobile Menu Sidebar */}
-      <MobileMenuSidebar
-        isOpen={isMobileMenuOpen}
-        onClose={closeMobileMenu}
-      />
+      <MobileMenuSidebar isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
 
       {/* Search Modal */}
-      <SearchModal
-        isOpen={isSearchOpen}
-        onClose={closeSearchModal}
-      />
+      <SearchModal isOpen={isSearchOpen} onClose={closeSearchModal} />
     </>
   );
 }
