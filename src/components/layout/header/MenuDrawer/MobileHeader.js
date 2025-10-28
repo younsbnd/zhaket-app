@@ -71,7 +71,7 @@ export default function MobileHeader() {
           <button
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label="Open mobile menu"
-            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
+            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-gray-50 transition-colors duration-200 ${
               isScrolled
                 ? "bg-white"
                 : "bg-white/50 backdrop-blur-sm"
@@ -84,7 +84,7 @@ export default function MobileHeader() {
           <Link
             href="/"
             aria-label="Go to homepage"
-            className="focus:outline-none focus:ring-2 focus:ring-[#EB8800] rounded-lg transition-all duration-200"
+            className="rounded-lg transition-all duration-200"
           >
             <Image
               src="/images/logo.svg"
@@ -103,7 +103,7 @@ export default function MobileHeader() {
           <button
             onClick={openSearchModal}
             aria-label="Open search"
-            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-[#FFF5E6] focus:outline-none focus:ring-2 focus:ring-[#EB8800] transition-colors duration-200 ${
+            className={`flex justify-center items-center h-10 w-10 rounded-lg shadow-md hover:bg-[#FFF5E6] transition-colors duration-200 ${
               isScrolled
                 ? "bg-white"
                 : "bg-white/50 backdrop-blur-sm"

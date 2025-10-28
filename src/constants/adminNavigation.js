@@ -5,6 +5,7 @@ import {
   BiImage,
   BiTag,
   BiUser,
+  BiMenu,
 } from "react-icons/bi";
 import { AiFillProduct } from "react-icons/ai";
 import { HiOutlineTicket } from "react-icons/hi";
@@ -74,6 +75,13 @@ export const ADMIN_NAVIGATIONS = [
     path: "/admin/comments",
     icon: (
       <MdComment className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
+    ),
+  },
+  {
+    name: "مدیریت منوها",
+    path: "/admin/menus",
+    icon: (
+      <BiMenu className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
     ),
   },
 ];

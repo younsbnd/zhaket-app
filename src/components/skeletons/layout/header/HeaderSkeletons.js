@@ -60,13 +60,15 @@ export function DesktopHeaderSkeleton() {
         </div>
 
         {/* Main navigation (center) */}
-        <nav className="hidden md:flex items-center gap-[20px] xl:gap-[35px]">
-          {/* Categories / primary nav skeletons (5 items) */}
-          <Skeleton className="h-[36px] w-[120px] rounded-md" />
+        <nav className="hidden md:flex items-center gap-8">
+          {/* Categories dropdown skeleton */}
+          <Skeleton className="h-[36px] w-[140px] rounded-md" />
+          
+          {/* Dynamic menu skeletons */}
+          <Skeleton className="h-[36px] w-[100px] rounded-md" />
+          <Skeleton className="h-[36px] w-[90px] rounded-md" />
           <Skeleton className="h-[36px] w-[110px] rounded-md" />
-          <Skeleton className="h-[36px] w-[110px] rounded-md" />
-          <Skeleton className="h-[36px] w-[110px] rounded-md" />
-          <Skeleton className="h-[36px] w-[110px] rounded-md" />
+          <Skeleton className="h-[36px] w-[85px] rounded-md" />
         </nav>
 
         {/* Utilities (right) */}

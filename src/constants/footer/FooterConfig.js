@@ -15,7 +15,7 @@ export const footerLinks = [
     ],
   },
   {
-    // Services offered by the platform
+    // Services section
     title: "خدمات",
     titleEn: "Services",
     links: [
@@ -26,7 +26,7 @@ export const footerLinks = [
     ],
   },
   {
-    // Quick navigation to popular categories
+    // Quick access section
     title: "دسترسی سریع",
     titleEn: "Quick Access",
     links: [
@@ -42,17 +42,34 @@ export const footerLinks = [
 export const socials = [
   {
     href: "http://instagram.com/zhaketcom",
-    icon: <FaInstagram className="w-[27px] h-[27px]" />,
+    icon: FaInstagram,
     label: "instagram",
   },
   {
     href: "https://linkedin.com/company/zhaket",
-    icon: <FaLinkedin className="w-[21px] h-[21px]" />,
+    icon: FaLinkedin,
     label: "linkedin",
   },
   {
     href: "https://t.me/s/zhaketcom",
-    icon: <FaTelegramPlane className="w-[20px] h-[20px]" />,
+    icon: FaTelegramPlane,
     label: "telegram",
   },
+];
+ export const socialLinks = [
+  {
+    href: "http://instagram.com/zhaketcom",
+    icon: <FaInstagram size={27} className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200" />,
+    label: "صفحه اینستاگرام ژاکت"
+  },
+  {
+    href: "https://linkedin.com/company/zhaket",
+    icon: <FaLinkedin size={21} className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200" />,
+    label: "صفحه لینکدین ژاکت"
+  },
+  {
+    href: "https://t.me/s/zhaketcom",
+    icon: <FaTelegramPlane size={20} className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200" />,
+    label: "کانال تلگرام ژاکت"
+  }
 ];

@@ -7,61 +7,103 @@ import { HiArrowLeft } from "react-icons/hi";
 import { Button, Input } from "@heroui/react";
 
 /**
- * FooterDesktopSection component
- * Renders desktop footer with navigation links, newsletter signup, and contact section
+ * FooterDesktopSection Component
+ * 
+ * Renders the desktop version of the footer with:
+ * - Logo and navigation links on the left side
+ * - Newsletter subscription and contact support on the right side
+ * - Responsive design that hides on mobile devices
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.footerLinks - Array of footer link sections with title and links
+ * @returns {JSX.Element} Desktop footer section
  */
 export default function FooterDesktopSection({ footerLinks }) {
   return (
     <div className="justify-between md:flex md:pt-[50px]">
-      {/* Navigation columns for desktop */}
-      <div className="hidden md:grid md:grid-cols-3 w-[calc(100%_-_377px)] pt-[25px] gap-x-10">
-        {footerLinks.map((section, index) => (
-          <div
-            key={section.title}
-            className="flex w-full flex-col items-start gap-4"
-          >
-            {/* Logo in first column */}
-            {index === 0 && (
-              <Link href="/" aria-label="صفحه اصلی ژاکت">
-                <Image
-                  alt="لوگو ژاکت"
-                  width={60}
-                  height={43}
-                  src="/images/logo.svg"
-                  className="min-h-[31px] min-w-[44px] transition-opacity duration-300 hover:opacity-80"
-                  priority
-                />
-              </Link>
-            )}
-
-            {/* Section title */}
-            <h3
-              className={`text-base text-[#424244] leading-7 font-medium ${index === 0 ? "hidden" : ""
-                } md:block`}
-            >
-              {section.title}
-            </h3>
+      {/* Left side: Logo + Navigation columns */}
+      <div className="hidden md:flex md:w-[calc(100%_-_377px)] pt-[25px] gap-x-32">
+        {/* Company logo section */}
+        <div className="flex flex-col items-start gap-4">
+          <Link href="/" aria-label="صفحه اصلی ژاکت">
+            <Image
+              alt="لوگو ژاکت"
+              width={60}
+              height={43}
+              src="/images/logo.svg"
+              className="min-h-[31px] min-w-[44px] transition-opacity duration-300 hover:opacity-80"
+              priority
+            />
+          </Link>
+          
+          {/* Static Contact section under logo */}
+          <div className="flex w-full flex-col items-start gap-4">
+            
+           
 
             {/* Section links */}
-            <nav className="flex flex-col items-start gap-2" aria-label={`${section.title} لینک‌ها`}>
-              {section.links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-sm leading-7 text-[#76767C] transition-colors duration-300 hover:text-[#FF9606]"
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <nav className="flex flex-col items-start gap-2" aria-label="ارتباط با ما لینک‌ها">
+              <Link
+                href="/content/terms"
+                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+              >
+                قوانین ژاکت
+              </Link>
+              <Link
+                href="/logo"
+                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+              >
+                لوگو
+              </Link>
+              <Link
+                href="/content/about"
+                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+              >
+                درباره ما
+              </Link>
+              <Link
+                href="/content/contact"
+                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+              >
+                تماس با ما
+              </Link>
             </nav>
           </div>
-        ))}
+        </div>
+
+        {/* Navigation links organized in 2 columns with increased spacing */}
+        <div className="grid grid-cols-2 gap-x-16 flex-1 justify-start">
+          {footerLinks.filter(section => section.title !== "ارتباط با ژاکت").map((section, index) => (
+            <div
+              key={section.title}
+              className="flex w-full flex-col items-start gap-4"
+            >
+              {/* Section title */}
+              <h3 className="text-[17px] text-[#424244] leading-7 font-medium md:block">
+                {section.title}
+              </h3>
+
+              {/* Section links */}
+              <nav className="flex flex-col items-start gap-2" aria-label={`${section.title} لینک‌ها`}>
+                {section.links.map((link, linkIndex) => (
+                  <Link
+                    key={`${section.title}-${linkIndex}-${link.href}`}
+                    href={link.href}
+                    className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Newsletter and contact section */}
-      <div className="flex flex-col md:w-[377px]">
+      <div className="flex flex-col mr-36 md:w-[377px]">
         {/* Newsletter subscription card */}
-        <div className="mt-4 h-[159px] rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
+        <div className="mt-4 h-[159px]  rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
           <div className="flex items-center gap-3 pb-2">
             <Image
               alt="لوگو ژاکت"

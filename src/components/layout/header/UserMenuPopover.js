@@ -17,26 +17,10 @@ import { signOut } from "next-auth/react";
 export default function UserMenu({ session }) {
   return (
     <Popover placement="bottom-end">
-      <PopoverTrigger>
-        <Button className="group flex h-10 w-fit items-center gap-2 rounded-lg bg-white p-2 shadow-sm" disableRipple>
-          <div className="flex items-center gap-2">
-            {session?.user?.image ? (
-              <Image
-                src={session.user.image}
-                alt={session.user.name || "کاربر"}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            ) : (
-              <FaUser className="text-[#878F9B]" size={16} />
-            )}
-            <span className="text-sm leading-7 pr-1 text-[#787676] hidden lg:inline">
-              {session?.user?.name || session?.user?.email || "کاربر"}
-            </span>
-            <FaChevronDown className="text-[#878F9B]" size={12} />
-          </div>
-        </Button>
+      <PopoverTrigger >
+        <button className="group flex h-10 w-12 items-center justify-center rounded-lg bg-white shadow-sm border-0 outline-none cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+          <FaUser className="text-[#878F9B]" size={15} />
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="p-0 min-w-[240px] bg-white rounded-lg shadow-lg">
