@@ -81,7 +81,7 @@ export const ADMIN_NAVIGATIONS = [
   {
 
     name: "مدیریت منوها",
-    path: "/admin/menus",
+    path: "/admin/menu",
     icon: (
       <BiMenu className="inline-flex p-1 text-3xl items-center justify-center rounded-md bg-blue-500/15 text-blue-400 ring-1 ring-inset ring-blue-400/20" />
     ),
