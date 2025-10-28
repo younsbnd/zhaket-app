@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useCallback } from "react";
-import { Popover, PopoverTrigger, PopoverContent, CircularProgress } from "@heroui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  CircularProgress,
+} from "@heroui/react";
 import { FaChevronDown } from "react-icons/fa";
 import { AiOutlineHeart } from "react-icons/ai";
 import { BiHome, BiPlus, BiUser } from "react-icons/bi";
@@ -18,6 +23,15 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
   }, [onMenuClose]);
 
 
+  // Get user display name
+  const getDisplayName = useCallback(() => {
+    return (
+      session?.user?.name?.split(" ")[0] ||
+      session?.user?.email?.split("@")[0] ||
+      "کاربر ژاکت"
+    );
+  }, [session]);
+
 
   // Handle menu item click and close menu
   const handleMenuItemClick = useCallback(() => {
@@ -28,27 +42,13 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
     <Popover placement="bottom-end">
       <PopoverTrigger>
         <button
-          className="group flex h-10 w-fit min-w-12 items-center justify-center rounded-lg bg-white p-2 shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)] outline-none transition duration-300 hover:bg-[#76767c] md:h-12 md:bg-[#F9FAFC] md:shadow-none"
-          aria-label={`profile menu`}
+
+          className="group flex h-10 w-fit min-w-12 items-center justify-center rounded-lg bg-white p-2 shadow-[0px_4px_8px_0px_rgba(153,126,86,0.08)]  md:h-12 md:bg-[#F9FAFC] md:shadow-none cursor-pointer"
+          aria-label={`Open ${getDisplayName()} profile menu`}
         >
           <div className="flex items-center gap-2">
-            {/* User avatar */}
-            {session?.user?.image ? (
-              <Image
-                src={session.user.image}
-                alt={session.user.name || "کاربر"}
-                width={20}
-                height={20}
-                className="rounded-full"
-                priority
-              />
-            ) : (
-              <BiUser className="w-5 h-5 text-[#878F9B]" />
-            )}
+            <BiUser className="w-5 h-5 text-[#878F9B]" />
 
-      
- 
-           
           </div>
         </button>
       </PopoverTrigger>
@@ -58,7 +58,7 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           {/* User info header */}
           <div className="flex justify-center flex-col items-start pr-7 py-3">
             <p className="transition duration-300 text-base leading-7 text-[#5B5C60]">
-              {session?.user?.name || "کاربر ژاکت"}
+              {session?.user?.fullName || "کاربر"}
             </p>
           </div>
 
@@ -66,12 +66,14 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           <Link
             href="/panel"
             onClick={handleMenuItemClick}
-            className="block"
+            className="block focus:outline-none "
             role="menuitem"
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
               <BiHome className="w-5 h-5 text-[#5B5C60]" />
-              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">پیشخوان</p>
+              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
+                پیشخوان
+              </p>
             </div>
           </Link>
 
@@ -85,7 +87,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
             <div className="flex items-center justify-between gap-4 rounded-xl bg-[#FFF5E6] py-4 pr-7 pl-3 hover:bg-[#F9FAFC] mx-2 transition-colors duration-200">
               <div className="flex items-center justify-center gap-4">
                 <BiUser className="w-5 h-5 text-[#EB8800]" />
-                <p className="transition duration-300 text-sm leading-7 text-[#EB8800]">تکمیل پروفایل</p>
+                <p className="transition duration-300 text-sm leading-7 text-[#EB8800]">
+                  تکمیل پروفایل
+                </p>
               </div>
               <div className="flex items-center justify-center">
                 <CircularProgress
@@ -109,7 +113,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
               <AiOutlineHeart className="w-5 h-5 text-[#5B5C60]" />
-              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">دانلودها</p>
+              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
+                دانلودها
+              </p>
             </div>
           </Link>
 
@@ -122,7 +128,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
               <BiPlus className="w-5 h-5 text-[#6097F3]" />
-              <p className="transition duration-300 text-sm leading-7 text-[#6097F3]">ثبت تیکت</p>
+              <p className="transition duration-300 text-sm leading-7 text-[#6097F3]">
+                ثبت تیکت
+              </p>
             </div>
           </Link>
 
@@ -135,7 +143,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
               <CiEdit className="w-5 h-5 text-[#5B5C60]" />
-              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">ویرایش حساب</p>
+              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
+                ویرایش حساب
+              </p>
             </div>
           </Link>
 
@@ -148,7 +158,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
             role="menuitem"
           >
             <CiLogout className="w-5 h-5 text-[#5B5C60]" />
-            <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">خروج از حساب</p>
+            <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
+              خروج از حساب
+            </p>
           </button>
         </div>
       </PopoverContent>

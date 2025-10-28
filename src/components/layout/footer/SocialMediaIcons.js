@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { FaInstagram, FaLinkedin, FaTelegramPlane } from "react-icons/fa";
+ 
 import { socialLinks } from "@/constants/footer/FooterConfig";
 
 /**

@@ -10,6 +10,32 @@ import { fetcher } from "@/lib/api/fetcher";
 import AdminFormSkeleton from "@/components/skeletons/admin/AdminFormSkeleton";
 
 /**
+ * Build hierarchical options for parent menu selection
+ * @param {Array} menus - Array of menu objects
+ * @returns {Array} Array of parent menu options
+ */
+const buildHierarchicalOptions = (menus) => {
+  const options = [{ label: "بدون منوی والد", value: "" }];
+  
+  // Ensure menus is an array before processing
+  if (!menus || !Array.isArray(menus) || menus.length === 0) {
+    return options;
+  }
+  
+  // Show ALL menus as parent options - including children
+  menus.forEach((menu) => {
+    if (menu && menu._id && menu.name) {
+      options.push({ 
+        label: `${menu.name}`,
+        value: menu._id 
+      });
+    }
+  });
+  
+  return options;
+};
+
+/**
  * CreateMenuLogic Component
  * 
  * Handles the logic for creating new menu items.
@@ -105,10 +131,8 @@ const CreateMenuLogic = () => {
         return <AdminFormSkeleton inputsCount={6} hasTextarea={true} hasSwitch={true} />;
     }
 
-    // Filter available parent menus (only root menus)
-    const availableMenus = menusResponse?.data ? 
-        menusResponse.data.filter(menu => !menu.parent) : 
-        []; 
+    // Show ALL menus as parent options - including children
+    const availableMenus = menusResponse?.data || []; 
 
     return (
         <div className="glass rounded-2xl p-5">
@@ -122,6 +146,7 @@ const CreateMenuLogic = () => {
                     isLoading,
                     menus: availableMenus,
                     currentMenuType: null,
+                    buildHierarchicalOptions,
                 }}
             />
         </div>

@@ -150,8 +150,7 @@ const EditMenuLogic = () => {
         }
         
         // Show ALL menus as parent options - including children
-        if(allMenusResponse.length > 0) {
-          allMenusResponse.forEach((menu) => {
+        menus.forEach((menu) => {
           if (menu && menu._id && menu.name) {
             options.push({ 
               label: `${menu.name}`,
@@ -161,7 +160,8 @@ const EditMenuLogic = () => {
         });
         
         return options;
-      }}
+    };
+
     // Show loading skeleton while fetching data
     if (isLoadingCurrentMenu || isLoadingAllMenus) {
         return <AdminFormSkeleton inputsCount={6} hasTextarea={true} hasSwitch={true} />;
@@ -177,8 +177,7 @@ const EditMenuLogic = () => {
                 : null;
 
     // Filter available parent menus (exclude current menu and only root menus)
-    const availableMenus = allMenusResponse?.data ||
-        [];
+    const availableMenus = allMenusResponse?.data || [];
 
     return (
         <div className="glass rounded-2xl p-5">

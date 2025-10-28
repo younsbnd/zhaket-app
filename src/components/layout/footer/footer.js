@@ -9,10 +9,17 @@ import { footerLinks, socials } from "@/constants/footer/FooterConfig";
 import FooterDesktopSection from "@/components/layout/footer/FooterDesktopSection";
 import FooterAboutSection from "@/components/layout/footer/FooterAboutSection";
 import FooterAccordionSection from "@/components/layout/footer/FooterAccordionSection";
+ 
 import FooterMenuProvider from "@/components/layout/footer/FooterMenuProvider";
 import SocialMediaIcons from "@/components/layout/footer/SocialMediaIcons";
+ 
+import { useSettings } from "@/contexts/SettingsContext";
+import { FaInstagram, FaLinkedin, FaTelegramPlane } from "react-icons/fa";
+
+ 
 const Footer = () => {
   const [loading, setLoading] = useState(true);
+  const { settings } = useSettings();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -22,8 +29,16 @@ const Footer = () => {
   if (loading) {
     return <FooterSkeleton />;
   }
+ 
+
+  // Get social links from settings
+  const instagramUrl = settings?.socialLinks?.instagram || "http://instagram.com/zhaketcom";
+  const linkedinUrl = settings?.socialLinks?.linkedin || "https://linkedin.com/company/zhaket";
+  const logoUrl = settings?.logoUrl || "/images/logo.svg";
+
+ 
   return (
-    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0">
+    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0 md:w-full">
       {/* Mobile Social Section */}
       <div
         className="flex items-center w-full justify-between pt-10 md:hidden"
@@ -36,7 +51,7 @@ const Footer = () => {
               alt="لوگو ژاکت"
               width={60}
               height={60}
-              src="/images/logo.svg"
+              src={logoUrl}
               sizes="35"
               className="w-[60px] h-[60px] object-contain"
               priority
@@ -45,7 +60,48 @@ const Footer = () => {
         </Link>
 
         {/* Social Icons */}
-        <SocialMediaIcons isMobile={true} />
+ 
+        <div className="flex gap-3">
+          <Link
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="صفحه اینستاگرام ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaInstagram
+              size={27}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+
+          <Link
+            href={linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="صفحه لینکدین ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaLinkedin
+              size={21}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+
+          <Link
+            href="https://t.me/s/zhaketcom"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="کانال تلگرام ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaTelegramPlane
+              size={20}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+        </div>
+ 
       </div>
 
       {/* Mobile Accordion Links */}
@@ -59,6 +115,7 @@ const Footer = () => {
       </FooterMenuProvider>
 
       {/* Desktop Links */}
+ 
       <FooterMenuProvider fallbackLinks={footerLinks}>
         {({ footerLinks: processedFooterLinks }) => (
           <FooterDesktopSection
@@ -66,18 +123,20 @@ const Footer = () => {
           />
         )}
       </FooterMenuProvider>
+ 
+  
 
       {/* About Section */}
-      <FooterAboutSection socials={socials} />
+      <FooterAboutSection socials={socials} logoUrl={logoUrl} />
 
       {/* Bottom Bar */}
       <div
-        className="flex items-center  justify-between pt-6 pb-[10px] md:justify-between"
+        className="flex items-center w-full  justify-between pt-6 pb-[10px] md:justify-between"
         data-cy="footer-policy"
       >
         <div className="flex  flex-col-reverse items-center md:flex-row">
           <p className="text-sm leading-7 font-medium text-center text-[#7E899B] transition-colors duration-300">
-            تمامی حقوق برای ژاکت محفوظ است
+            {settings?.copyrightText || "تمامی حقوق برای ژاکت محفوظ است"}
           </p>
 
           <div className="mx-2 hidden h-4 w-[1px] bg-[#E1E3E5] md:inline" />
@@ -98,7 +157,48 @@ const Footer = () => {
         </div>
 
         {/* Desktop Social Icons */}
-        <SocialMediaIcons isMobile={false} />
+ 
+        <div className="hidden md:flex gap-3 py-2">
+          <Link
+            href={instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="صفحه اینستاگرام ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaInstagram
+              size={27}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+
+          <Link
+            href={linkedinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="صفحه لینکدین ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaLinkedin
+              size={21}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+
+          <Link
+            href="https://t.me/s/zhaketcom"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="کانال تلگرام ژاکت"
+            className="group flex h-10 w-10 items-center justify-center rounded-md bg-[#F9FAFC] hover:bg-gray-100 transition-colors duration-200"
+          >
+            <FaTelegramPlane
+              size={20}
+              className="text-[#C1C3C8] group-hover:text-[#FF9606] transition-colors duration-200"
+            />
+          </Link>
+        </div>
+ 
       </div>
     </footer>
   );

@@ -55,7 +55,7 @@ const updateMenu = async (req, { params }) => {
     await connectToDb();
     const body = await req.json();
 
-    console.log("📥 Received body:", JSON.stringify(body, null, 2));
+   
 
     // Trim string fields to avoid accidental spaces
     const sanitizedBody = Object.fromEntries(
@@ -64,14 +64,12 @@ const updateMenu = async (req, { params }) => {
       )
     );
 
-    console.log("🧹 Sanitized body:", JSON.stringify(sanitizedBody, null, 2));
-
+ 
     // Validate request body
     const validation = menuValidation.safeParse(sanitizedBody);
     
     if (!validation.success) {
-      console.error("❌ Validation failed:", validation.error);
-      console.error("📋 Validation issues:", JSON.stringify(validation.error.issues, null, 2));
+  
       
       const formattedErrors = {};
       
@@ -83,13 +81,12 @@ const updateMenu = async (req, { params }) => {
           }
         });
       }
-      
-      console.error("🔴 Formatted errors:", formattedErrors);
+    
       throw createBadRequestError("اطلاعات ورودی نامعتبر است", formattedErrors);
     }
     
     const cleanedBody = validation.data;
-    console.log("✅ Validation passed. Cleaned body:", JSON.stringify(cleanedBody, null, 2));
+
 
     // Check if menu exists
     const existingMenu = await Menu.findById(id);
@@ -97,29 +94,7 @@ const updateMenu = async (req, { params }) => {
       throw createNotFoundError("منو یافت نشد");
     }
 
-    console.log("📄 Existing menu:", JSON.stringify(existingMenu, null, 2));
-
-    // Check for duplicate name (excluding current menu)
-    if (cleanedBody.name !== existingMenu.name) {
-      const nameExists = await Menu.findOne({
-        name: cleanedBody.name,
-        _id: { $ne: id },
-      }).lean();
-      if (nameExists) {
-        throw createBadRequestError("نام منو تکراری است و قبلا ثبت شده است");
-      }
-    }
-
-    // Check for duplicate slug (excluding current menu)
-    if (cleanedBody.slug !== existingMenu.slug) {
-      const slugExists = await Menu.findOne({
-        slug: cleanedBody.slug,
-        _id: { $ne: id },
-      }).lean();
-      if (slugExists) {
-        throw createBadRequestError("نامک منو تکراری است و قبلا ثبت شده است");
-      }
-    }
+   
 
     // Process data with defaults
     const processedData = {
@@ -130,7 +105,7 @@ const updateMenu = async (req, { params }) => {
       noIndex: cleanedBody.noIndex ?? false,
     };
 
-    console.log("🔄 Processed data for update:", JSON.stringify(processedData, null, 2));
+  
 
     // Update menu
     const updatedMenu = await Menu.findByIdAndUpdate(
@@ -139,7 +114,7 @@ const updateMenu = async (req, { params }) => {
       { new: true, runValidators: true }
     ).populate("parent", "name slug");
 
-    console.log("✅ Menu updated successfully:", JSON.stringify(updatedMenu, null, 2));
+ 
 
     return NextResponse.json({
       data: updatedMenu,
@@ -147,7 +122,7 @@ const updateMenu = async (req, { params }) => {
       success: true,
     });
   } catch (error) {
-    console.error("❌ Update menu error:", error);
+   
     return errorHandler(error);
   }
 };

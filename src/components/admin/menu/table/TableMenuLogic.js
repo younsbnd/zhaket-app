@@ -46,7 +46,7 @@ const TableMenuLogic = () => {
   const [deleteId, setDeleteId] = useState(null);
 
   // use swr for get data
-  const { data: response, isLoading } = useSWR(
+  const { data: response, isLoading, mutate } = useSWR(
    "/api/admin/menu",
     fetcher
   );
@@ -74,6 +74,9 @@ const TableMenuLogic = () => {
     try {
       const response = await deleteRecord(id);
       if (response.ok) {
+        // Invalidate and revalidate SWR cache to refresh the table
+        await mutate();
+        
         addToast({
           description: "منو با موفقیت حذف شد",
           color: "success",

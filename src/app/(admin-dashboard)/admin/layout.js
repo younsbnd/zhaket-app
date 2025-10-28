@@ -15,7 +15,7 @@ const layout = ({ children }) => {
             <AdminHeader />
           </div>
           {/* content */}
-          <div className="content max-w-7xl mx-auto w-full px-3 pt-6">
+          <div className="content max-w-7xl mx-auto w-full px-4 pt-6 pb-8">
             {children}
           </div>
         </div>

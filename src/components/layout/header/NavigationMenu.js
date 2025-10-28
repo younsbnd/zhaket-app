@@ -60,7 +60,7 @@ function MenuItem({ menu, activeMegaMenuTab, setActiveMegaMenuTab }) {
           <div className="absolute top-full right-0 mt-1 bg-white rounded-[10px] shadow-[0px_20px_60px_-15px_rgba(0,0,0,0.15)] z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[200px]">
             <div className="p-1">
               <ul className="space-y-1">
-                {menu.children.map(child => (
+                {menu.children.toReversed().map(child => (
                   <li key={child._id}>
                     <Link
                       href={child.path}

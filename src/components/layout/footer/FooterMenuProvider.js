@@ -63,7 +63,7 @@ export default function FooterMenuProvider({ children, fallbackLinks }) {
       // This is a title menu
       acc[menu._id] = {
         title: menu.name,
-        links: (menu.children || []).map(child => ({
+        links: (menu.children || []).toReversed().map(child => ({
           label: child.name,
           href: child.path || '#',
           target: child.target || '_self'

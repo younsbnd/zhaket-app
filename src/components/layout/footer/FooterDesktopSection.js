@@ -18,9 +18,9 @@ import { Button, Input } from "@heroui/react";
  * @param {Array} props.footerLinks - Array of footer link sections with title and links
  * @returns {JSX.Element} Desktop footer section
  */
-export default function FooterDesktopSection({ footerLinks }) {
+export default function FooterDesktopSection({ footerLinks, logoUrl }) {
   return (
-    <div className="justify-between md:flex md:pt-[50px]">
+    <div className="justify-between md:flex md:pt-[50px] w-full">
       {/* Left side: Logo + Navigation columns */}
       <div className="hidden md:flex md:w-[calc(100%_-_377px)] pt-[25px] gap-x-32">
         {/* Company logo section */}
@@ -30,7 +30,7 @@ export default function FooterDesktopSection({ footerLinks }) {
               alt="لوگو ژاکت"
               width={60}
               height={43}
-              src="/images/logo.svg"
+              src={logoUrl || "/images/logo.svg"}
               className="min-h-[31px] min-w-[44px] transition-opacity duration-300 hover:opacity-80"
               priority
             />
@@ -38,9 +38,6 @@ export default function FooterDesktopSection({ footerLinks }) {
           
           {/* Static Contact section under logo */}
           <div className="flex w-full flex-col items-start gap-4">
-            
-           
-
             {/* Section links */}
             <nav className="flex flex-col items-start gap-2" aria-label="ارتباط با ما لینک‌ها">
               <Link
@@ -103,14 +100,14 @@ export default function FooterDesktopSection({ footerLinks }) {
       {/* Newsletter and contact section */}
       <div className="flex flex-col mr-36 md:w-[377px]">
         {/* Newsletter subscription card */}
-        <div className="mt-4 h-[159px]  rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
+        <div className="mt-4 h-[159px] rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
           <div className="flex items-center gap-3 pb-2">
             <Image
               alt="لوگو ژاکت"
               priority
               width={22}
               height={22}
-              src="/images/logo.svg"
+              src={logoUrl || "/images/logo.svg"}
               style={{ width: 22, height: 22 }}
             />
             <span className="text-lg leading-7 text-[#544C45] font-medium">

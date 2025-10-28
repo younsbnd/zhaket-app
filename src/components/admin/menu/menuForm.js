@@ -106,7 +106,7 @@ const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading,
           errors={errors}
           variant="bordered"
           color="primary"
-          options={[{ label: "بدون منوی والد", value: "" }]}
+          options={buildHierarchicalOptions ? buildHierarchicalOptions(menus) : [{ label: "بدون منوی والد", value: "" }]}
           renderValue={(items) => items[0] ? <span className="text-white">{items[0].textValue}</span> : null}
           classNames={selectClassNames}
         />

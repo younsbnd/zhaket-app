@@ -20,7 +20,7 @@ export default function MegaMenuDropdown({ menu, activeMegaMenuTab, setActiveMeg
         {/* Left Sidebar - Categories List */}
         <div className="bg-[#F9FAFC] rounded-[10px] md:w-[190px] lg:w-[300px] xl:w-[320px] p-[5px] flex-shrink-0">
           <ul>
-            {menu.children.map((child, index) => {
+            {menu.children.toReversed().map((child, index) => {
               const isActive = activeMegaMenuTab[menu._id] === child._id || (index === 0 && !activeMegaMenuTab[menu._id]);
               return (
                 <li key={child._id}>
@@ -61,9 +61,7 @@ export default function MegaMenuDropdown({ menu, activeMegaMenuTab, setActiveMeg
                         height={20}
                         className="w-[29px] h-[29px] object-contain"
                       />
-                    ) : (
-                      <TbCategory color={isActive ? "#FF9606" : "#878F9B"} size={24} />
-                    )}
+                    ) : null}
                     {/* Category Name */}
                     <p className="transition duration-300 text-[15px]">
                       <Link href={child.path} target={child.target || '_self'}>
@@ -91,7 +89,7 @@ export default function MegaMenuDropdown({ menu, activeMegaMenuTab, setActiveMeg
                   <div className="w-full max-w-[270px] rounded-[10px] pr-[20px] pt-[15px]">
 
                     <ul>
-                      {activeChild.children?.slice(0, 5).map(subChild => (
+                      {activeChild.children?.toReversed().slice(0, 5).map(subChild => (
                         <li key={subChild._id}>
                           <div>
                             <p

@@ -3,23 +3,42 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Popover, PopoverTrigger, PopoverContent, Button, CircularProgress } from "@heroui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+  CircularProgress,
+} from "@heroui/react";
 import { FaUser, FaChevronDown } from "react-icons/fa";
-import { HiOutlineLogout, HiOutlineCog, HiOutlineDownload, HiOutlineTicket, HiOutlineViewGrid } from "react-icons/hi";
+import {
+  HiOutlineLogout,
+  HiOutlineCog,
+  HiOutlineDownload,
+  HiOutlineTicket,
+  HiOutlineViewGrid,
+} from "react-icons/hi";
 import { signOut } from "next-auth/react";
+import { BiUser } from "react-icons/bi";
 
 /**
  * UserMenu component
  * Displays user dropdown menu when user is authenticated.
- * 
+ *
  * @param {Object} session - The session object from useSession().
  */
 export default function UserMenu({ session }) {
   return (
     <Popover placement="bottom-end">
-      <PopoverTrigger >
-        <button className="group flex h-10 w-12 items-center justify-center rounded-lg bg-white shadow-sm border-0 outline-none cursor-pointer hover:bg-gray-50 transition-colors duration-200">
-          <FaUser className="text-[#878F9B]" size={15} />
+      <PopoverTrigger>
+        <button
+          type="button"
+          className="group cursor-pointer  flex  items-center gap-2 rounded-lg px-4 py-[14px] bg-slate-50"
+        >
+          <div className="flex items-center gap-2">
+            <BiUser className="text-[#878F9B]" size={20} />
+          </div>
+
         </button>
       </PopoverTrigger>
 
@@ -28,7 +47,7 @@ export default function UserMenu({ session }) {
           {/* User info header */}
           <div className="flex justify-center flex-col items-start pr-7 py-3">
             <p className="text-base leading-7 text-[#5B5C60]">
-              کاربر {session?.user?.name || "ژاکت"}
+              {session?.user?.fullName || "کاربر"}
             </p>
           </div>
 

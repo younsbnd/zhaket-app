@@ -56,18 +56,6 @@ const createMenu = async (req) => {
     }
     const cleanedBody = validation.data;
 
-    // Check for duplicate name
-    const nameExists = await Menu.findOne({ name: cleanedBody.name }).lean();
-    if (nameExists) {
-      throw createBadRequestError("نام منو تکراری است و قبلا ثبت شده است");
-    }
-
-    // Check for duplicate slug
-    const slugExists = await Menu.findOne({ slug: cleanedBody.slug }).lean();
-    if (slugExists) {
-      throw createBadRequestError("نامک منو تکراری است و قبلا ثبت شده است");
-    }
-
     // Process data with defaults
     const processedData = {
       ...cleanedBody,
