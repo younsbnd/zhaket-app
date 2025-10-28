@@ -98,7 +98,7 @@ export default function FooterDesktopSection({ footerLinks, logoUrl }) {
       </div>
 
       {/* Newsletter and contact section */}
-      <div className="flex flex-col mr-36 md:w-[377px]">
+      <div className="flex flex-col lg:mr-36 md:w-[377px]">
         {/* Newsletter subscription card */}
         <div className="mt-4 h-[159px] rounded-xl border-[3px] border-white bg-[linear-gradient(233.69deg,#FFDAA2_-5.92%,#FFF3E0_17.7%)] p-7 shadow-[0px_5px_25px_0px_rgba(255,107,1,0.08)]">
           <div className="flex items-center gap-3 pb-2">
