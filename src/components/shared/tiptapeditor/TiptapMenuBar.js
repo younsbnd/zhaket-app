@@ -12,7 +12,7 @@ import {
   TbAlignCenter,
   TbAlignRight,
 } from "react-icons/tb";
-import ControlledSelect from "../forms/ControlledSelect";
+import TiptapHeadingButtons from "./TiptapHeadingButtons";
   
 /** 
  * Icon-only button with tooltip 
@@ -48,55 +48,20 @@ const IconBtn = ({ title, active, disabled, onClick, Icon }) => (
  * - onAddOrEditLink: callback to add or edit a link
  * - onInsertImage: callback to insert an image
  * - className: optional extra classes
- * - control: react-hook-form control object
- * - errors: react-hook-form errors object
- * - name: name of the block type field
  */
-const ToolbarContent = ({
-  editor,
-  onAddOrEditLink,
-  onInsertImage,
-  className = "",
-  control,
-  errors,
-  name = "blockType",
-}) => {
+const ToolbarContent = ({ editor, onAddOrEditLink, onInsertImage, className = "" }) => {
   if (!editor) return null;
 
   // Check if a formatting option is active
   const formatState = (name) => editor.isActive(name);
   const alignState = (align) => editor.isActive({ textAlign: align });
 
-  // Handle block type selection
-  const handleBlockSelect = (value) => {
-    if (!value) return;
-    if (value === "paragraph") editor.chain().focus().setParagraph().run();
-    else editor.chain().focus().toggleHeading({ level: parseInt(value, 10) }).run();
-  };
-
   const renderDivider = () => <Divider orientation="vertical" className="hidden h-6 sm:block" />;
-
-  const options = [
-    { value: "paragraph", label: "Normal text" },
-    { value: "1", label: "Heading 1" },
-    { value: "2", label: "Heading 2" },
-    { value: "3", label: "Heading 3" },
-  ];
 
   return (
     <div role="toolbar" className={`flex flex-wrap items-center gap-2 ${className}`}>
-      {/* Block type selector using ControlledSelect */}
-      {control && (
-        <ControlledSelect
-          name={name}
-          control={control}
-          errors={errors}
-          options={options}
-          placeholder="Block type"
-          onChange={handleBlockSelect} // sync selection with editor
-        />
-      )}
-
+      {/* Block type selector */}
+      <TiptapHeadingButtons editor={editor} />
       {renderDivider()}
 
       {/* Bold formatting button */}
@@ -175,10 +140,8 @@ const ToolbarContent = ({
  * - editor: Tiptap editor instance
  * - onAddOrEditLink: callback for links
  * - onInsertImage: callback for images
- * - control: react-hook-form control object
- * - errors: react-hook-form errors object
  */
-export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEditLink, onInsertImage, control, errors }) {
+export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEditLink, onInsertImage }) {
   const [open, setOpen] = useState(false); // Mobile menu toggle
   const panelRef = useRef(null);
 
@@ -211,14 +174,7 @@ export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEd
 
       {/* Desktop toolbar */}
       <div className="hidden border-t border-slate-500 px-3 py-2 sm:block">
-        <ToolbarContent
-          editor={editor}
-          onAddOrEditLink={onAddOrEditLink}
-          onInsertImage={onInsertImage}
-          className="gap-2"
-          control={control}
-          errors={errors}
-        />
+        <ToolbarContent editor={editor} onAddOrEditLink={onAddOrEditLink} onInsertImage={onInsertImage} className="gap-2" />
       </div>
 
       {/* Mobile toolbar */}
@@ -227,14 +183,7 @@ export default function TiptapMenuBar({ title = "Editor Menu", editor, onAddOrEd
           ref={panelRef}
           className="absolute left-3 right-3 top-12 z-20 origin-top rounded-md border border-slate-500 bg-slate-700 p-2 shadow-xl transition-all sm:hidden"
         >
-          <ToolbarContent
-            editor={editor}
-            onAddOrEditLink={onAddOrEditLink}
-            onInsertImage={onInsertImage}
-            className="gap-2"
-            control={control}
-            errors={errors}
-          />
+          <ToolbarContent editor={editor} onAddOrEditLink={onAddOrEditLink} onInsertImage={onInsertImage} className="gap-2" />
         </div>
       )}
     </div>

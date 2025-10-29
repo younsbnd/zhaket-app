@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useImperativeHandle, useMemo, useState, forwardRef } from "react";
+import React, { useEffect, useImperativeHandle, useMemo, forwardRef } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
@@ -22,13 +22,9 @@ const urlAllowed = (href, validate) => {
 const stripEmptyTags = (html) => html.replace(/<(p|h[1-6])[^>]*>\s*<\/\1>/gi, "").trim();
 
 /* --------------------- Main Editor --------------------- */
-const getHeadingLevel = (editor) =>
-  (editor.isActive("heading", { level: 1 }) && 1) ||
-  (editor.isActive("heading", { level: 2 }) && 2) ||
-  (editor.isActive("heading", { level: 3 }) && 3) || 0;
 
 const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
-  const { value = "", editable = true, className = "", linkOptions = {}, menuTitle = "Editor Menu", onChangeHtml, onChangeBlocks } = props;
+  const { value = "", editable = true, className = "", linkOptions = {}, menuTitle = "Editor Menu", onChangeHtml } = props;
 
   const extensions = useMemo(() => [
     StarterKit.configure({
@@ -45,8 +41,6 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
     Image.configure({}),
     TextAlign.configure({ types: ["heading", "paragraph"] })
   ], [linkOptions]);
-
-  const [headingLevel, setHeadingLevel] = useState("0");
 
   /** Create Tiptap editor instance */
   const editor = useEditor({
@@ -70,7 +64,6 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
     },
     onCreate: ({ editor }) => { onChangeHtml?.(stripEmptyTags(editor.getHTML())); },
     onUpdate: ({ editor }) => { onChangeHtml?.(stripEmptyTags(editor.getHTML())); },
-    onSelectionUpdate: ({ editor }) => setHeadingLevel(String(getHeadingLevel(editor))),
   });
 
   useImperativeHandle(ref, () => editor, [editor]);
@@ -115,7 +108,6 @@ const TiptapEditor = forwardRef(function TiptapEditor(props, ref) {
       <TiptapMenuBar
         title={menuTitle}
         editor={editor}
-        headingLevel={headingLevel}
         onAddOrEditLink={handleAddOrEditLink}
         onInsertImage={handleInsertImage}
       />
