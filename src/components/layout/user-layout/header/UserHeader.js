@@ -24,7 +24,7 @@ export default function UserHeader() {
 
           {/* Page Title */}
           <div className="flex flex-row md:flex-row gap-3 items-center">
-            <Icon size={24} className="text-[#FF9606]" />
+            <Icon size={24} className="text-[#FF9606] " />
             <p className="text-2xl font-bold text-gray-600">{title}</p>
           </div>
 

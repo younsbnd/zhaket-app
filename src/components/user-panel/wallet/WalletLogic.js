@@ -94,7 +94,7 @@ export default function WalletLogic() {
   };
 
   // Show loading while session is loading
-  if (status === "loading") {
+  if (status === "loading" && !session) {
     return <WalletSkeleton />;
   }
 
