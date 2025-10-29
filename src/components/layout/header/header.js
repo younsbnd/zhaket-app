@@ -132,7 +132,6 @@ export default function Header() {
               >
                 <PopoverTrigger>
                   <Button
-                    disableRipple
                     className="flex items-center gap-[9px] font-bold text-[15px] text-[#424244] hover:text-[#FF9606] bg-transparent p-0 h-auto"
                   >
                     <TbCategory color="#FF9606" size={20} />

@@ -34,7 +34,6 @@ export default function UserMenu({ session }) {
         <button
           type="button"
           className="group cursor-pointer  flex  items-center gap-2 rounded-lg px-4 py-[14px] bg-slate-50"
-          disableRipple
         >
           <div className="flex items-center gap-2">
             <BiUser className="text-[#878F9B]" size={20} />
