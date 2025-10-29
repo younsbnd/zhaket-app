@@ -5,6 +5,7 @@ import { FaListUl } from "react-icons/fa";
 import { BsQuestionCircle, BsHeadphones } from "react-icons/bs";
 import { AiOutlineStar } from "react-icons/ai";
 import CommentSection from "./comment/CommentSection";
+import DescriptionRenderer from "../../shared/tiptapeditor/DescriptionRenderer";
 
 const ProductContent = ({ product }) => {
   return (
@@ -42,7 +43,7 @@ const ProductContent = ({ product }) => {
             }
           >
             <div className="py-8">
-              <div dangerouslySetInnerHTML={{ __html: product?.description }} />
+              <DescriptionRenderer description={product?.description} />
             </div>
           </Tab>
 
