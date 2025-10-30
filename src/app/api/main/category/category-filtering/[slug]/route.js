@@ -59,7 +59,8 @@ export const GET = async (req, { params }) => {
      * ---------------------- */
     const filterQuery = {
       category: { $in: categoryIds },
-      price: { $gte: minPrice, $lte: maxPrice }
+      price: { $gte: minPrice, $lte: maxPrice },
+      status: "PUBLISHED",
     };
 
     /** -----------------------

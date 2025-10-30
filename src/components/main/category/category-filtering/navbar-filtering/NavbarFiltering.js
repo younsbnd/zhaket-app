@@ -71,7 +71,7 @@ const NavbarFiltering = ({
             type="button"
             aria-label="Grid view"
             onClick={() => handleViewModeClick("grid")}
-            className={`flex items-center justify-center h-11 w-11 rounded-lg ${
+            className={`flex items-center justify-center h-11 w-11 rounded-lg cursor-pointer ${
               viewMode === "grid" ? "border border-[#E5E8EB] bg-white" : ""
             }`}
           >
@@ -83,7 +83,7 @@ const NavbarFiltering = ({
             type="button"
             aria-label="List view"
             onClick={() => handleViewModeClick("list")}
-            className={`flex items-center justify-center h-11 w-11 rounded-lg ${
+            className={`flex items-center justify-center h-11 w-11 rounded-lg cursor-pointer ${
               viewMode === "list" ? "border border-[#E5E8EB] bg-white" : ""
             }`}
           >
