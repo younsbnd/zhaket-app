@@ -1,7 +1,4 @@
-/**
- * Menu Logic Constants
- * Contains business logic for menu management
- */
+ 
 
 /**
  * Build menu type options based on current menu type
