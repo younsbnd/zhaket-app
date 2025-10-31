@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+// FAQ schema
+const faqSchema = z.object({
+  question: z.string().min(3, "سوال باید حداقل 3 کاراکتر باشد"),
+  answer: z.string().min(3, "پاسخ باید حداقل 3 کاراکتر باشد"),
+  order: z.number().optional().default(0),
+});
+
 // create schema for product
 export const productValidation = z.object({
   title: z.string().min(3, "عنوان باید حداقل 3 کاراکتر باشد"),
@@ -14,6 +21,7 @@ export const productValidation = z.object({
   imageAlt: z.string().optional(),
   category: z.string().min(1, "دسته بندی الزامی است"),
   tags: z.array(z.string()).optional(),
+  faqs: z.array(faqSchema).optional(),
   seoTitle: z.string().optional(),
   metaDescription: z.string().optional(),
   noIndex: z.boolean().optional().default(false),

@@ -1,5 +1,24 @@
 import mongoose from "mongoose";
 
+const FAQSchema = new mongoose.Schema({
+  question: {
+    type: String,
+    required: [true, "سوال الزامی است"],
+    minlength: [3, "سوال باید حداقل 3 کاراکتر باشد"],
+    trim: true,
+  },
+  answer: {
+    type: String,
+    required: [true, "پاسخ الزامی است"],
+    minlength: [3, "پاسخ باید حداقل 3 کاراکتر باشد"],
+    trim: true,
+  },
+  order: {
+    type: Number,
+    default: 0,
+  },
+});
+
 const productCategorySchema = new mongoose.Schema(
   {
     // Basic fields
@@ -35,6 +54,9 @@ const productCategorySchema = new mongoose.Schema(
     parent: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ProductCategory",
+    },
+    faqs: {
+      type: [FAQSchema],
     },
 
     // SEO fields

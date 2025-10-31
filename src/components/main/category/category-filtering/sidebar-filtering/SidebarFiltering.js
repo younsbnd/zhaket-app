@@ -36,7 +36,7 @@ const SidebarFilteringUI = ({
     </div>
 
     {/* Desktop sidebar */}
-    <div className="sticky top-0 hidden p-4 md:block">
+    <div className="hidden p-4 md:block">
       {hasAnyActiveFilterOrSort && (
         <button
           className="flex items-center gap-2 h-10 mb-4 text-xs font-semibold text-[#76767C]

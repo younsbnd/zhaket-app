@@ -118,7 +118,8 @@ export const GET = async (req, { params }) => {
         _id: mainCategory._id,
         name: mainCategory.name,
         slug: mainCategory.slug,
-        description: mainCategory.description
+        description: mainCategory.description,
+        faqs: mainCategory.faqs || []
       },
       pagination: {
         currentPage,

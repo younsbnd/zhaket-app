@@ -1,6 +1,6 @@
 
   // Format date to Persian
-  export const formatDate = (dateString) => {
+  export const formatDate = (dateString, format = "YYYY/MM/DD HH:mm") => {
     if (!dateString) return "تاریخ نامشخص";
 
     try {
@@ -12,11 +12,11 @@
       }
 
       return new Intl.DateTimeFormat("fa-IR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+        year: format.includes("YYYY") ? "numeric" : undefined,
+        month: format.includes("MM") ? "long" : undefined,
+        day: format.includes("DD") ? "numeric" : undefined,
+        hour: format.includes("HH") ? "2-digit" : undefined,
+        minute: format.includes("mm") ? "2-digit" : undefined,
       }).format(date);
     } catch (error) {
       return "تاریخ نامعتبر";
