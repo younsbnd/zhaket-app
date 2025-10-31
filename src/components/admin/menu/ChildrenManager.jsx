@@ -303,6 +303,7 @@ const ChildrenManager = ({ control, errors }) => {
           افزودن زیرمنو سطح 1
         </Button>
       </div>
+      <div className={`space-y-6 ${fields.length > 3 ? 'max-h-[600px] overflow-y-auto pr-2' : ''}`}>
       {fields.map((field, index) => {
         // Display index for numbering (normal order)
         const displayIndex = index + 1;
@@ -372,6 +373,7 @@ const ChildrenManager = ({ control, errors }) => {
         </div>
         );
       })}
+      </div>
     </div>
   );
 };
