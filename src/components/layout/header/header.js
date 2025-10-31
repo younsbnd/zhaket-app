@@ -139,38 +139,7 @@ export default function Header() {
 
           {/* Main Navigation - visible on tablet and desktop */}
           <nav className="hidden md:flex items-center gap-[20px] xl:gap-[35px]">
-<<<<<<< HEAD
- 
-=======
-            {/* Categories Dropdown */}
-            <div
-              onMouseEnter={() => setIsPopoverOpen(true)}
-              onMouseLeave={() => setIsPopoverOpen(false)}
-              onFocus={() => setIsPopoverOpen(true)}
-              onBlur={() => setIsPopoverOpen(false)}
-              tabIndex={0}
-              className="outline-none"
-            >
-              <Popover
-                placement="bottom-end"
-                showArrow
-                offset={8}
-                isOpen={isPopoverOpen}
-                onOpenChange={setIsPopoverOpen}
-                trigger="manual"
-              >
-                <PopoverTrigger>
-                  <Button
-                    className="flex items-center gap-[9px] font-bold text-[15px] text-[#424244] hover:text-[#FF9606] bg-transparent p-0 h-auto"
-                  >
-                    <TbCategory color="#FF9606" size={20} />
-                    <Link href="/category" className="hover:text-[#FF9606]">
-                      دسته‌بندی‌ها
-                    </Link>
-                    <FaChevronDown color="#FF9606" />
-                  </Button>
-                </PopoverTrigger>
->>>>>>> 59fd5ee3afbfcd30793a2901c64d5e0cc0b9430d
+
 
             {/* Dynamic Menu from Database */}
             {isLoadingMenus ? (
