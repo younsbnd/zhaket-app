@@ -127,14 +127,14 @@ const IdentifierStep = ({
       <div className="flex items-center gap-2 justify-between">
         <button
           onClick={onOpen}
-          className="text-[9px] font-semibold mt-4 bg-gray-500/82 text-white flex px-[14.5px] rounded-md gap-1 pt-2 pb-[5px] cursor-pointer"
+          className="text-[12px] font-semibold mt-4 bg-gray-500/82 text-white flex px-[14.5px] rounded-md gap-1 pt-2 pb-[5px] cursor-pointer"
         >
-          <FiLock className="text-[11px] text-white" />
+          <FiLock className="text-[14px] text-white" />
           نکات امنیتی
         </button>
 
         <button
-          className="text-[9.7px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block self-end"
+          className="text-[12px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block self-end"
           onClick={() => setIsResetPassword(!isResetPassword)}
         >
           {isResetPassword ? "ورود / ثبت نام" : "فراموشی رمز عبور"}

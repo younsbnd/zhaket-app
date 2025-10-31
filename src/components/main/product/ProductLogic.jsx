@@ -3,6 +3,7 @@ import { notFound, useParams } from "next/navigation";
 import React from "react";
 import ProductTopFeature from "./ProductTopFeature";
 import ProductContent from "./ProductContent";
+import ProductLoadingSkeleton from "../../skeletons/main/product/ProductLoadingSkeleton";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 
@@ -20,8 +21,7 @@ const ProductLogic = () => {
     return notFound();
   }
 
-  if (isLoading)
-    return <div className="max-w-[1279px] mx-auto">Loading...</div>;
+  if (isLoading) return <ProductLoadingSkeleton />;
 
   return (
     <div className="bg-[#f9fafc] pb-8">

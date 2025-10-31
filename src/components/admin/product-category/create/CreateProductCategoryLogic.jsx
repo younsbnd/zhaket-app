@@ -25,6 +25,7 @@ const CreateProductCategoryLogic = () => {
       imageUrl: "",
       imageAlt: "",
       description: "",
+      faqs: [],
       seoTitle: "",
       metaDescription: "",
       canonical: "",

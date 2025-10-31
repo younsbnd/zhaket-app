@@ -2,12 +2,12 @@
 
 // React and Next.js imports
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
- 
+import { FiTag } from "react-icons/fi";
+import { addToast } from "@heroui/react";
 
 // Table and CRUD utilities
-import TagsTable from "../TagsTable";
+import AdminTable from "@/components/shared/AdminTable";
 import { useCrud } from "@/hooks/useCrud";
 import { fetcher } from "@/lib/api/fetcher";
 import { logger } from "@/lib/utils/logger";
@@ -18,75 +18,87 @@ import { logger } from "@/lib/utils/logger";
  * Main container component for tag management operations
  */
 export default function TagsManagement() {
-  const router = useRouter();
-  const [activeDeletingId, setActiveDeletingId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   // Fetch all tags using SWR
-  // SWR provides data, error, isLoading, and mutate (NOT setError)
   const {
     data: tags,
-    error: fetchError,
     isLoading: isFetching,
-    mutate, // Used to refetch data after operations
+    mutate,
   } = useSWR("/api/tags", fetcher);
 
   // CRUD hook for deleting tags
-  // Only using deleteRecord and error from useCrud
-  const { deleteRecord, error: deleteError } = useCrud("/tags");
+  const { deleteRecord, isLoading: isLoadingDelete } = useCrud("/tags");
 
   /**
-  
+   * Handle tag deletion
    * @param {string} id - Tag ID to delete
    */
   const handleDelete = async (id) => {
-    // Show confirmation dialog before deletion
-    if (!window.confirm("آیا از حذف این تگ اطمینان دارید؟")) {
-      return;
-    }
-
     try {
-      setActiveDeletingId(id);
       await deleteRecord(id);
       mutate();
-    
+      addToast({
+        description: "تگ با موفقیت حذف شد",
+        color: "success",
+        shouldShowTimeoutProgress: true,
+      });
     } catch (err) {
-      
-      const errorMessage = err?.message || (typeof err === "string" ? err : "خطا در حذف تگ");
-      
       logger.error("Tag deletion error:", err);
-      
-    } finally {
-      setActiveDeletingId(null);
+      addToast({
+        description: err?.message || "خطا در حذف تگ",
+        color: "danger",
+        shouldShowTimeoutProgress: true,
+      });
     }
   };
 
-  /**
-   * Navigate to edit tag page
-   * @param {string} id - Tag ID to edit
-   */
-  const handleEdit = (id) => {
-    router.push(`/admin/tags/${id}`);
-  };
+  // Define table columns
+  const columns = [
+    {
+      header: "نام تگ",
+      key: "name",
+      render: (tag) => (
+        <div className="flex items-center gap-3">
+          <div className="size-9 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+            <FiTag className="text-emerald-400 size-4" />
+          </div>
+          <div>
+            <div className="font-medium text-white">{tag.name}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "اسلاگ",
+      key: "slug",
+      render: (tag) => <span className="text-slate-300">{tag.slug}</span>,
+    },
+    {
+      header: "توضیحات",
+      key: "description",
+      render: (tag) => (
+        <div className="max-w-xs truncate text-slate-300">
+          {tag.description || "توضیحی ندارد"}
+        </div>
+      ),
+    },
+  ];
 
-  /**
-   * Navigate to create new tag page
-   */
-  const handleCreate = () => {
-    router.push("/admin/tags/create");
-  };
-
-  // Render tags table component with all necessary props
-  // Pass down handlers and state to child component
   return (
-    <TagsTable
-      tags={tags}
-      isFetching={isFetching}
-      fetchError={fetchError}
-      activeDeletingId={activeDeletingId}
-      deleteError={deleteError}
-      onCreate={handleCreate}
-      onEdit={handleEdit}
+    <AdminTable
+      isLoading={isFetching}
+      data={tags?.data || []}
+      columns={columns}
+      createLink="/admin/tags/create"
+      createButtonText="تگ جدید"
+      editLinkPrefix="/admin/tags"
       onDelete={handleDelete}
+      deleteId={deleteId}
+      setDeleteId={setDeleteId}
+      isLoadingDelete={isLoadingDelete}
+      emptyMessage="هیچ تگی موجود نیست"
+      tableId="tags-table"
     />
   );
 }

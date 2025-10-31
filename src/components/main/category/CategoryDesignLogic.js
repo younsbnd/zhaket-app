@@ -40,7 +40,7 @@ export default function CategoryDesignLogic() {
   const sortBy = searchParams.get("sortBy") || "createdAt";
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const page = searchParams.get("page") || "1";
-  const limit = searchParams.get("limit") || "5";
+  const limit = searchParams.get("limit") || "12";
 
   // Construct API URL
   const apiUrl = `/api/main/category/category-filtering/${slug}?sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&limit=${limit}`;

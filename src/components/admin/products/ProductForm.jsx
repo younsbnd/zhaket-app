@@ -5,6 +5,7 @@ import ProductSeoForm from "../../shared/forms/SeoForm";
 import ProductBasicInfo from "./forms/ProductBasicInfo";
 import ProductOrganization from "./forms/ProductOrganization";
 import ProductMedia from "./forms/ProductMedia";
+import ProductFAQ from "./forms/ProductFAQ";
 
 const ProductForm = ({
   handleSubmit,
@@ -40,6 +41,9 @@ const ProductForm = ({
       />
 
       <ProductSeoForm control={control} errors={errors} />
+
+      {/* FAQ */}
+      <ProductFAQ control={control} errors={errors} />
 
       {/* submit button */}
       <Button

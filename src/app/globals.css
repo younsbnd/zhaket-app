@@ -12,6 +12,18 @@
 }
 
 @layer base {
+  .prose p {
+    line-height: 1.9;
+    margin-bottom: 0px !important;
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6 {
+    line-height:2;
+  }
   h1 {
     @apply text-4xl font-bold;
   }

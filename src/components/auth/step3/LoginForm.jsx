@@ -39,6 +39,9 @@ const LoginForm = ({
             errorMessage={errors.fullName?.message}
             isInvalid={!!errors.fullName}
             errors={errors}
+            classNames={{
+              input: "autofill:[-webkit-text-fill-color:rgb(107,114,128)]",
+            }}
             rules={{
               required: "نام و نام خانوادگی الزامی است",
               minLength: {
@@ -58,6 +61,9 @@ const LoginForm = ({
             errorMessage={errors.password?.message}
             isInvalid={!!errors.password}
             errors={errors}
+            classNames={{
+              input: "autofill:[-webkit-text-fill-color:rgb(107,114,128)]",
+            }}
             endContent={
               <button
                 className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
@@ -90,6 +96,9 @@ const LoginForm = ({
             errorMessage={errors.password?.message}
             isInvalid={!!errors.password}
             errors={errors}
+            classNames={{
+              input: "autofill:[-webkit-text-fill-color:rgb(107,114,128)]",
+            }}
             endContent={
               <button
                 className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
@@ -122,6 +131,9 @@ const LoginForm = ({
             errorMessage={errors.confirmPassword?.message}
             isInvalid={!!errors.confirmPassword}
             errors={errors}
+            classNames={{
+              input: "autofill:[-webkit-text-fill-color:rgb(107,114,128)]",
+            }}
             endContent={
               <button
                 className="focus:outline-none transition-colors duration-200 hover:text-gray-600"
@@ -193,7 +205,8 @@ const LoginForm = ({
           fullWidth
           isLoading={isLoading}
           radius="sm"
-          className="text-white"
+          className="text-white "
+          size="lg"
         >
           {isResetPassword
             ? isOtpVerified
@@ -222,7 +235,7 @@ const LoginForm = ({
             setIsResetPassword(true);
             setStep(1);
           }}
-          className="text-[9.7px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block"
+          className="text-[12px] text-blue-500/95 cursor-pointer border-b-1 border-blue-500 border-dashed align-bottom inline-block pt-3"
         >
           فراموشی رمز عبور
         </button>

@@ -59,7 +59,8 @@ export const GET = async (req, { params }) => {
      * ---------------------- */
     const filterQuery = {
       category: { $in: categoryIds },
-      price: { $gte: minPrice, $lte: maxPrice }
+      price: { $gte: minPrice, $lte: maxPrice },
+      status: "PUBLISHED",
     };
 
     /** -----------------------
@@ -117,7 +118,8 @@ export const GET = async (req, { params }) => {
         _id: mainCategory._id,
         name: mainCategory.name,
         slug: mainCategory.slug,
-        description: mainCategory.description
+        description: mainCategory.description,
+        faqs: mainCategory.faqs || []
       },
       pagination: {
         currentPage,

@@ -3,8 +3,17 @@ import { memo } from "react";
 import Link from "next/link";
 import { TbShoppingCart } from "react-icons/tb";
 import { FaEye } from "react-icons/fa";
+import { useCartStore } from "@/stores/useCartStore";
+import { useSession } from "next-auth/react";
 
-const ProductActions = ({ demoLink, isGrid = true }) => {
+const ProductActions = ({ demoLink, isGrid = true, product }) => {
+    const { data: session } = useSession();
+    const addToCart = useCartStore((state) => state.addToCart);
+
+    const handleAddToCart = () => {
+        addToCart(product, session);
+    };
+
     return (
         <div className={`flex gap-2 ${isGrid ? "" : "justify-end"}`}>
             {/* Preview Button */}
@@ -23,7 +32,8 @@ const ProductActions = ({ demoLink, isGrid = true }) => {
 
             {/* Add to Cart Button */}
             <button
-                className={`${isGrid ? "flex-1  h-[42px]" : "w-[168px] h-[51px]"} flex items-center justify-center gap-2 rounded-lg bg-[#FFAE11] text-[13px] font-semibold cursor-pointer text-white hover:bg-[#EB8800] transition-colors`}
+                onClick={handleAddToCart}
+                className={`${isGrid ? "flex-1 px-2 h-[42px]" : "w-[168px] h-[51px]"} flex items-center justify-center gap-2 rounded-lg bg-[#FFAE11] text-[13px] font-semibold cursor-pointer text-white hover:bg-[#EB8800] transition-colors`}
             >
                 {!isGrid && <TbShoppingCart className="w-4 h-4" />}
 

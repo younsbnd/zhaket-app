@@ -29,6 +29,7 @@ const CreateProductLogic = () => {
       imageAlt: "",
       category: "",
       tags: [],
+      faqs: [],
       seoTitle: "",
       metaDescription: "",
       canonical: "",

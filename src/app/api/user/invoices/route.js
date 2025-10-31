@@ -24,20 +24,6 @@ const getInvoices = async (req, res) => {
             throw createNotFoundError("محصول خریداری شده یافت نشد");
         }
 
-        // Check if user has email
-        if (!session.user) {
-            throw createBadRequestError("کاربر یافت نشد");
-        }
-
-        if (!session.user.email) {
-            throw createBadRequestError("ایمیل کاربر یافت نشد");
-        }
-
-
-        // Check if RESEND_API_KEY is available
-        if (!process.env.RESEND_API_KEY) {
-            throw createBadRequestError("متغیر محیطی RESEND_API_KEY تعریف نشده است");
-        }
         return NextResponse.json({
             success: true,
             data: orders,

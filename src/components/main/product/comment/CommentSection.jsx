@@ -1,16 +1,35 @@
 "use client";
 import React, { useState } from "react";
-import { Button, Spinner } from "@heroui/react";
+import { addToast, Button, Spinner } from "@heroui/react";
 import { TfiCommentAlt } from "react-icons/tfi";
 import { MdOutlineAddBox } from "react-icons/md";
 import CommentItem from "./CommentItem";
 import AddComment from "./AddComment";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const CommentSection = ({ productId }) => {
   const [showAddComment, setShowAddComment] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  // handle add comment
+  const handleAddComment = () => {
+    if (!session) {
+      addToast({
+        title: "برای افزودن دیدگاه لازم است وارد حساب کاربری خود شوید",
+        color: "warning",
+        variant: "flat",
+        shouldShowTimeoutProgress: true,
+      });
+      router.push("/login");
+      return;
+    }
+    setShowAddComment(!showAddComment);
+  };
 
   // Fetch comments from API
   const {
@@ -66,7 +85,7 @@ const CommentSection = ({ productId }) => {
           <Button
             className="flex items-center gap-2 bg-lime-50 text-lime-500 hover:bg-lime-500 hover:text-white transition-all duration-400"
             radius="sm"
-            onClick={() => setShowAddComment(!showAddComment)}
+            onPress={handleAddComment}
           >
             <MdOutlineAddBox className="text-[17px]" />
             <p className="text-base text-[13px]">افزودن دیدگاه</p>

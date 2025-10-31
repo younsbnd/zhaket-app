@@ -87,7 +87,7 @@ const ProductCard = ({ product = {}, viewMode = "grid" }) => {
             <PriceSection />
             <ProductStats rating={rating} salesCount={salesCount} isGrid />
           </div>
-          <ProductActions demoLink={demo} isGrid />
+          <ProductActions demoLink={demo} isGrid product={product} />
         </motion.section>
       </motion.div>
     );
@@ -144,7 +144,7 @@ const ProductCard = ({ product = {}, viewMode = "grid" }) => {
             </div>
           </div>
           <div className="h-[1px] bg-[#F6F7F8] my-4" />
-          <ProductActions demoLink={demo} isGrid={false} />
+          <ProductActions demoLink={demo} isGrid={false} product={product} />
         </div>
       </section>
     </div>

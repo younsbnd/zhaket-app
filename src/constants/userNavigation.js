@@ -17,21 +17,6 @@ export const USER_NAVIGATION = [
     badge: true, // Example: show badge
   },
   {
-    title: "همکاری در فروش",
-    path: "/panel/affiliate",
-    icon: <FaRegHandshake />,
-  },
-  {
-    title: "علاقه‌مندی",
-    path: "/panel/favorites",
-    icon: <FiHeart />,
-  },
-  {
-    title: "باشگاه مشتریان",
-    path: "/panel/club",
-    icon: <MdOutlineGroups />,
-  },
-  {
     title: "کیف پول",
     path: "/panel/wallet",
     icon: <FiDollarSign />,
@@ -40,11 +25,6 @@ export const USER_NAVIGATION = [
     title: "مالی",
     path: "/panel/invoices",
     icon: <MdOutlineAttachMoney />,
-  },
-  {
-    title: "توسعه دهنده شو",
-    path: "/panel/become-developer",
-    icon: <FiDollarSign />,
   },
 ];
 export const dropdownItems = [
@@ -62,12 +42,10 @@ export const dropdownItems = [
     title: "تنظیمات",
     icon: <HiOutlineCog className="w-5 h-5 text-gray-600" />,
     children: [
-      { title: "پروفایل", href: "/panel/settings/profile" },
       {
         title: "تغییر رمز عبور",
         href: "/panel/settings/edit-profile/edit-password",
       },
-      { title: "اطلاعیه‌ها", href: "/panel/settings/notifications" },
     ],
   },
 ];
