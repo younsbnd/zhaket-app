@@ -53,6 +53,7 @@ const EditProductCategoryLogic = () => {
       imageUrl: "",
       imageAlt: "",
       description: "",
+      faqs: [],
       seoTitle: "",
       metaDescription: "",
       canonical: "",
@@ -108,6 +109,7 @@ const EditProductCategoryLogic = () => {
         imageUrl: categoryResponse?.data?.image?.url,
         imageAlt: categoryResponse?.data?.image?.alt,
         parent: categoryResponse?.data?.parent,
+        faqs: categoryResponse?.data?.faqs || [],
       });
     }
   }, [categoryResponse?.data, productCategoriesResponse?.data, reset]);

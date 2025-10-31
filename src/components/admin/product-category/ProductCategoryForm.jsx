@@ -4,6 +4,7 @@ import ControlledSwitch from "@/components/shared/forms/ControlledSwitch";
 import ControlledTextarea from "@/components/shared/forms/ControlledTextarea";
 import { Button, Form, form } from "@heroui/react";
 import React from "react";
+import CategoryFAQ from "./forms/CategoryFAQ";
 
 const ProductCategoryForm = ({
   handleSubmit,
@@ -198,6 +199,9 @@ const ProductCategoryForm = ({
         }}
         labelClassName="text-blue-500"
       />
+
+      {/* FAQ */}
+      <CategoryFAQ control={control} errors={errors} />
 
       {/* submit button */}
       <Button
