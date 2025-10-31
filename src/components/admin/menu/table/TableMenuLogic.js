@@ -1,39 +1,11 @@
- "use client";
+"use client";
 import React, { useState } from "react";
 import AdminTable from "@/components/shared/AdminTable";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import { useCrud } from "@/hooks/useCrud";
 import { addToast, useDisclosure } from "@heroui/react";
-import { logger } from "@/lib/utils/logger";
 import ConfirmationModal from "@/components/shared/ConfirmationModal";
-import { Chip } from "@heroui/react";
-
-/**
- * Build hierarchical options for parent menu selection
- * @param {Array} menus - Array of menu objects
- * @returns {Array} Array of parent menu options
- */
-const buildHierarchicalOptions = (menus) => {
-  const options = [{ label: "بدون منوی والد", value: "" }];
-  
-  // Ensure menus is an array before processing
-  if (!menus || !Array.isArray(menus) || menus.length === 0) {
-    return options;
-  }
-  
-  // Show ALL menus as parent options - including children
-  menus.forEach((menu) => {
-    if (menu && menu._id && menu.name) {
-      options.push({ 
-        label: `${menu.name}`,
-        value: menu._id 
-      });
-    }
-  });
-  
-  return options;
-};
 
 const TableMenuLogic = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -50,24 +22,6 @@ const TableMenuLogic = () => {
    "/api/admin/menu",
     fetcher
   );
-
-  // Helper functions for rendering
-  const getStatusConfig = (isActive) => {
-    return isActive 
-      ? { color: "success", text: "فعال" }
-      : { color: "danger", text: "غیرفعال" };
-  };
-
-  const getTargetConfig = (target) => {
-    switch (target) {
-      case "_self":
-        return { color: "primary", text: "همان صفحه" };
-      case "_blank":
-        return { color: "secondary", text: "صفحه جدید" };
-      default:
-        return { color: "default", text: "نامشخص" };
-    }
-  };
 
   // Delete handler
   const deleteHandler = async (id) => {
@@ -101,49 +55,26 @@ const TableMenuLogic = () => {
       render: (menu) => <span className="font-medium">{menu.name}</span>
     },
     {
-      key: "slug",
-      header: "نامک",
-      render: (menu) => <span className="text-slate-400">{menu.slug}</span>
-    },
-    {
       key: "path",
       header: "مسیر",
       render: (menu) => <span className="text-slate-400">{menu.path}</span>
     },
     {
-      key: "parent",
-      header: "منوی والد",
-      render: (menu) => <span className="text-slate-400">{menu.parent?.name || "-"}</span>
+      key: "menuType",
+      header: "نوع منو",
+      render: (menu) => {
+        const typeLabels = {
+          "mega-menu": "مگا منو",
+          "header-menu": "منوی هدر",
+          "footer-menu": "منوی فوتر"
+        };
+        return <span className="text-slate-400">{typeLabels[menu.menuType] || menu.menuType}</span>;
+      }
     },
     {
-      key: "target",
-      header: "نوع باز کردن",
-      render: (menu) => (
-        <Chip
-          color={getTargetConfig(menu.target).color}
-          variant="flat"
-          radius="sm"
-          size="sm"
-          className="text-[12px] text-white"
-        >
-          {getTargetConfig(menu.target).text}
-        </Chip>
-      )
-    },
-    {
-      key: "isActive",
-      header: "وضعیت",
-      render: (menu) => (
-        <Chip
-          color={getStatusConfig(menu.isActive).color}
-          variant="flat"
-          radius="sm"
-          size="sm"
-          className="text-[12px] text-white"
-        >
-          {getStatusConfig(menu.isActive).text}
-        </Chip>
-      )
+      key: "children",
+      header: "تعداد زیرمنو",
+      render: (menu) => <span className="text-slate-400">{menu.children?.length || 0}</span>
     }
   ];
 

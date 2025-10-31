@@ -15,8 +15,7 @@ const getMenus = async () => {
     await connectToDb();
     
     const menus = await Menu.find({})
-      .sort({ createdAt: -1 })
-      .populate("parent", "name slug");
+      .sort({ createdAt: -1 });
     
     return NextResponse.json({
       data: menus,
@@ -26,6 +25,53 @@ const getMenus = async () => {
   } catch (error) {
     return errorHandler(error);
   }
+};
+
+/**
+ * Helper function to clean icon (remove if null/undefined/empty)
+ */
+const cleanIcon = (icon) => {
+  if (!icon || icon === null || icon === undefined || (typeof icon === 'string' && icon.trim() === "")) {
+    return undefined;
+  }
+  return typeof icon === 'string' ? icon.trim() : icon;
+};
+
+/**
+ * Recursive function to process children and their nested children
+ */
+const processChildren = (children) => {
+  if (!children || !Array.isArray(children)) return [];
+  
+  return children.map(child => {
+    const childData = {
+      name: child.name || "",
+      path: child.path || "",
+    };
+    
+    // Add icon only if it's valid
+    const childIcon = cleanIcon(child.icon);
+    if (childIcon !== undefined) {
+      childData.icon = childIcon;
+    }
+    
+    // Process nested children (level 3)
+    if (child.children && Array.isArray(child.children) && child.children.length > 0) {
+      childData.children = child.children.map(subChild => {
+        const subChildData = {
+          name: subChild.name || "",
+          path: subChild.path || "",
+        };
+        const subIcon = cleanIcon(subChild.icon);
+        if (subIcon !== undefined) {
+          subChildData.icon = subIcon;
+        }
+        return subChildData;
+      });
+    }
+    
+    return childData;
+  });
 };
 
 /**
@@ -49,21 +95,36 @@ const createMenu = async (req) => {
     const validation = menuValidation.safeParse(sanitizedBody);
     if (!validation.success) {
       const formattedErrors = {};
-      validation.error.errors.forEach(err => {
-        formattedErrors[err.path[0]] = err.message;
-      });
-      throw createBadRequestError("اطلاعات ورودی نامعتبر است", formattedErrors);
+      if (validation.error.issues && Array.isArray(validation.error.issues)) {
+        validation.error.issues.forEach(issue => {
+          if (issue.path && issue.path.length > 0) {
+            formattedErrors[issue.path[0]] = issue.message;
+          }
+        });
+      }
+      return NextResponse.json(
+        {
+          success: false,
+          message: "اطلاعات ورودی نامعتبر است",
+          errors: formattedErrors,
+        },
+        { status: 400 }
+      );
     }
     const cleanedBody = validation.data;
 
     // Process data with defaults
     const processedData = {
-      ...cleanedBody,
-      parent: cleanedBody.parent === "" || !cleanedBody.parent ? null : cleanedBody.parent,
-      isActive: cleanedBody.isActive ?? true,
-      target: cleanedBody.target || "_self",
-      noIndex: cleanedBody.noIndex ?? false,
+      name: cleanedBody.name,
+      path: cleanedBody.path,
+      menuType: cleanedBody.menuType || "header-menu",
+      children: processChildren(cleanedBody.children),
     };
+    
+    const menuIcon = cleanIcon(cleanedBody.icon);
+    if (menuIcon !== undefined) {
+      processedData.icon = menuIcon;
+    }
 
     // Create menu
     const newMenu = await Menu.create(processedData);

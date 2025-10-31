@@ -1,72 +1,47 @@
 import ControlledInput from "@/components/shared/forms/ControlledInput";
 import ControlledSelect from "@/components/shared/forms/ControlledSelect";
-import ControlledSwitch from "@/components/shared/forms/ControlledSwitch";
-import ControlledTextarea from "@/components/shared/forms/ControlledTextarea";
-import { Button, Form, Alert, addToast } from "@heroui/react";
-import React from "react";
-import { getMenuTypeOptions, DEFAULT_TARGET_OPTIONS } from "@/constants/admin/menu/menuLogic";
+import { Button, Form, addToast } from "@heroui/react";
+import React, { useEffect } from "react";
+import { getMenuTypeOptions } from "@/constants/admin/menu/menuLogic";
+import ChildrenManager from "./ChildrenManager";
 
 /**
  * MenuForm Component
  * 
  * Renders a form for creating and editing menu items with validation.
- * Includes fields for basic menu data, parent selection, menu type, and SEO fields.
- * 
- * @param {Object} props - Component props
- * @param {Function} props.handleSubmit - Form submission handler
- * @param {Object} props.errors - Form validation errors
- * @param {Function} props.onSubmit - Submit callback function
- * @param {Object} props.control - React Hook Form control object
- * @param {string} props.btnText - Text for submit button
- * @param {boolean} props.isLoading - Loading state
- * @param {string} props.serverError - Server error message
- * @param {string} props.currentMenuType - Current menu type for editing
- * @param {string} props.currentMenuId - Current menu ID for editing
- * @param {Array} props.menus - Array of available menus for parent selection
- * @param {Function} props.buildHierarchicalOptions - Function to build parent menu options
- * @returns {JSX.Element} Menu form component
+ * Includes fields for basic menu data, menu type, and nested children.
  */
-const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading, serverError, currentMenuType, currentMenuId, menus, buildHierarchicalOptions }) => {
-  // CSS class names for input styling
+const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading, serverError, currentMenuType }) => {
   const inputClassNames = {
     base: "w-full bg-slate-800 p-2 rounded-md border-0",
     inputWrapper: "w-full bg-slate-800 p-2 rounded-md border-slate-600",
   };
- 
-  // CSS class names for select styling
+
   const selectClassNames = {
     base: "w-full bg-slate-800 p-2 rounded-md border-0",
     trigger: "p-2 rounded-md border-slate-600",
   };
 
-    return (
-    <Form onSubmit={handleSubmit(onSubmit)} className="w-full">
-      {/* Display server error if exists */}
-      {serverError && 
-        addToast({
+  // Display server error if exists
+  useEffect(() => {
+    if (serverError) {
+      addToast({
         description: serverError || "خطا در ثبت منو",
-          color: "danger",
-          shouldShowTimeoutProgress: true,
-        })
-      } 
+        color: "danger",
+        shouldShowTimeoutProgress: true,
+      });
+    }
+  }, [serverError]);
 
-      {/* Name and Slug input fields */}
+  return (
+    <Form onSubmit={handleSubmit(onSubmit)} className="w-full">
+      {/* Name input field */}
       <div className="flex flex-col gap-4 w-full md:flex-row">
         <ControlledInput
           name="name"
           control={control}
           label="نام منو"
           rules={{ required: "نام منو الزامی است", minLength: { value: 2, message: "حداقل 2 کاراکتر" } }}
-          errors={errors}
-          variant="bordered"
-          color="primary"
-          classNames={inputClassNames}
-        />
-        <ControlledInput
-          name="slug"
-          control={control}
-          label="نامک منو"
-          rules={{ required: "نامک منو الزامی است", minLength: { value: 2, message: "حداقل 2 کاراکتر" } }}
           errors={errors}
           variant="bordered"
           color="primary"
@@ -89,7 +64,7 @@ const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading,
         <ControlledInput
           name="icon"
           control={control}
-          label="آیکون منو"
+          label="آیکون منو (اختیاری)"
           errors={errors}
           variant="bordered"
           color="primary"
@@ -97,19 +72,8 @@ const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading,
         />
       </div>
 
-      {/* Parent Menu, Menu Type and Target selection fields */}
+      {/* Menu Type selection field */}
       <div className="flex flex-col gap-4 w-full md:flex-row">
-        <ControlledSelect
-          name="parent"
-          control={control}
-          label="منوی والد"
-          errors={errors}
-          variant="bordered"
-          color="primary"
-          options={buildHierarchicalOptions ? buildHierarchicalOptions(menus) : [{ label: "بدون منوی والد", value: "" }]}
-          renderValue={(items) => items[0] ? <span className="text-white">{items[0].textValue}</span> : null}
-          classNames={selectClassNames}
-        />
         <ControlledSelect
           name="menuType"
           control={control}
@@ -122,86 +86,12 @@ const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading,
           renderValue={(items) => items[0] ? <span className="text-white">{items[0].textValue}</span> : null}
           classNames={selectClassNames}
         />
-        <ControlledSelect
-          name="target"
-          control={control}
-          label="نوع باز کردن"
-          errors={errors}
-          variant="bordered"
-          color="primary"
-          options={DEFAULT_TARGET_OPTIONS}
-          renderValue={(items) => items[0] ? <span className="text-white">{items[0].textValue}</span> : null}
-          classNames={selectClassNames}
-        />
       </div>
 
-      {/* Description textarea field */}
-      <ControlledTextarea
-        name="description"
-        control={control}
-        label="توضیحات"
-        errors={errors}
-        variant="bordered"
-        color="primary"
-        rows={3}
-        classNames={inputClassNames}
-      />
-
-      {/* Menu active status switch */}
-      <ControlledSwitch
-        name="isActive"
-        control={control}
-        label="وضعیت منو"
-        errors={errors}
-        variant="bordered"
-        color="primary"
-        classNames={inputClassNames}
-        labelClassName="text-blue-500"
-      />
-
-      {/* SEO fields section */}
-      <div className="flex flex-col gap-4 w-full md:flex-row">
-        <ControlledInput
-          name="seoTitle"
-          control={control}
-          label="عنوان سئو"
-          errors={errors}
-          variant="bordered"
-          color="primary"
-          classNames={inputClassNames}
-        />
-        <ControlledInput
-          name="canonical"
-          control={control}
-          label="لینک کانونیکال"
-          errors={errors}
-          variant="bordered"
-          color="primary"
-          classNames={inputClassNames}
-        />
-        </div>
-
-      <ControlledTextarea
-        name="metaDescription"
-        control={control}
-        label="توضیحات سئو"
-        errors={errors}
-        variant="bordered"
-        color="primary"
-        rows={3}
-        classNames={inputClassNames}
-      />
-
-      <ControlledSwitch
-        name="noIndex"
-        control={control}
-        label="وضعیت ایندکس"
-        errors={errors}
-        variant="bordered"
-        color="primary"
-        classNames={inputClassNames}
-        labelClassName="text-blue-500"
-      />
+      {/* Children Manager */}
+      <div className="mt-6">
+        <ChildrenManager control={control} errors={errors} />
+      </div>
 
       {/* Submit button */}
       <Button
@@ -214,5 +104,5 @@ const MenuForm = ({ handleSubmit, errors, onSubmit, control, btnText, isLoading,
     </Form>
   );
 };
- 
- export default MenuForm;
+
+export default MenuForm;

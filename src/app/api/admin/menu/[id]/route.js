@@ -7,6 +7,51 @@ import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 
 /**
+ * Helper function to clean icon (remove if null/undefined/empty)
+ */
+const cleanIcon = (icon) => {
+  if (!icon || icon === null || icon === undefined || (typeof icon === 'string' && icon.trim() === "")) {
+    return undefined;
+  }
+  return typeof icon === 'string' ? icon.trim() : icon;
+};
+
+/**
+ * Recursive function to process children and their nested children
+ */
+const processChildren = (children) => {
+  if (!children || !Array.isArray(children)) return [];
+  
+  return children.map(child => {
+    const childData = {
+      name: child.name || "",
+      path: child.path || "",
+    };
+    
+    const childIcon = cleanIcon(child.icon);
+    if (childIcon !== undefined) {
+      childData.icon = childIcon;
+    }
+    
+    if (child.children && Array.isArray(child.children) && child.children.length > 0) {
+      childData.children = child.children.map(subChild => {
+        const subChildData = {
+          name: subChild.name || "",
+          path: subChild.path || "",
+        };
+        const subIcon = cleanIcon(subChild.icon);
+        if (subIcon !== undefined) {
+          subChildData.icon = subIcon;
+        }
+        return subChildData;
+      });
+    }
+    
+    return childData;
+  });
+};
+
+/**
  * Get single menu by ID
  * @route GET /api/admin/menu/[id]
  * @access Admin
@@ -15,15 +60,13 @@ const getMenu = async (req, { params }) => {
   try {
     const { id } = await params;
     
-    // Validate MongoDB ObjectId
     if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه منو معتبر نیست");
     }
 
     await connectToDb();
     
-    // Find menu with populated parent
-    const menu = await Menu.findById(id).populate("parent", "name slug");
+    const menu = await Menu.findById(id);
     if (!menu) {
       throw createNotFoundError("منو یافت نشد");
     }
@@ -47,7 +90,6 @@ const updateMenu = async (req, { params }) => {
   try {
     const { id } = await params;
     
-    // Validate MongoDB ObjectId
     if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه منو معتبر نیست");
     }
@@ -55,25 +97,19 @@ const updateMenu = async (req, { params }) => {
     await connectToDb();
     const body = await req.json();
 
-   
-
-    // Trim string fields to avoid accidental spaces
+    // Trim string fields
     const sanitizedBody = Object.fromEntries(
       Object.entries(body).map(([key, value]) =>
         typeof value === "string" ? [key, value.trim()] : [key, value]
       )
     );
 
- 
     // Validate request body
     const validation = menuValidation.safeParse(sanitizedBody);
     
     if (!validation.success) {
-  
-      
       const formattedErrors = {};
       
-      // ✅ FIX: Use validation.error.issues instead of validation.error.errors
       if (validation.error.issues && Array.isArray(validation.error.issues)) {
         validation.error.issues.forEach(issue => {
           if (issue.path && issue.path.length > 0) {
@@ -82,11 +118,17 @@ const updateMenu = async (req, { params }) => {
         });
       }
     
-      throw createBadRequestError("اطلاعات ورودی نامعتبر است", formattedErrors);
+      return NextResponse.json(
+        {
+          success: false,
+          message: "اطلاعات ورودی نامعتبر است",
+          errors: formattedErrors,
+        },
+        { status: 400 }
+      );
     }
     
     const cleanedBody = validation.data;
-
 
     // Check if menu exists
     const existingMenu = await Menu.findById(id);
@@ -94,27 +136,33 @@ const updateMenu = async (req, { params }) => {
       throw createNotFoundError("منو یافت نشد");
     }
 
-   
-
-    // Process data with defaults
-    const processedData = {
-      ...cleanedBody,
-      parent: cleanedBody.parent === "" || !cleanedBody.parent ? null : cleanedBody.parent,
-      isActive: cleanedBody.isActive ?? true,
-      target: cleanedBody.target || "_self",
-      noIndex: cleanedBody.noIndex ?? false,
+    // Prepare update operation
+    const updateOperation = {
+      name: cleanedBody.name,
+      path: cleanedBody.path,
+      menuType: cleanedBody.menuType || "header-menu",
+      children: processChildren(cleanedBody.children),
     };
-
-  
+    
+    const menuIcon = cleanIcon(cleanedBody.icon);
+    const updateQuery = { $set: updateOperation };
+    
+    if (menuIcon !== undefined) {
+      updateOperation.icon = menuIcon;
+    } else if (cleanedBody.hasOwnProperty('icon')) {
+      // If icon was explicitly set to empty/null, remove it
+      if (!updateQuery.$unset) {
+        updateQuery.$unset = {};
+      }
+      updateQuery.$unset.icon = "";
+    }
 
     // Update menu
     const updatedMenu = await Menu.findByIdAndUpdate(
       id,
-      processedData,
+      updateQuery,
       { new: true, runValidators: true }
-    ).populate("parent", "name slug");
-
- 
+    );
 
     return NextResponse.json({
       data: updatedMenu,
@@ -122,7 +170,6 @@ const updateMenu = async (req, { params }) => {
       success: true,
     });
   } catch (error) {
-   
     return errorHandler(error);
   }
 };
@@ -136,26 +183,17 @@ const deleteMenu = async (req, { params }) => {
   try {
     const { id } = await params;
     
-    // Validate MongoDB ObjectId
     if (!isValidObjectId(id)) {
       throw createBadRequestError("شناسه منو معتبر نیست");
     }
 
     await connectToDb();
 
-    // Check if menu exists
     const menu = await Menu.findById(id);
     if (!menu) {
       throw createNotFoundError("منو یافت نشد");
     }
 
-    // Check if menu has children
-    const children = await Menu.find({ parent: id });
-    if (children.length > 0) {
-      throw createBadRequestError("نمی‌توان منویی که دارای زیرمنو است را حذف کرد");
-    }
-
-    // Delete menu
     await Menu.findByIdAndDelete(id);
 
     return NextResponse.json({

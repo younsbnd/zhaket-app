@@ -36,41 +36,56 @@ export default function FooterDesktopSection({ footerLinks, logoUrl }) {
             />
           </Link>
           
-          {/* Static Contact section under logo */}
+          {/* Dynamic first footer menu children under logo (no title) */}
           <div className="flex w-full flex-col items-start gap-4">
-            {/* Section links */}
-            <nav className="flex flex-col items-start gap-2" aria-label="ارتباط با ما لینک‌ها">
-              <Link
-                href="/content/terms"
-                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
-              >
-                قوانین ژاکت
-              </Link>
-              <Link
-                href="/logo"
-                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
-              >
-                لوگو
-              </Link>
-              <Link
-                href="/content/about"
-                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
-              >
-                درباره ما
-              </Link>
-              <Link
-                href="/content/contact"
-                className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
-              >
-                تماس با ما
-              </Link>
-            </nav>
+            {footerLinks && footerLinks.length > 0 && footerLinks[0] && footerLinks[0].links ? (
+              /* First footer menu links only (no title) */
+              <nav className="flex flex-col items-start gap-2" aria-label={`${footerLinks[0].title} لینک‌ها`}>
+                {footerLinks[0].links.map((link, linkIndex) => (
+                  <Link
+                    key={`first-menu-${linkIndex}-${link.href}`}
+                    href={link.href}
+                    className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            ) : (
+              /* Fallback static links if no dynamic menu */
+              <nav className="flex flex-col items-start gap-2" aria-label="ارتباط با ما لینک‌ها">
+                <Link
+                  href="/content/terms"
+                  className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                >
+                  قوانین ژاکت
+                </Link>
+                <Link
+                  href="/logo"
+                  className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                >
+                  لوگو
+                </Link>
+                <Link
+                  href="/content/about"
+                  className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                >
+                  درباره ما
+                </Link>
+                <Link
+                  href="/content/contact"
+                  className="text-[14px] leading-7 text-[#76767C] font-bold transition-colors duration-300 hover:text-[#FF9606]"
+                >
+                  تماس با ما
+                </Link>
+              </nav>
+            )}
           </div>
         </div>
 
-        {/* Navigation links organized in 2 columns with increased spacing */}
+        {/* Navigation links organized in 2 columns with increased spacing (excluding first menu) */}
         <div className="grid grid-cols-2 gap-x-16 flex-1 justify-start">
-          {footerLinks.filter(section => section.title !== "ارتباط با ژاکت").map((section, index) => (
+          {footerLinks.slice(1).filter(section => section.title !== "ارتباط با ژاکت").map((section, index) => (
             <div
               key={section.title}
               className="flex w-full flex-col items-start gap-4"
@@ -105,10 +120,10 @@ export default function FooterDesktopSection({ footerLinks, logoUrl }) {
             <Image
               alt="لوگو ژاکت"
               priority
-              width={22}
-              height={22}
+              width={33}
+              height={33}
               src={logoUrl || "/images/logo.svg"}
-              style={{ width: 22, height: 22 }}
+              className="w-[22px] h-[22px] object-contain"
             />
             <span className="text-lg leading-7 text-[#544C45] font-medium">
               خبرنامه ژاکت

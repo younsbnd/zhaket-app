@@ -26,50 +26,21 @@ export default function FooterMenuProvider({ children, fallbackLinks }) {
     fetcher,
   );
 
-  // Build hierarchical structure for footer menus
-  const buildHierarchicalStructure = (flatMenus) => {
-    const menuMap = new Map();
-    
-    flatMenus.forEach(menu => {
-      menuMap.set(menu._id.toString(), { ...menu, children: [] });
-    });
-    
-    const rootMenus = [];
-    
-    flatMenus.forEach(menu => {
-      if (menu.parent) {
-        const parent = menuMap.get(menu.parent._id.toString());
-        if (parent) {
-          parent.children.push(menuMap.get(menu._id.toString()));
-        }
-      } else {
-        rootMenus.push(menuMap.get(menu._id.toString()));
-      }
-    });
-    
-    return rootMenus;
-  };
-
-  // Process footer menu data
-  const hierarchicalMenus = menusResponse?.data ? buildHierarchicalStructure(menusResponse.data) : [];
-  const activeMenus = hierarchicalMenus.filter(menu => menu.isActive);
+  // Process footer menu data - children are already embedded
+  const allMenus = menusResponse?.data || [];
   
-  // Footer menus - parent menus without children should be titles
-  const footerMenus = activeMenus.filter(menu => menu.menuType === 'footer-menu');
+  // Footer menus - filter only footer-menu type
+  const footerMenus = allMenus.filter(menu => menu.menuType === 'footer-menu');
   
-  // Group footer menus by parent (titles)
-  const groupedFooterMenus = footerMenus.reduce((acc, menu) => {
-    if (!menu.parent) {
-      // This is a title menu
-      acc[menu._id] = {
-        title: menu.name,
-        links: (menu.children || []).toReversed().map(child => ({
-          label: child.name,
-          href: child.path || '#',
-          target: child.target || '_self'
-        }))
-      };
-    }
+  // Group footer menus - children are embedded
+  const groupedFooterMenus = footerMenus.reverse().reduce((acc, menu) => {
+    acc[menu._id] = {
+      title: menu.name,
+      links: (menu.children || []).toReversed().map(child => ({
+        label: child.name,
+        href: child.path || '#'
+      }))
+    };
     return acc;
   }, {});
 

@@ -58,30 +58,6 @@ export default function Header() {
     fetcher,
 
   );
-
-  // Build hierarchical structure
-  const buildHierarchicalStructure = (flatMenus) => {
-    const menuMap = new Map();
-
-    flatMenus.forEach(menu => {
-      menuMap.set(menu._id.toString(), { ...menu, children: [] });
-    });
-
-    const rootMenus = [];
-
-    flatMenus.forEach(menu => {
-      if (menu.parent) {
-        const parent = menuMap.get(menu.parent._id.toString());
-        if (parent) {
-          parent.children.push(menuMap.get(menu._id.toString()));
-        }
-      } else {
-        rootMenus.push(menuMap.get(menu._id.toString()));
-      }
-    });
-
-    return rootMenus;
-  };
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -109,26 +85,23 @@ export default function Header() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  // Process menu data
-  const hierarchicalMenus = menusResponse?.data ? buildHierarchicalStructure(menusResponse.data) : [];
-  const activeMenus = hierarchicalMenus.filter(menu => menu.isActive);
+  // Process menu data - children are already embedded in the menu object
+  const allMenus = menusResponse?.data || [];
 
   // Separate main menus and mega menus
-  const mainMenus = activeMenus.filter(menu => !menu.parent && (menu.menuType === 'header-menu' || menu.menuType === 'mega-menu' || !menu.menuType));
-  const megaMenus = activeMenus.filter(menu => menu.menuType === 'mega-menu');
+  const mainMenus = allMenus.filter(menu => (menu.menuType === 'header-menu' || menu.menuType === 'mega-menu' || !menu.menuType)).reverse();
+  const megaMenus = allMenus.filter(menu => menu.menuType === 'mega-menu');
   
-  // Footer menus - parent menus without children should be titles
-  const footerMenus = activeMenus.filter(menu => menu.menuType === 'footer-menu');
+  // Footer menus
+  const footerMenus = allMenus.filter(menu => menu.menuType === 'footer-menu');
 
-
-
-  // Set activeTab to first parent mega menu with children when megaMenus are loaded
+  // Set activeTab to first mega menu with children when megaMenus are loaded
   useEffect(() => {
     if (megaMenus.length > 0 && !activeTab) {
-      // Find first parent mega menu with children
-      let firstParentMegaMenu = megaMenus.find(menu => !menu.parent && menu.children && menu.children.length > 0);
-      if (firstParentMegaMenu) {
-        setActiveTab(firstParentMegaMenu._id);
+      // Find first mega menu with children
+      let firstMegaMenu = megaMenus.find(menu => menu.children && menu.children.length > 0);
+      if (firstMegaMenu) {
+        setActiveTab(firstMegaMenu._id);
       }
     }
   }, [megaMenus, activeTab]);

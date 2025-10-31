@@ -4,78 +4,87 @@
 import React, { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import useSWR from "swr";
 
 // Icon imports
-import { FcExpand, FcNext } from "react-icons/fc";
 import { AiOutlineClose } from "react-icons/ai";
-import { FaChevronDown } from "react-icons/fa";
-import { addToast } from "@heroui/react";
+import { FiPlus, FiMinus } from "react-icons/fi";
 
-// Constants imports
-import { POPULAR_PLUGINS, POPULAR_THEMES, TAB_CONTENT } from "@/constants/header/mainMenuData";
-import { mainTabs } from "@/constants/header/mobileMenuData";
+// API imports
+import { fetcher } from "@/lib/api/fetcher";
+ 
+
 /**
  * MobileMenuSidebar Component
- * Renders a mobile sidebar menu with accordion functionality for navigation categories
+ * Renders a mobile sidebar menu with dynamic navigation from database
  * @param {boolean} isOpen - Controls sidebar visibility
  * @param {function} onClose - Handler to close the sidebar
  * @returns {JSX.Element} Mobile sidebar menu component
  */
 export default function MobileMenuSidebar({ isOpen, onClose }) {
-  const [openAccordions, setOpenAccordions] = useState({});
-
-  // Dynamic Menu State
-  const [menus, setMenus] = useState([]);
-  const [isLoadingMenus, setIsLoadingMenus] = useState(true);
-  const [menuError, setMenuError] = useState(null);
   const [expandedMenus, setExpandedMenus] = useState({});
+  const [megaMenuItems, setMegaMenuItems] = useState([]);
+  const [headerMenuItems, setHeaderMenuItems] = useState([]);
 
+  // Fetch menu data dynamically
+  const { data: menusResponse, isLoading: isLoadingMenus, error: menuError } = useSWR(
+    "/api/admin/menu",
+    fetcher,
+  );
+
+  // Process dynamic menu data
   useEffect(() => {
-    fetchMenus();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const fetchMenus = async () => {
-    try {
-      setIsLoadingMenus(true);
-      const response = await fetch('/api/admin/menu');
-      const data = await response.json();
+    if (menusResponse?.data && Array.isArray(menusResponse.data)) {
+      let megaItems = [];
+      let headerItems = [];
       
-      if (data.success && data.data) {
-        const hierarchicalMenus = buildHierarchicalStructure(data.data);
-        const activeMenus = hierarchicalMenus.filter(menu => menu.isActive);
-        setMenus(activeMenus);
-      } else {
-        setMenuError('Failed to fetch menus');
-      }
-    } catch (err) {
-      setMenuError(err.message);
-    } finally {
-      setIsLoadingMenus(false);
-    }
-  };
-
-  const buildHierarchicalStructure = (flatMenus) => {
-    const menuMap = new Map();
-    
-    flatMenus.forEach(menu => {
-      menuMap.set(menu._id.toString(), { ...menu, children: [] });
-    });
-    
-    const rootMenus = [];
-    
-    flatMenus.forEach(menu => {
-      if (menu.parent) {
-        const parent = menuMap.get(menu.parent._id.toString());
-        if (parent) {
-          parent.children.push(menuMap.get(menu._id.toString()));
+      // First, add mega menu children as top-level items (دسته‌بندی‌ها)
+      const megaMenus = menusResponse.data.filter(menu => menu.menuType === 'mega-menu');
+      megaMenus.forEach(megaMenu => {
+        if (megaMenu.children && megaMenu.children.length > 0) {
+          megaMenu.children.toReversed().forEach(child => {
+            megaItems.push({
+              _id: child._id,
+              label: child.name,
+              href: child.path,
+              icon: child.icon,
+              menuType: 'mega-child',
+              children: (child.children || []).toReversed().map(subChild => ({
+                _id: subChild._id,
+                label: subChild.name,
+                href: subChild.path
+              }))
+            });
+          });
         }
-      } else {
-        rootMenus.push(menuMap.get(menu._id.toString()));
-      }
-    });
-    
-    return rootMenus;
-  };
+      });
+      
+      // Then, add regular header menus at the bottom
+      const headerMenus = menusResponse.data.filter(menu => menu.menuType === 'header-menu');
+      headerMenus.forEach(menu => {
+        headerItems.push({
+          _id: menu._id,
+          label: menu.name,
+          href: menu.path,
+          icon: menu.icon,
+          menuType: menu.menuType,
+          children: (menu.children || []).toReversed().map(child => ({
+            _id: child._id,
+            label: child.name,
+            href: child.path,
+            children: (child.children || []).toReversed().map(subChild => ({
+              _id: subChild._id,
+              label: subChild.name,
+              href: subChild.path
+            }))
+          }))
+        });
+      });
+
+      setMegaMenuItems(megaItems);
+      setHeaderMenuItems(headerItems);
+    }
+  }, [menusResponse]);
 
   const toggleMenu = (menuId) => {
     setExpandedMenus(prev => ({
@@ -83,14 +92,6 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
       [menuId]: !prev[menuId]
     }));
   };
-
-  // Toggle accordion state for menu items with useCallback for performance
-  const toggleAccordion = useCallback((id) => {
-    setOpenAccordions(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  }, []);
 
   // Handle keyboard navigation for accessibility
   const handleKeyDown = useCallback((event, action) => {
@@ -103,84 +104,13 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
     }
   }, [onClose]);
 
-  // Render content for accordion sections
-  const renderAccordionContent = useCallback((tabId) => {
-    if (tabId === "most-popular") {
-      return (
-        <div className="px-2 py-1 bg-white rounded-md mt-2 shadow-sm">
-          <div className="grid grid-cols-1 gap-4">
-            {/* Popular themes section */}
-            <nav aria-label="Popular themes">
-              <ul className="space-y-2">
-                {POPULAR_THEMES.slice(0, 4).map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                            className="text-sm text-[#76767C] hover:text-[#FF9606] transition-colors duration-200 block py-1 rounded"
-                      onClick={onClose}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            {/* Popular plugins section */}
-            <nav aria-label="Popular plugins">
-              <ul className="space-y-2">
-                {POPULAR_PLUGINS.slice(0, 4).map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                            className="text-sm text-[#76767C] hover:text-[#FF9606] transition-colors duration-200 block py-1 rounded"
-                      onClick={onClose}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-        </div>
-      );
-    }
-
-    const content = TAB_CONTENT[tabId];
-    if (!content) return null;
-
-    return (
-      <div className="px-4 py-3 bg-white rounded-md mt-2 shadow-sm">
-        <div className="grid grid-cols-1 gap-4">
-          {content.map((col, idx) => (
-            <nav key={idx} aria-label={`Category section ${idx + 1}`}>
-              <ul className="space-y-2">
-                {col.slice(0, 5).map((item) => (
-                  <li key={item.label}>
-                    <Link
-                      href={item.href}
-                            className="text-sm text-[#76767C] hover:text-[#FF9606] transition-colors duration-200 block py-1 rounded"
-                      onClick={onClose}
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
-        </div>
-      </div>
-    );
-  }, [onClose]);
-
   return (
     <>
       {/* Mobile menu overlay - dark background when menu is open */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full w-full bg-[#00000033] transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
+        className={`fixed top-0 left-0 z-50 h-full w-full bg-[#00000033] transition-opacity duration-300 ${
+          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={onClose}
         onKeyDown={(e) => handleKeyDown(e, onClose)}
         aria-hidden="true"
@@ -189,14 +119,15 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
 
       {/* Mobile menu sidebar */}
       <aside
-        className={`fixed top-0 right-0 z-60 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
-          } md:hidden`}
+        className={`fixed top-0 right-0 z-60 h-full w-[370px] max-w-[90vw] transform-gpu overflow-y-auto bg-white px-[10px] py-5 transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        } md:hidden`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation menu"
       >
         {/* Mobile menu header with logo and close button */}
-        <header className="flex items-center justify-between rounded-md px-[20px]">
+        <header className="flex items-center justify-between rounded-md px-[20px] mb-6">
           <Link
             href="/"
             onClick={onClose}
@@ -224,105 +155,160 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
           </button>
         </header>
 
-        {/* Mobile menu categories with accordion functionality */}
-        <nav className="mt-6 flex w-full flex-col gap-[15px] rounded-[10px] bg-[#F9FAFC] p-2 px-[21px] py-[28px]" data-cy="menu-container" aria-label="Main navigation">
-          {mainTabs.map((tab) => (
-            <div key={tab.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
-              <button
-                className="cursor-pointer flex w-full items-center justify-between py-2 rounded-lg"
-                data-cy="stylish-accordion-button"
-                type="button"
-                onClick={() => toggleAccordion(tab.id)}
-                onKeyDown={(e) => handleKeyDown(e, () => toggleAccordion(tab.id))}
-                aria-expanded={openAccordions[tab.id] || false}
-                aria-controls={`accordion-content-${tab.id}`}
-              >
-                <div className="flex items-center justify-start gap-[10px]">
-                  <span className="flex-shrink-0" aria-hidden="true">
-                    {tab.mobileIcon}
-                  </span>
-                  <span className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium">
-                    {tab.label}
-                  </span>
-                </div>
-                <span className="max-h-4 max-w-4 flex-shrink-0" aria-hidden="true">
-                  {openAccordions[tab.id] ? <FcNext /> : <FcExpand />}
-                </span>
-              </button>
-
-              {/* Expandable accordion content */}
-              <div
-                id={`accordion-content-${tab.id}`}
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${openAccordions[tab.id] ? 'max-h-[500px] opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'
-                  }`}
-                aria-hidden={!openAccordions[tab.id]}
-              >
-                {openAccordions[tab.id] && renderAccordionContent(tab.id)}
-              </div>
+        {/* Dynamic menu items */}
+        {isLoadingMenus ? (
+          <div className="mt-6 flex w-full flex-col gap-[18px] rounded-[10px] bg-[#F9FAFC] p-2 px-[21px] py-[28px]">
+            <div className="animate-pulse">
+              <div className="h-4 bg-gray-300 rounded mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded mb-2"></div>
+              <div className="h-4 bg-gray-300 rounded"></div>
             </div>
-          ))}
-        </nav>
+          </div>
+        ) : (
+          <>
+            {/* Mega Menu Items - با بک‌گراند خاکستری */}
+            {megaMenuItems.length > 0 && (
+              <nav className="mt-6 flex w-full flex-col gap-6 rounded-[10px] bg-[#F9FAFC] p-2 px-[21px] py-[28px]" data-cy="mega-menu-container" aria-label="Mega menu navigation">
+                {megaMenuItems.toReversed().map((menu) => {
+                  const menuId = `mega-${menu._id}`;
+                  const hasChildren = Array.isArray(menu.children) && menu.children.length > 0;
+                  const isExpanded = !!expandedMenus[menuId];
 
-        {/* Dynamic navigation from database */}
-        <nav className="flex justify-center flex-col items-start gap-6 p-[20px]" data-cy="menu-container" aria-label="Additional navigation">
-          {/* Dynamic Menu from Database */}
-          {isLoadingMenus ? (
-            <div className="space-y-4">
-              <div className="animate-pulse bg-gray-200 h-8 rounded"></div>
-              <div className="animate-pulse bg-gray-200 h-8 rounded"></div>
-            </div>
-          ) : menuError ? (
-             addToast({
-              description:"خطا در بارگذاری منوها",
-              color: "danger",
-              shouldShowTimeoutProgress: true,
-            })
-          ) : menus.length > 0 ? (
-            <div className="space-y-4">
-              {menus.map(menu => (
-                <div key={menu._id}>
-                  <div className="flex items-center justify-between">
-                    <Link
-                      href={menu.path}
-                      target={menu.target || '_self'}
-                      className="block px-4 py-2 text-[#424244] hover:text-[#FF9606] hover:bg-gray-50 rounded-lg transition-all duration-200 flex-1 font-medium"
-                    >
-                      {menu.name}
-                    </Link>
-                    
-                    {menu.children?.length > 0 && (
+                  return (
+                    <div key={menu._id}>
                       <button
-                        onClick={() => toggleMenu(menu._id)}
-                        className="px-2 py-1 text-gray-500 hover:text-gray-700 transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-gray-100"
-                        aria-label={`Toggle ${menu.name} submenu`}
+                        className="cursor-pointer flex w-full items-center justify-between mb-1"
+                        type="button"
+                        onClick={() => {
+                          if (hasChildren) {
+                            toggleMenu(menuId);
+                          } else if (menu.href) {
+                            onClose();
+                          }
+                        }}
                       >
-                        <FaChevronDown 
-                          className={`transition-transform duration-200  ${expandedMenus[menu._id] ? 'rotate-180' : ''}`}
-                          size={12}
-                        />
+                        <div className="flex items-center justify-start gap-[10px]">
+                          <Link href={menu.href || "#"} onClick={onClose}>
+                            <p className="transition duration-300 text-base leading-7 text-[#5B5C60]">
+                              {menu.label}
+                            </p>
+                          </Link>
+                        </div>
+                        {hasChildren ? (
+                          <span className="max-h-4 max-w-4 text-[#878F9B]">
+                            {isExpanded ? <FiMinus size={15} /> : <FiPlus size={15} />}
+                          </span>
+                        ) : null}
                       </button>
-                    )}
-                  </div>
-                  
-                  {menu.children?.length > 0 && expandedMenus[menu._id] && (
-                    <div className="ml-4 mt-1 space-y-1">
-                      {menu.children.map(child => (
-                        <Link
-                          key={child._id}
-                          href={child.path}
-                          target={child.target || '_self'}
-                          className="block px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors duration-200 text-sm"
-                        >
-                          {child.name}
-                        </Link>
-                      ))}
+
+                      {hasChildren && isExpanded ? (
+                        <div className="rounded-md shadow-sm bg-white mt-3 space-y-2 p-2">
+                          {menu.children.map((child) => (
+                            <Link
+                              key={child._id}
+                              href={child.href}
+                              onClick={onClose}
+                              className="block rounded-lg bg-white px-3 py-2 text-[13px] text-[#5F6274] hover:text-[#FF9606] duration-200"
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          ) : null}
-        </nav>
+                  );
+                })}
+              </nav>
+            )}
+
+            {/* Header Menu Items - با بک‌گراند سفید */}
+            {headerMenuItems.length > 0 && (
+              <nav className="mt-6 flex w-full flex-col gap-6 rounded-[10px] bg-white p-2 px-[21px] py-[28px]" data-cy="header-menu-container" aria-label="Header menu navigation">
+                {headerMenuItems.map((menu) => {
+                  const menuId = `header-${menu._id}`;
+                  const hasChildren = Array.isArray(menu.children) && menu.children.length > 0;
+                  const isExpanded = !!expandedMenus[menuId];
+
+                  return (
+                    <div key={menu._id}>
+                      <button
+                        className="cursor-pointer flex w-full items-center justify-between mb-1"
+                        type="button"
+                        onClick={() => {
+                          if (hasChildren) {
+                            toggleMenu(menuId);
+                          } else if (menu.href) {
+                            onClose();
+                          }
+                        }}
+                      >
+                        <div className="flex items-center justify-start gap-[10px]">
+                          <Link href={menu.href || "#"} onClick={onClose}>
+                            <p className="transition duration-300 text-base leading-7 text-[#5B5C60]">
+                              {menu.label}
+                            </p>
+                          </Link>
+                        </div>
+                        {hasChildren ? (
+                          <span className="max-h-4 max-w-4 text-[#878F9B]">
+                            {isExpanded ? <FiMinus size={15} /> : <FiPlus size={15} />}
+                          </span>
+                        ) : null}
+                      </button>
+
+                      {hasChildren && isExpanded ? (
+                        <div className="rounded-md shadow-sm bg-white mt-3 space-y-2 p-2">
+                          {menu.children.map((child) => {
+                            const childId = `child-${child._id}`;
+                            const hasSubChildren = Array.isArray(child.children) && child.children.length > 0;
+                            const isChildExpanded = !!expandedMenus[childId];
+
+                            return (
+                              <div key={child._id}>
+                                <div className="flex items-center justify-between">
+                                  <Link
+                                    href={child.href}
+                                    onClick={onClose}
+                                    className="flex flex-row rounded-lg bg-white px-3 py-2 text-[13px] text-[#5F6274] hover:text-[#FF9606] duration-200 flex-1"
+                                  >
+                                    {child.label}
+                                  </Link>
+                                  {hasSubChildren && (
+                                    <button
+                                      onClick={() => toggleMenu(childId)}
+                                      className="px-2 py-1 text-[#878F9B]"
+                                    >
+                                      {isChildExpanded ? <FiMinus size={12} /> : <FiPlus size={12} />}
+                                    </button>
+                                  )}
+                                </div>
+                                
+                                {hasSubChildren && isChildExpanded && (
+                                  <div className="ml-4 mt-2 space-y-2">
+                                    {child.children.map((subChild) => (
+                                      <Link
+                                        key={subChild._id}
+                                        href={subChild.href}
+                                        onClick={onClose}
+                                        className="block rounded-lg bg-gray-50 px-3 py-2 text-[12px] text-[#5F6274] hover:text-[#FF9606] duration-200"
+                                      >
+                                        {subChild.label}
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </nav>
+            )}
+          </>
+        )}
       </aside>
     </>
   );

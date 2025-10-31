@@ -16,8 +16,8 @@ import MegaMenuDropdown from "./MegaMenuDropdown";
  */
 function MenuItem({ menu, activeMegaMenuTab, setActiveMegaMenuTab }) {
   return (
-    <div className="relative group">
-      <div className="flex items-center gap-1">
+    <div className="relative group ">
+      <div className="flex items-center gap-3">
         {/* Menu icon */}
         {menu.icon && menu.icon.trim() !== '' ? (
           <Image
@@ -31,7 +31,6 @@ function MenuItem({ menu, activeMegaMenuTab, setActiveMegaMenuTab }) {
         
         <Link
           href={menu.path}
-          target={menu.target || '_self'}
           className="font-bold text-[15px] text-[#424244] hover:text-[#FF9606] transition-colors duration-200"
         >
           {menu.name}
@@ -40,7 +39,7 @@ function MenuItem({ menu, activeMegaMenuTab, setActiveMegaMenuTab }) {
         {/* Show dropdown arrow for menus with children */}
         {(menu.children?.length > 0) && (
           <FaChevronDown
-            className="text-[#424244] group-hover:text-[#FF9606] group-hover:rotate-180 transition-all duration-300 ease-in-out"
+            className="text-[#FF9606] group-hover:text-[#FF9606] group-hover:rotate-180 transition-all duration-300 ease-in-out"
             size={12}
             aria-hidden="true"
           />
@@ -58,14 +57,13 @@ function MenuItem({ menu, activeMegaMenuTab, setActiveMegaMenuTab }) {
           />
         ) : (
           <div className="absolute top-full right-0 mt-1 bg-white rounded-[10px] shadow-[0px_20px_60px_-15px_rgba(0,0,0,0.15)] z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 min-w-[200px]">
-            <div className="p-1">
-              <ul className="space-y-1">
+            <div className="p-3">
+              <ul className="space-y-3">
                 {menu.children.toReversed().map(child => (
                   <li key={child._id}>
                     <Link
                       href={child.path}
-                      target={child.target || '_self'}
-                      className="block text-[14px] text-[#424244] hover:text-[#FF9606] transition-colors duration-200 py-2"
+                      className="block text-[14px] text-[#424244] hover:text-[#FF9606] transition-colors duration-200 py-3 px-4 rounded hover:bg-gray-100"
                     >
                       {child.name}
                     </Link>
