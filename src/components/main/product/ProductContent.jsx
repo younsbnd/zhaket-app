@@ -147,7 +147,7 @@ const ProductContent = ({ product }) => {
 
           {/* product FAQ section */}
           {product?.faqs && product.faqs.length > 0 && (
-            <div className="max-w-[1279px] mx-auto p-8 mt-8 mb-8 shadow-[0px_10px_25px_0px_#969BA41A] rounded-md bg-white">
+            <div className="max-w-[1279px] md:mx-auto p-8 mt-8 mb-8 shadow-[0px_10px_25px_0px_#969BA41A] rounded-md bg-white mx-5">
               <ProductFAQSection faqs={product.faqs} />
             </div>
           )}

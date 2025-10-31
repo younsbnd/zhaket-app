@@ -40,7 +40,7 @@ const CartItems = () => {
               <div className="p-4 flex w-full flex-col py-0 pl-2 md:pl-0">
                 {/* Product Title and Price */}
                 <div className="md:flex md:items-center md:justify-between">
-                  <Link href={`/products/${item?.slug}`}>
+                  <Link href={`/category/web/${item?.slug}`}>
                     <p className="transition duration-300 text-base leading-7 font-bold line-clamp-1 text-[#424244]">
                       {item?.title}
                     </p>
