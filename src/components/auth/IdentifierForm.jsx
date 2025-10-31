@@ -64,12 +64,14 @@ const IdentifierForm = ({
         radius="sm"
         color="warning"
         size="lg"
+        className="!autofill:text-gray-900 !autofill:bg-white"
         classNames={{
           input:
-            "placeholder:text-gray-500/85 placeholder:text-[12px] placeholder:font-semibold text-[12px] text-gray-500",
+            "placeholder:text-gray-500/85 placeholder:text-[14px] placeholder:font-semibold text-[14px] text-gray-500 autofill:[-webkit-text-fill-color:rgb(107,114,128)]",
+          inputWrapper: "!h-[60px] border-1 ",
         }}
         startContent={
-          <LuUserRound className="text-gray-400 text-[16px] mb-0.5" />
+          <LuUserRound className="text-gray-400 text-[18px] mb-0.5" />
         }
       />
       {/* Button for user identifier */}
@@ -78,8 +80,7 @@ const IdentifierForm = ({
         isDisabled={isLoading || isResetPasswordLoading}
         radius="sm"
         type="submit"
-        color="warning"
-        className="w-full text-white text-[12px] mt-3 py-6 font-semibold"
+        className="w-full text-white text-[14px] mt-3 py-[30px] font-semibold bg-[#FFAE11] hover:bg-[#EB8800]"
       >
         {btnText}
       </Button>

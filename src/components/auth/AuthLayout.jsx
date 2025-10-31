@@ -13,9 +13,9 @@ const AuthLayout = ({ title, children }) => {
           width={800}
           height={500}
           priority
-          className="absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[590px]"
+          className="absolute top-1/2 left-1/2 z-0 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[740px]"
         />
-        <div className="bg-white border border-[#F4F4F4] shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] w-90 z-10 rounded-lg mx-9 sm:p-10 p-5 relative">
+        <div className="bg-white border border-[#F4F4F4] shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] w-[450px] z-10 rounded-lg mx-9 sm:p-10 p-5 relative h-[428px] min-h-min">
           {/* logo and title */}
           <div className=" flex flex-col justify-center items-center h-auto mb-9 relative">
             <Image
@@ -24,12 +24,12 @@ const AuthLayout = ({ title, children }) => {
               width={50}
               height={50}
               priority
-              className="w-12 h-12"
+              className="w-16 h-11"
             />
 
-            <span className="mt-3 text-[14.2px]">{title}</span>
+            <span className="mt-3 text-[17px] font-medium pb-5 pt-3">{title}</span>
           </div>
-          <div className="">{children}</div>
+          <div className="px-2">{children}</div>
         </div>
       </div>
     </div>
