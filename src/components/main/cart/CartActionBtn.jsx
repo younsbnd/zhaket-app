@@ -7,21 +7,34 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { logger } from "@/lib/utils/logger";
 import { useCrud } from "@/hooks/useCrud";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const CartActionBtn = ({ useWallet }) => {
   const [isAcceptedCheckbox, setIsAcceptedCheckbox] = useState(false);
   const { createRecord: createCheckout, isLoading } = useCrud("/checkout");
   const router = useRouter();
-
+  const { data: session } = useSession();
   //   submit handler for checkout
   const handleSubmit = async () => {
     if (!isAcceptedCheckbox) {
       addToast({
         title:
           "برای ادامه‌ی خرید لازم است شرایط و قوانین را مطالعه کرده و بپذیرید",
-        color: "primary",
+        color: "warning",
         variant: "solid",
       });
+      return;
+    }
+
+    // check if logged in
+    if (!session) {
+      addToast({
+        title: "برای ادامه‌ی خرید لازم است وارد حساب کاربری خود شوید",
+        color: "warning",
+        variant: "flat",
+        shouldShowTimeoutProgress: true,
+      });
+      router.push("/login");
       return;
     }
 
