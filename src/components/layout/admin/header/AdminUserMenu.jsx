@@ -6,8 +6,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 const menuItems = [
-  { label: "پروفایل", href: "/admin/profile" },
-  { label: "اعلان‌ها", href: "/admin/notifications" },
+  { label: "پروفایل", href: "#" },
+  { label: "اعلان‌ها", href: "#" },
   { type: "divider" },
 ];
 
