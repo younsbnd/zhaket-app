@@ -2,10 +2,17 @@
 "use client";
 
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FaCheck, FaDownload, FaHome } from 'react-icons/fa'
+import { useCartStore } from '@/stores/useCartStore';
 
 const SuccessMessage = () => {
+  const clearCart = useCartStore((state) => state.clearCart);
+
+  useEffect(() => {
+    clearCart();
+  }, [clearCart]);
+  
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#F4F5F6] py-12 px-6 text-center font-[iranyekan]">
       <div className="bg-white shadow-[0px_5px_25px_0px_rgba(126,137,155,0.11)] rounded-xl p-10 max-w-lg w-full border border-[#F4F4F4]">

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import ProductForm from "../ProductForm";
 import { notFound, useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
@@ -9,7 +9,8 @@ import { useCrud } from "@/hooks/useCrud";
 import { addToast, Alert } from "@heroui/react";
 import ProductCategoriesFormSkeleton from "@/components/skeletons/product-categories/ProductCategoriesFormSkeleton";
 
-const EditProductLogic = () => {
+// Component that uses useParams
+function EditProductContent() {
   const { id } = useParams();
   const router = useRouter();
 
@@ -65,6 +66,7 @@ const EditProductLogic = () => {
       imageAlt: "",
       category: "",
       tags: [],
+      faqs: [],
       seoTitle: "",
       metaDescription: "",
       canonical: "",
@@ -115,6 +117,7 @@ const EditProductLogic = () => {
         imageAlt: product.images?.alt || "",
         category: product.category?._id || "",
         tags: product.tags?.map(tag => tag._id) || [],
+        faqs: product.faqs || [],
         seoTitle: product.seoTitle || "",
         metaDescription: product.metaDescription || "",
         canonical: product.canonical || "",
@@ -145,6 +148,15 @@ const EditProductLogic = () => {
         tags={tagsResponse?.data}
       />
     </div>
+  );
+}
+
+// Wrapper component with Suspense
+const EditProductLogic = () => {
+  return (
+    <Suspense fallback={<ProductCategoriesFormSkeleton />}>
+      <EditProductContent />
+    </Suspense>
   );
 };
 

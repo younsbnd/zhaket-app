@@ -2,17 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-
-// ============================================================================
-// CONSTANTS
-// ============================================================================
-
 const MOBILE_BREAKPOINT = "(max-width: 1023px)";
 const DEFAULT_VIEW_MODE = "grid";
-
-// ============================================================================
-// PRODUCT CARDS GRID COMPONENT
-// ============================================================================
 
 /**
  * ProductCardsGrid Component
@@ -64,8 +55,8 @@ const ProductCardsGrid = ({ products = [], viewMode = DEFAULT_VIEW_MODE }) => {
   // Dynamic container classes
   const containerClasses =
     effectiveViewMode === "list"
-      ? "flex flex-col gap-4 p-4 md:p-6"
-      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4";
+      ? "flex flex-col gap-4 p-0"
+      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4 justify-items-center";
 
   return (
     <div className={containerClasses} role="list">

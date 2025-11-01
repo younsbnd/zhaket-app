@@ -17,7 +17,7 @@ const ProductTopFeature = ({ product }) => {
             {/* breadcrumbs */}
             <div className="p-5 rounded bg-white md:px-0">
               <Breadcrumbs size="sm">
-                <BreadcrumbItem href={`/${product?.category?.slug}`}>
+                <BreadcrumbItem href={`/category/${product?.category?.slug}`}>
                   {product?.category?.name}
                 </BreadcrumbItem>
                 <BreadcrumbItem>{product?.title}</BreadcrumbItem>

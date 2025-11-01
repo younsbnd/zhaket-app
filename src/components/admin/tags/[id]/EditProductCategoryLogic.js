@@ -1,7 +1,7 @@
 "use client";
 
 // React and Next.js imports
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
  
@@ -19,7 +19,8 @@ import TagFormSkeleton from "@/components/skeletons/tags/productTagSkeleton";
  * Logic component for editing existing product tags
  * Handles data fetching, form initialization, and update operations
  */
-export default function EditProductTagLogic() {
+// Component that uses useParams and useSearchParams
+function EditProductTagContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
@@ -116,5 +117,14 @@ export default function EditProductTagLogic() {
       title="ویرایش تگ"
       serverError={serverError}
     />
+  );
+}
+
+// Wrapper component with Suspense
+export default function EditProductTagLogic() {
+  return (
+    <Suspense fallback={<TagFormSkeleton isEditMode={true} />}>
+      <EditProductTagContent />
+    </Suspense>
   );
 }

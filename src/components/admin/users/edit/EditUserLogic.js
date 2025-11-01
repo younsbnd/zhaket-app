@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Suspense } from "react";
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import useSWR from "swr";
@@ -21,7 +21,8 @@ function isValidPhone(value) {
   return /^09[0-9]{9}$/.test(value || "");
 }
 
-export default function EditUserLogic() {
+// Component that uses useParams and useSearchParams
+function EditUserContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
@@ -177,5 +178,14 @@ export default function EditUserLogic() {
       watchedEmail={watchedEmail}
       watchedPhoneNumber={watchedPhoneNumber}
     />
+  );
+}
+
+// Wrapper component with Suspense
+export default function EditUserLogic() {
+  return (
+    <Suspense fallback={<UserFormSkeleton />}>
+      <EditUserContent />
+    </Suspense>
   );
 }

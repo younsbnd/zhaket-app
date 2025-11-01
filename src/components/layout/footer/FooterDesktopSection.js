@@ -10,9 +10,9 @@ import { Button, Input } from "@heroui/react";
  * FooterDesktopSection component
  * Renders desktop footer with navigation links, newsletter signup, and contact section
  */
-export default function FooterDesktopSection({ footerLinks }) {
+export default function FooterDesktopSection({ footerLinks, logoUrl }) {
   return (
-    <div className="justify-between md:flex md:pt-[50px]">
+    <div className="justify-between md:flex md:pt-[50px] w-full">
       {/* Navigation columns for desktop */}
       <div className="hidden md:grid md:grid-cols-3 w-[calc(100%_-_377px)] pt-[25px] gap-x-10">
         {footerLinks.map((section, index) => (
@@ -27,7 +27,7 @@ export default function FooterDesktopSection({ footerLinks }) {
                   alt="لوگو ژاکت"
                   width={60}
                   height={43}
-                  src="/images/logo.svg"
+                  src={logoUrl || "/images/logo.svg"}
                   className="min-h-[31px] min-w-[44px] transition-opacity duration-300 hover:opacity-80"
                   priority
                 />
@@ -68,7 +68,7 @@ export default function FooterDesktopSection({ footerLinks }) {
               priority
               width={22}
               height={22}
-              src="/images/logo.svg"
+              src={logoUrl || "/images/logo.svg"}
               style={{ width: 22, height: 22 }}
             />
             <span className="text-lg leading-7 text-[#544C45] font-medium">

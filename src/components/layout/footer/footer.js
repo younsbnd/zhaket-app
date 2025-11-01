@@ -10,8 +10,11 @@ import { footerLinks, socials } from "@/constants/footer/FooterConfig";
 import FooterDesktopSection from "@/components/layout/footer/FooterDesktopSection";
 import FooterAboutSection from "@/components/layout/footer/FooterAboutSection";
 import FooterAccordionSection from "@/components/layout/footer/FooterAccordionSection";
+import { useSettings } from "@/contexts/SettingsContext";
+
 const Footer = () => {
   const [loading, setLoading] = useState(true);
+  const { settings } = useSettings();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -22,8 +25,13 @@ const Footer = () => {
     return <FooterSkeleton />;
   }
 
+  // Get social links from settings
+  const instagramUrl = settings?.socialLinks?.instagram || "http://instagram.com/zhaketcom";
+  const linkedinUrl = settings?.socialLinks?.linkedin || "https://linkedin.com/company/zhaket";
+  const logoUrl = settings?.logoUrl || "/images/logo.svg";
+
   return (
-    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0">
+    <footer className="flex items-center justify-center relative mx-auto w-full max-w-[1279px] flex-col p-4 md:px-0 md:pt-0 md:w-full">
       {/* Mobile Social Section */}
       <div
         className="flex items-center w-full justify-between pt-10 md:hidden"
@@ -36,7 +44,7 @@ const Footer = () => {
               alt="لوگو ژاکت"
               width={60}
               height={60}
-              src="/images/logo.svg"
+              src={logoUrl}
               sizes="35"
               className="w-[60px] h-[60px] object-contain"
               priority
@@ -47,7 +55,7 @@ const Footer = () => {
         {/* Social Icons */}
         <div className="flex gap-3">
           <Link
-            href="http://instagram.com/zhaketcom"
+            href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="صفحه اینستاگرام ژاکت"
@@ -60,7 +68,7 @@ const Footer = () => {
           </Link>
 
           <Link
-            href="https://linkedin.com/company/zhaket"
+            href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="صفحه لینکدین ژاکت"
@@ -91,10 +99,10 @@ const Footer = () => {
       <FooterAccordionSection footerLinks={footerLinks} socials={socials} />
 
       {/* Desktop Links */}
-      <FooterDesktopSection footerLinks={footerLinks} />
+      <FooterDesktopSection footerLinks={footerLinks} logoUrl={logoUrl} />
 
       {/* About Section */}
-      <FooterAboutSection socials={socials} />
+      <FooterAboutSection socials={socials} logoUrl={logoUrl} />
 
       {/* Bottom Bar */}
       <div
@@ -103,7 +111,7 @@ const Footer = () => {
       >
         <div className="flex flex-col-reverse items-center md:flex-row">
           <p className="text-sm leading-7 font-medium text-center text-[#7E899B] transition-colors duration-300">
-            تمامی حقوق برای ژاکت محفوظ است
+            {settings?.copyrightText || "تمامی حقوق برای ژاکت محفوظ است"}
           </p>
 
           <div className="mx-2 hidden h-4 w-[1px] bg-[#E1E3E5] md:inline" />
@@ -126,7 +134,7 @@ const Footer = () => {
         {/* Desktop Social Icons */}
         <div className="hidden md:flex gap-3 py-2">
           <Link
-            href="http://instagram.com/zhaketcom"
+            href={instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="صفحه اینستاگرام ژاکت"
@@ -139,7 +147,7 @@ const Footer = () => {
           </Link>
 
           <Link
-            href="https://linkedin.com/company/zhaket"
+            href={linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="صفحه لینکدین ژاکت"

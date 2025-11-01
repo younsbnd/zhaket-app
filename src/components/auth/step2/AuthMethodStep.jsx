@@ -30,13 +30,14 @@ const AuthMethodStep = ({ isUserExists, setStep, identifier, setWithOtp }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {/* send otp button */}
       <Button
-        className="w-full text-[12px] font-semibold"
+        className="w-full text-[14px] font-semibold"
         color="warning"
         variant="flat"
         radius="sm"
+        size="lg"
         onPress={onSendOtp}
         isDisabled={isLoading}
         isLoading={isLoading}
@@ -45,10 +46,11 @@ const AuthMethodStep = ({ isUserExists, setStep, identifier, setWithOtp }) => {
       </Button>
       {/* login with password button */}
       <Button
-        className="w-full text-[12px] font-semibold"
+        className="w-full text-[14px] font-semibold"
         variant="flat"
         color="warning"
         radius="sm"
+        size="lg"
         onPress={() => {
           setWithOtp(false);
           setStep(3);

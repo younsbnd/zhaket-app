@@ -11,7 +11,7 @@ import Image from "next/image";
 export default function FooterAboutSection() {
   return (
     <div
-      className="flex flex-col md:flex-row items-center justify-center pt-10 gap-4"
+      className="flex flex-col md:flex-row items-center justify-center pt-10 gap-4 w-full"
       data-cy="data-cy-footer-about-us"
     >
       <div className="flex flex-col md:flex-row items-center justify-between gap-[50px] rounded-lg bg-[#F9FAFC] p-[23px] text-[#5D6877] w-full">

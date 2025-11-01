@@ -3,40 +3,43 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Popover, PopoverTrigger, PopoverContent, Button, CircularProgress } from "@heroui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+  CircularProgress,
+} from "@heroui/react";
 import { FaUser, FaChevronDown } from "react-icons/fa";
-import { HiOutlineLogout, HiOutlineCog, HiOutlineDownload, HiOutlineTicket, HiOutlineViewGrid } from "react-icons/hi";
+import {
+  HiOutlineLogout,
+  HiOutlineCog,
+  HiOutlineDownload,
+  HiOutlineTicket,
+  HiOutlineViewGrid,
+} from "react-icons/hi";
 import { signOut } from "next-auth/react";
+import { BiUser } from "react-icons/bi";
+import { RiAdminLine } from "react-icons/ri";
 
 /**
  * UserMenu component
  * Displays user dropdown menu when user is authenticated.
- * 
+ *
  * @param {Object} session - The session object from useSession().
  */
 export default function UserMenu({ session }) {
   return (
     <Popover placement="bottom-end">
       <PopoverTrigger>
-        <Button className="group flex h-10 w-fit items-center gap-2 rounded-lg bg-white p-2 shadow-sm" disableRipple>
+        <button
+          type="button"
+          className="group cursor-pointer  flex  items-center gap-2 rounded-lg px-4 py-[14px] bg-slate-50"
+        >
           <div className="flex items-center gap-2">
-            {session?.user?.image ? (
-              <Image
-                src={session.user.image}
-                alt={session.user.name || "کاربر"}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            ) : (
-              <FaUser className="text-[#878F9B]" size={16} />
-            )}
-            <span className="text-sm leading-7 pr-1 text-[#787676] hidden lg:inline">
-              {session?.user?.name || session?.user?.email || "کاربر"}
-            </span>
-            <FaChevronDown className="text-[#878F9B]" size={12} />
+            <BiUser className="text-[#878F9B]" size={20} />
           </div>
-        </Button>
+        </button>
       </PopoverTrigger>
 
       <PopoverContent className="p-0 min-w-[240px] bg-white rounded-lg shadow-lg">
@@ -44,9 +47,19 @@ export default function UserMenu({ session }) {
           {/* User info header */}
           <div className="flex justify-center flex-col items-start pr-7 py-3">
             <p className="text-base leading-7 text-[#5B5C60]">
-              کاربر {session?.user?.name || "ژاکت"}
+              {session?.user?.fullName || "کاربر"}
             </p>
           </div>
+
+          {/* admin link */}
+          {session?.user?.role === "admin" && (
+          <Link href="/admin">
+            <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
+              <RiAdminLine className="text-[#5B5C60]" size={14} />
+              <p className="text-sm leading-7 text-[#5B5C60]">پنل ادمین</p>
+            </div>
+          </Link>
+          )}
 
           {/* Dashboard link */}
           <Link href="/panel">
@@ -57,7 +70,7 @@ export default function UserMenu({ session }) {
           </Link>
 
           {/* Profile completion */}
-          <Link href="/panel/settings/edit-profile">
+          <Link href="/panel/settings/edit-profile/edit-password">
             <div className="flex items-center justify-between gap-4 rounded-xl bg-[#FFF5E6] py-4 pr-7 pl-3 hover:bg-[#F9FAFC] mx-2">
               <div className="flex items-center gap-4">
                 <FaUser className="text-[#EB8800]" size={12} />
@@ -89,14 +102,6 @@ export default function UserMenu({ session }) {
             <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
               <HiOutlineTicket className="text-[#6097F3]" size={15} />
               <p className="text-sm leading-7 text-[#6097F3]">ثبت تیکت</p>
-            </div>
-          </Link>
-
-          {/* Settings */}
-          <Link href="/panel/settings/edit-profile">
-            <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
-              <HiOutlineCog className="text-[#5B5C60]" size={17} />
-              <p className="text-sm leading-7 text-[#5B5C60]">ویرایش حساب</p>
             </div>
           </Link>
 

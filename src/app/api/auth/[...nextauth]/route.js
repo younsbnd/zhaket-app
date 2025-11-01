@@ -107,6 +107,7 @@ export const authOptions = {
         token.id = user._id;
         token.role = user.role;
         token.balance = user.balance || 0;
+        token.fullName = user.fullName;
       }
       
       // Update balance when session is updated
@@ -119,6 +120,7 @@ export const authOptions = {
     async session({ session, token, trigger, newSession }) {
       session.user.id = token.id;
       session.user.role = token.role;
+      session.user.fullName = token.fullName;
       
       // Fetch latest balance from database
       if (session.user.id) {
@@ -131,7 +133,7 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/auth/login",
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

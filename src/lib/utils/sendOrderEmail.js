@@ -23,10 +23,13 @@ export const sendOrderCompletionEmail = async (orderId) => {
   // Check if user has email
   if (!order.user) {
     throw createBadRequestError("کاربر یافت نشد");
-  } 
-  
+  }
+
   if (!order.user.email) {
-    throw createBadRequestError("ایمیل کاربر یافت نشد");
+    logger.warn(
+      `کاربر ${order.user._id} ایمیل ندارد. ایمیل تکمیل سفارش برای سفارش ${order._id} ارسال نشد.`
+    );
+    return;
   }
 
   // Check if order is completed

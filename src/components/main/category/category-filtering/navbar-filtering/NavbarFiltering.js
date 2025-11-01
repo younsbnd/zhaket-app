@@ -38,21 +38,21 @@ const NavbarFiltering = ({
     currentSort.sortBy === option.sortBy && currentSort.sortOrder === option.sortOrder;
 
   return (
-    <div className="relative my-6 flex items-center bg-white pr-4 shadow-md md:rounded-sm">
+    <div className="relative my-6 flex flex-col md:flex-row md:items-center bg-white p-4 shadow-md md:rounded-sm">
       {/* Sort title */}
-      <div className="flex items-center gap-3 pb-2 max-w-[100px] text-[#424244]">
+      <div className="flex items-center gap-3 pb-2 text-[#424244]">
         <TfiAlignCenter className="h-5 w-5" />
         <span className="text-sm leading-7">مرتب‌سازی :</span>
       </div>
 
       {/* Sort options bar */}
-      <div className="no-scrollbar flex gap-4 overflow-x-auto max-w-fit">
+      <div className="flex flex-wrap gap-3 md:gap-4">
         {SORT_OPTIONS.map((option) => (
           <div
             key={option.id}
             onClick={() => handleSortClick(option)}
             /** Controlled highlight styling */
-            className={`min-w-fit cursor-pointer py-4 text-[15px] first:mr-4 last:ml-4 transition-colors ${
+            className={`cursor-pointer py-2 md:py-4 text-[14px] md:text-[15px] transition-colors ${
               isSortActive(option)
                 ? "border-b-2 border-[#FF9606] font-bold text-[#5B5C60]" // active state
                 : "text-[#878F9B] hover:text-[#5B5C60]" // inactive hover state
@@ -64,14 +64,14 @@ const NavbarFiltering = ({
       </div>
 
       {/* View mode toggle (visible on xl and above) */}
-      <div className="absolute left-0 hidden xl:flex p-1 h-full items-center justify-center">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 hidden xl:flex">
         <div className="flex h-[53px] w-[103px] items-center justify-center rounded-lg bg-[#F9FAFC]">
           {/* Grid mode */}
           <button
             type="button"
             aria-label="Grid view"
             onClick={() => handleViewModeClick("grid")}
-            className={`flex items-center justify-center h-11 w-11 rounded-lg ${
+            className={`flex items-center justify-center h-11 w-11 rounded-lg cursor-pointer ${
               viewMode === "grid" ? "border border-[#E5E8EB] bg-white" : ""
             }`}
           >
@@ -83,7 +83,7 @@ const NavbarFiltering = ({
             type="button"
             aria-label="List view"
             onClick={() => handleViewModeClick("list")}
-            className={`flex items-center justify-center h-11 w-11 rounded-lg ${
+            className={`flex items-center justify-center h-11 w-11 rounded-lg cursor-pointer ${
               viewMode === "list" ? "border border-[#E5E8EB] bg-white" : ""
             }`}
           >
