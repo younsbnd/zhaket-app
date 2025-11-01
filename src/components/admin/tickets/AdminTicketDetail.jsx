@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import { useSession } from "next-auth/react";
@@ -16,7 +16,8 @@ import AdminMessagesList from "./ticket-detail/AdminMessagesList";
 import { useCrud } from "@/hooks/useCrud";
 import { FiAlertTriangle } from "react-icons/fi";
 
-const AdminTicketDetail = () => {
+// Component that uses useParams
+function AdminTicketDetailContent() {
   const { data: session } = useSession();
   const params = useParams();
   const { id: ticketId } = params;
@@ -138,6 +139,15 @@ const AdminTicketDetail = () => {
         </Card>
       </div>
     </div>
+  );
+}
+
+// Wrapper component with Suspense
+const AdminTicketDetail = () => {
+  return (
+    <Suspense fallback={<AdminTicketDetailSkeleton />}>
+      <AdminTicketDetailContent />
+    </Suspense>
   );
 };
 

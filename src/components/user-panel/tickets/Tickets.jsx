@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, Suspense } from "react";
 import TicketTabs from "./TicketTabs";
 import PaginationTickets from "./PaginationTickets";
 import TicketItem from "./TicketItem";
@@ -7,7 +7,8 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import { useSearchParams } from "next/navigation";
 
-const Tickets = () => {
+// Tickets content component with useSearchParams
+function TicketsContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const searchParams = useSearchParams();
   const rawStatus = searchParams.get("status");
@@ -57,6 +58,29 @@ const Tickets = () => {
         </div>
       </div>
     </div>
+  );
+}
+
+// Loading fallback for tickets
+function TicketsLoading() {
+  return (
+    <div className="p-4 md:py-0 min-h-[calc(100vh-200px)] mt-5">
+      <div className="rounded-lg bg-white text-card-foreground shadow-[0px_25px_10px_0px_#5B5E6812] mx-0">
+        <div className="p-6.5 pt-0 px-0 flex flex-1 flex-col min-h-[calc(100vh-350px)]">
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const Tickets = () => {
+  return (
+    <Suspense fallback={<TicketsLoading />}>
+      <TicketsContent />
+    </Suspense>
   );
 };
 

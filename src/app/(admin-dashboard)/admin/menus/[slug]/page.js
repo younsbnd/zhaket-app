@@ -12,7 +12,7 @@ export const generateMetadata = ({ params }) => {
 const MenuItemsPage = () => {
   return (
     <div>
-      <MenuItemsLogic  />
+      <MenuItemsLogic />
     </div>
   );
 };

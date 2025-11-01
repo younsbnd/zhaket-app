@@ -1,14 +1,12 @@
-
 "use client";
 
 import SuccessMessage from '@/components/main/payment/success-message/SuccessMessage';
 import FailureMessage from '@/components/main/payment/failure-message/FailureMessage';
 import { useSearchParams, redirect } from 'next/navigation';
-import React from "react";
+import React, { Suspense } from "react";
 
-
-
-const PaymentPage = () => {
+// Payment content component with useSearchParams
+function PaymentContent() {
     // Get URL search parameters
     const searchParams = useSearchParams();
 
@@ -26,10 +24,22 @@ const PaymentPage = () => {
         // Redirect to homepage if status is invalid or missing
         redirect('/');
     }
+}
 
-    // Default fallback (empty)
+// Loading fallback component
+function PaymentLoading() {
     return (
-        <div></div>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+    );
+}
+
+const PaymentPage = () => {
+    return (
+        <Suspense fallback={<PaymentLoading />}>
+            <PaymentContent />
+        </Suspense>
     );
 };
 
