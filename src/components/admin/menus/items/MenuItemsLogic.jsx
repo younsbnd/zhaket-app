@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { Button, addToast } from "@heroui/react";
 import Link from "next/link";
 import useSWR from "swr";
@@ -11,9 +11,8 @@ import { IoMdArrowRoundForward } from "react-icons/io";
 import { FiAlertTriangle } from "react-icons/fi";
 import MenuItemsSkeleton from "@/components/skeletons/admin/MenuItemsSkeleton";
 
-
-
-const MenuItemsLogic = () => {
+// Component that uses useParams
+function MenuItemsContent() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [parentItem, setParentItem] = useState(null);
@@ -288,6 +287,15 @@ const MenuItemsLogic = () => {
         </div>
       </div>
     </div>
+  );
+}
+
+// Wrapper component with Suspense
+const MenuItemsLogic = () => {
+  return (
+    <Suspense fallback={<MenuItemsSkeleton />}>
+      <MenuItemsContent />
+    </Suspense>
   );
 };
 

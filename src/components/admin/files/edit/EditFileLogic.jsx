@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import useSWR from "swr";
 import FileForm from "../FileForm";
 import { useForm } from "react-hook-form";
@@ -9,7 +9,8 @@ import { addToast, Alert } from "@heroui/react";
 import { fetcher } from "@/lib/api/fetcher";
 import AdminFormSkeleton from "@/components/skeletons/admin/AdminFormSkeleton";
 
-const EditFileLogic = () => {
+// Component that uses useParams
+function EditFileContent() {
   const { id } = useParams();
   const router = useRouter();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -139,6 +140,15 @@ const EditFileLogic = () => {
         isUploading={isUpdating}
       />
     </div>
+  );
+}
+
+// Wrapper component with Suspense
+const EditFileLogic = () => {
+  return (
+    <Suspense fallback={<AdminFormSkeleton />}>
+      <EditFileContent />
+    </Suspense>
   );
 };
 

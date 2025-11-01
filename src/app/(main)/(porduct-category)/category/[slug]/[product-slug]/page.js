@@ -1,5 +1,6 @@
 import ProductLogic from "@/components/main/product/ProductLogic";
-import { fetchServerData } from "@/lib/api/fetchServerData";
+import connectToDb from "@/lib/utils/db";
+import Product from "@/models/Product";
 import { metadata } from "@/lib/seo/metadata";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -8,19 +9,24 @@ import React from "react";
 export const generateMetadata = async ({ params }) => {
   try {
     const { "product-slug": productSlug } = await params;
-    const product = await fetchServerData(`/admin/products/${productSlug}`);
     
-    if (!product?.data) {
+    await connectToDb();
+    const product = await Product.findOne({ slug: productSlug })
+      .select('title description noIndex canonical')
+      .lean();
+    
+    if (!product) {
       notFound();
     }
     
     return metadata({
-      title: product?.data?.title,
-      description: product?.data?.description,
-      noindex: product?.data?.noIndex,
-      canonical: product?.data?.canonical
+      title: product?.title,
+      description: product?.description,
+      noindex: product?.noIndex,
+      canonical: product?.canonical
     });
   } catch (error) {
+    console.error("Error fetching product metadata:", error);
     notFound();
   }
 };

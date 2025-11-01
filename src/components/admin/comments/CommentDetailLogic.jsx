@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import { Card, CardBody, addToast } from "@heroui/react";
@@ -13,7 +13,8 @@ import CommentContent from "./detail/CommentContent";
 import RepliesSection from "./detail/RepliesSection";
 import ReplyFormSection from "./detail/ReplyFormSection";
 
-const CommentDetailLogic = () => {
+// Component that uses useParams
+function CommentDetailContent() {
   const params = useParams();
   const { id: commentId } = params;
   const { updateRecord, isLoading: isUpdating } = useCrud("/admin/comments");
@@ -115,6 +116,15 @@ const CommentDetailLogic = () => {
         </Card>
       </div>
     </div>
+  );
+}
+
+// Wrapper component with Suspense
+const CommentDetailLogic = () => {
+  return (
+    <Suspense fallback={<AdminTicketDetailSkeleton />}>
+      <CommentDetailContent />
+    </Suspense>
   );
 };
 

@@ -1,16 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useParams, useSearchParams, useRouter, notFound } from "next/navigation";
 import useSWR from "swr";
 import { fetcher } from "@/lib/api/fetcher";
 import CategoryDesignUI from "./CategoryDesignUI";
 
+// Loading fallback for category page
+function CategoryLoading() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+    </div>
+  );
+}
+
 /**
  * CategoryDesignLogic - Manages URL parameters, data fetching, and view state
  * for category filtering and pagination.
  */
-export default function CategoryDesignLogic() {
+// Component that uses useParams and useSearchParams
+function CategoryDesignContent() {
   const { slug } = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -110,5 +120,14 @@ export default function CategoryDesignLogic() {
       slug={slug}
       currentSort={currentSort}
     />
+  );
+}
+
+// Wrapper component with Suspense
+export default function CategoryDesignLogic() {
+  return (
+    <Suspense fallback={<CategoryLoading />}>
+      <CategoryDesignContent />
+    </Suspense>
   );
 }
