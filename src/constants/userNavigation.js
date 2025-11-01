@@ -1,6 +1,5 @@
-import { FiGrid, FiDownload, FiHeart, FiDollarSign } from "react-icons/fi";
-import { MdOutlineGroups, MdOutlineAttachMoney } from "react-icons/md";
-import { FaRegHandshake } from "react-icons/fa";
+import { FiGrid, FiDownload, FiDollarSign } from "react-icons/fi";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import { HiOutlineCog, HiOutlineLifebuoy } from "react-icons/hi2";
 
 // User dashboard navigation items

@@ -20,6 +20,7 @@ import {
 } from "react-icons/hi";
 import { signOut } from "next-auth/react";
 import { BiUser } from "react-icons/bi";
+import { RiAdminLine } from "react-icons/ri";
 
 /**
  * UserMenu component
@@ -50,6 +51,16 @@ export default function UserMenu({ session }) {
             </p>
           </div>
 
+          {/* admin link */}
+          {session?.user?.role === "admin" && (
+          <Link href="/admin">
+            <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
+              <RiAdminLine className="text-[#5B5C60]" size={14} />
+              <p className="text-sm leading-7 text-[#5B5C60]">پنل ادمین</p>
+            </div>
+          </Link>
+          )}
+
           {/* Dashboard link */}
           <Link href="/panel">
             <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
@@ -59,7 +70,7 @@ export default function UserMenu({ session }) {
           </Link>
 
           {/* Profile completion */}
-          <Link href="/panel/settings/edit-profile">
+          <Link href="/panel/settings/edit-profile/edit-password">
             <div className="flex items-center justify-between gap-4 rounded-xl bg-[#FFF5E6] py-4 pr-7 pl-3 hover:bg-[#F9FAFC] mx-2">
               <div className="flex items-center gap-4">
                 <FaUser className="text-[#EB8800]" size={12} />
@@ -91,14 +102,6 @@ export default function UserMenu({ session }) {
             <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
               <HiOutlineTicket className="text-[#6097F3]" size={15} />
               <p className="text-sm leading-7 text-[#6097F3]">ثبت تیکت</p>
-            </div>
-          </Link>
-
-          {/* Settings */}
-          <Link href="/panel/settings/edit-profile">
-            <div className="flex items-center gap-4 py-4 pr-7 hover:bg-[#F9FAFC]">
-              <HiOutlineCog className="text-[#5B5C60]" size={17} />
-              <p className="text-sm leading-7 text-[#5B5C60]">ویرایش حساب</p>
             </div>
           </Link>
 

@@ -55,7 +55,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] transition-colors duration-200 block py-1 rounded"
+                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606]  transition-colors duration-200 block py-1 rounded"
                       onClick={onClose}
                     >
                       {item.label}
@@ -72,7 +72,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] transition-colors duration-200 block py-1 rounded"
+                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606] transition-colors duration-200 block py-1 rounded"
                       onClick={onClose}
                     >
                       {item.label}
@@ -99,7 +99,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] transition-colors duration-200 block py-1 rounded"
+                      className="text-sm text-[#76767C] hover:text-[#FF9606] focus:text-[#FF9606] transition-colors duration-200 block py-1 rounded"
                       onClick={onClose}
                     >
                       {item.label}
@@ -158,7 +158,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
             aria-label="Close mobile menu"
             onClick={onClose}
             onKeyDown={(e) => handleKeyDown(e, onClose)}
-            className="cursor-pointer flex items-center justify-center rounded-lg bg-[#F7F8F9] text-[#5B5C60] hover:bg-[#EDEEEF] focus:outline-none focus:ring-2 focus:ring-[#FF9606] transition-colors duration-300 px-2 py-2 h-[33px] w-[33px]"
+            className="cursor-pointer flex items-center justify-center rounded-lg bg-[#F7F8F9] text-[#5B5C60] hover:bg-[#EDEEEF] transition-colors duration-300 px-2 py-2 h-[33px] w-[33px]"
           >
             <AiOutlineClose size={18} />
           </button>
@@ -169,7 +169,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
           {mainTabs.map((tab) => (
             <div key={tab.id} className="border-b border-gray-100 last:border-b-0 pb-4 last:pb-0">
               <button
-                className="cursor-pointer flex w-full items-center justify-between py-2 focus:outline-none focus:ring-2 focus:ring-[#FF9606] rounded-lg"
+                className="cursor-pointer flex w-full items-center justify-between py-2 rounded-lg"
                 data-cy="stylish-accordion-button"
                 type="button"
                 onClick={() => toggleAccordion(tab.id)}
@@ -186,7 +186,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
                   </span>
                 </div>
                 <span className="max-h-4 max-w-4 flex-shrink-0" aria-hidden="true">
-                  {openAccordions[tab.id] ? <FcNext /> : <FcExpand />}
+                  {openAccordions[tab.id] ? <FcExpand /> : <FcNext />}
                 </span>
               </button>
 
@@ -208,7 +208,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
           <Link
             href="/blog"
             onClick={onClose}
-            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] rounded"
+            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] rounded"
           >
             بلاگ
           </Link>
@@ -217,7 +217,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
             rel="nofollow"
             href="/academy"
             onClick={onClose}
-            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] rounded"
+            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] rounded"
           >
             ژاکت آکادمی
           </Link>
@@ -226,7 +226,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
             rel="nofollow"
             href="/service"
             onClick={onClose}
-            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] rounded"
+            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium border-b border-gray-100 pb-2 w-full hover:text-[#FF9606] focus:text-[#FF9606] rounded"
           >
             ژاکت سرویس
           </Link>
@@ -235,7 +235,7 @@ export default function MobileMenuSidebar({ isOpen, onClose }) {
             rel="follow"
             href="/ready-site"
             onClick={onClose}
-            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium hover:text-[#FF9606] focus:text-[#FF9606] focus:outline-none focus:ring-2 focus:ring-[#FF9606] rounded"
+            className="transition-colors duration-300 text-base leading-7 text-[#5B5C60] font-medium hover:text-[#FF9606] focus:text-[#FF9606] rounded"
           >
             سایت آماده
           </Link>

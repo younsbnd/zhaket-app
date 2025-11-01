@@ -44,14 +44,14 @@ export const MAIN_TABS = [
 ];
 
 export const POPULAR_THEMES = [
-  { label: "قالب وودمارت", href: "/web/woodmart-woocommerce-themes" },
-  { label: "قالب آسترا پرو", href: "/web/astra-pro-wordpress-theme" },
+  { label: "قالب وودمارت", href: "/category/web/woodmart" },
+  { label: "قالب آسترا پرو", href: "/category/web/astra-pro" },
 ];
 
 export const POPULAR_PLUGINS = [
-  { label: "افزونه المنتور پرو", href: "/web/elementor-pro-pagebuilder-plugin" },
-  { label: "افزونه دیجیتس", href: "/web/mobile-number-signup" },
-  { label: "افزونه یواست سئو", href: "/web/yoast-seo-premium-wordpress-plugin" },
+  { label: "افزونه المنتور پرو", href: "/category/web/elementor-pro" },
+  { label: "افزونه دیجیتس", href: "/category/web/digits" },
+  { label: "افزونه یواست سئو", href: "/category/web/yoast-seo" },
 ];
 
 export const TAB_CONTENT = {
@@ -61,23 +61,23 @@ export const TAB_CONTENT = {
 
   ],
   "wordpress-plugins": [
-    [{ label: "افزونه فروشگاهی", href: "/category/shop-plugins" }],
-    [{ label: "افزونه ترجمه", href: "/category/translation-plugins" }],
-    [{ label: "افزونه رزرواسیون", href: "/category/reservation-plugins" }]
+    [{ label: "افزونه فروشگاهی", href: "#" }],
+    [{ label: "افزونه ترجمه", href: "#" }],
+    [{ label: "افزونه رزرواسیون", href: "#" }]
   ],
   scripts: [
-    [{ label: "اسکریپت مدیریت پروژه", href: "/category/project-management-scripts" }],
-    [{ label: "اسکریپت شبکه اجتماعی", href: "/category/social-scripts" }],
-    [{ label: "اسکریپت چت", href: "/category/chat-scripts" }]
+    [{ label: "اسکریپت مدیریت پروژه", href: "#" }],
+    [{ label: "اسکریپت شبکه اجتماعی", href: "#" }],
+    [{ label: "اسکریپت چت", href: "#" }]
   ],
   "html-templates": [
-    [{ label: "قالب تک صفحه‌ای", href: "/category/onepage-html" }],
-    [{ label: "قالب لندینگ پیج", href: "/category/landing-html" }],
-    [{ label: "قالب رستوران", href: "/category/restaurant-html" }]
+    [{ label: "قالب تک صفحه‌ای", href: "#" }],
+    [{ label: "قالب لندینگ پیج", href: "#" }],
+    [{ label: "قالب رستوران", href: "#" }]
   ],
   "amazing-bundles": [
-    [{ label: "بسته کامل وردپرس", href: "/category/wordpress-bundles" }],
-    [{ label: "بسته قالب‌ها", href: "/category/themes-bundles" }],
-    [{ label: "بسته توسعه", href: "/category/development-bundles" }]
+    [{ label: "بسته کامل وردپرس", href: "#" }],
+    [{ label: "بسته قالب‌ها", href: "#" }],
+    [{ label: "بسته توسعه", href: "#" }]
   ],
 };

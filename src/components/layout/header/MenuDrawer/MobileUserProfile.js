@@ -14,6 +14,7 @@ import { CiEdit, CiLogout } from "react-icons/ci";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { RiAdminLine } from "react-icons/ri";
 
 export default function UserProfileDropdown({ session, onMenuClose }) {
   // Handle user logout
@@ -58,6 +59,22 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
             </p>
           </div>
 
+          {/* admin link */}
+          {session?.user?.role === "admin" && (
+            <Link
+              href="/admin"
+              onClick={handleMenuItemClick}
+              className="block focus:outline-none "
+              role="menuitem"
+            >
+              <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
+                <RiAdminLine className="w-5 h-5 text-[#5B5C60]" />
+                <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
+                  پنل ادمین
+                </p>
+              </div>
+            </Link>
+          )}
           {/* Dashboard link */}
           <Link
             href="/panel"
@@ -77,7 +94,7 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           <Link
             href="/panel/settings/edit-profile"
             onClick={handleMenuItemClick}
-            className="block focus:outline-none focus:ring-2 focus:ring-[#FF9606]"
+            className="block"
             role="menuitem"
           >
             <div className="flex items-center justify-between gap-4 rounded-xl bg-[#FFF5E6] py-4 pr-7 pl-3 hover:bg-[#F9FAFC] mx-2 transition-colors duration-200">
@@ -104,7 +121,7 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           <Link
             href="/panel/downloads"
             onClick={handleMenuItemClick}
-            className="block focus:outline-none focus:ring-2 focus:ring-[#FF9606]"
+            className="block"
             role="menuitem"
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
@@ -119,7 +136,7 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
           <Link
             href="/panel/tickets/new"
             onClick={handleMenuItemClick}
-            className="block focus:outline-none focus:ring-2 focus:ring-[#FF9606]"
+            className="block"
             role="menuitem"
           >
             <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
@@ -130,24 +147,9 @@ export default function UserProfileDropdown({ session, onMenuClose }) {
             </div>
           </Link>
 
-          {/* Edit account settings */}
-          <Link
-            href="/panel/settings/edit-profile"
-            onClick={handleMenuItemClick}
-            className="block focus:outline-none focus:ring-2 focus:ring-[#FF9606]"
-            role="menuitem"
-          >
-            <div className="flex items-center justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] transition-colors duration-200">
-              <CiEdit className="w-5 h-5 text-[#5B5C60]" />
-              <p className="transition duration-300 text-sm leading-7 text-[#5B5C60]">
-                ویرایش حساب
-              </p>
-            </div>
-          </Link>
-
           {/* Logout functionality */}
           <button
-            className="flex items-center cursor-pointer justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] w-full text-right transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#FF9606]"
+            className="flex items-center cursor-pointer justify-start gap-4 py-4 pr-7 hover:bg-[#F9FAFC] w-full text-right transition-colors duration-200"
             onClick={handleLogout}
             type="button"
             aria-label="Logout from account"
